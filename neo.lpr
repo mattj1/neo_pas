@@ -1,0 +1,5 @@
+program neo;
+
+begin
+end.
+
