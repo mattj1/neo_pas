@@ -1,8 +1,15 @@
+unit keybrd;
+
+interface
 uses crt, dos;
-procedure KeyClose; forward;
 
 type
  scanCode = byte;
+
+procedure KeyInit;
+procedure KeyClose;
+
+implementation
 
 var
   oldKeyInt : Pointer;
@@ -53,10 +60,4 @@ begin
 end;
 
 begin
- clrscr;
-
- KeyInit;
-
- readln;
-
 end.

@@ -1,8 +1,14 @@
-uses Crt, TextLib;
+program Text_TB;
+
+uses
+  Crt,
+  Text;
 
 var
   i, j: integer;
 begin
+  Text_Init;
+
   HideCursor;
   ClrScr;
   gotoxy(5, 5);
@@ -23,4 +29,5 @@ begin
   Write('Hello World, mem avail: ', MemAvail);
 
   readln;
+  Text_Close;
 end.

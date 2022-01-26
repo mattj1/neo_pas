@@ -1,4 +1,4 @@
-uses crt, gfx, image;
+uses crt, gfx, image, common;
 var angle: Real;
 var i, j, k, col: integer;
 var pal: Palette;

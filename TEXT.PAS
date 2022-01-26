@@ -1,7 +1,12 @@
-unit TextLib;
+unit Text;
 
 interface
-uses crt;
+
+uses crt, common;
+
+procedure Text_Init;
+procedure Text_Close;
+
 procedure DrawString(x, y: byte; str: string);
 procedure FillCharAttrib(const ascii_char, attr: byte);
 procedure TextBox(x, y, w, h: integer);
@@ -12,7 +17,7 @@ procedure HideCursor;
 implementation
 
 var
-  scrbuf: array[0..3999] of byte;
+  scrbuf: pointer;
 
 { https://www.baskent.edu.tr/~tkaracay/etudio/ders/prg/pascal/PasHTM2/pas/pasl2013.html }
 
@@ -36,51 +41,56 @@ end;
 
 procedure FillCharAttrib(const ascii_char, attr: byte); assembler;
 asm
-   mov ax, seg scrbuf
-   mov es, ax
-   mov di, offset scrbuf
+         les     di, scrbuf
 
-   mov al, ascii_char
-   mov ah, attr
-   mov cx, 2000
+         mov     al, ascii_char
+         mov     ah, attr
+         mov     cx, 2000
 
-   rep stosw
+         rep     stosw
 end;
 
 
 procedure SwapBuffers; assembler;
 asm
-      mov dx, $03da
-      @@1:
-          in al, dx
-          test al, 8
-          jz @@1
+         mov     dx, $03da
+         @@1:
+         in      al, dx
+         test    al, 8
+         jz      @@1
 
-      mov ax, SegB800
-      mov es, ax
-      mov di, 0
+         mov     ax, SegB800
+         mov     es, ax
+         mov     di, 0
 
-      mov ax, seg scrbuf
-      mov ds, ax
-      mov si, offset scrbuf
+         push    ds
+         push    si
+         lds     si, scrbuf
 
-      mov cx, 4000
-      rep movsb
+         mov     cx, 2000
+         rep     movsw
 
-      @@2:
-          in al, dx
-          test al, 8
-          jnz @@2
+         pop     si
+         pop     ds
+
+         @@2:
+         in      al, dx
+         test    al, 8
+         jnz     @@2
 
 end;
 
-
 procedure TextWriteRaw(ch, color: byte; var o: integer);
+var
+  bp: byte_ptr;
 begin
-  scrbuf[o] := ch;
-  Inc(o);
-  scrbuf[o] := color;
-  Inc(o);
+  bp := scrbuf;
+  Inc(bp, o);
+
+  bp^ := ch;
+  Inc(bp);
+  bp^ := color;
+  Inc(o, 2);
 end;
 
 procedure TextBox(x, y, w, h: integer);
@@ -115,20 +125,36 @@ begin
 end;
 
 procedure DrawString(x, y: byte; str: string);
-var left, right, i, j, o: Integer;
+var
+  left, right, i, j, o: integer;
 begin
-     j := 1;
-     left := x;
-     right := x + Length(str) - 1;
+  j := 1;
+  left := x;
+  right := x + Length(str) - 1;
 
-     if right > 80 then right := 80;
+  if right > 80 then right := 80;
 
-     o := 2 * (y * 80 + left);
+  o := 2 * (y * 80 + left);
 
-     for i := left to right do begin
-         TextWriteRaw(ord(str[j]), 7, o);
-         j := j + 1
-     end;
+  for i := left to right do
+  begin
+    TextWriteRaw(Ord(str[j]), 7, o);
+    j := j + 1;
+  end;
+end;
+
+procedure Text_Init;
+begin
+  GetMem(scrbuf, 4000);
+end;
+
+procedure Text_Close;
+begin
+  FreeMem(scrbuf, 4000);
+  ShowCursor;
+
+  TextColor(7);
+  clrscr;
 end;
 
 begin

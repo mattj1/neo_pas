@@ -41,16 +41,43 @@
       <Unit>
         <Filename Value="KEYBRD.PAS"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="TEXTLIB.PAS"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="TextLib"/>
+        <UnitName Value="keybrd"/>
       </Unit>
       <Unit>
         <Filename Value="IMAGE.PAS"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="image"/>
+      </Unit>
+      <Unit>
+        <Filename Value="kb_tb.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="TIMER.PAS"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="timer"/>
+      </Unit>
+      <Unit>
+        <Filename Value="timer_tb.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="GAME.PAS"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="common.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="TEXT.PAS"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Text"/>
+      </Unit>
+      <Unit>
+        <Filename Value="TEXT_TB.PAS"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Text_TB"/>
       </Unit>
     </Units>
   </ProjectOptions>

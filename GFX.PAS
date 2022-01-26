@@ -3,7 +3,7 @@ unit gfx;
 
 interface
 
-uses crt, image;
+uses crt, image, common;
 
 type
   Palette = record

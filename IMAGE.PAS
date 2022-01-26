@@ -1,5 +1,6 @@
 unit image;
 interface
+uses common;
 
 type
   BlendLUT_t = record
@@ -34,8 +35,6 @@ type
   BITMAPPALENTRY = record
     c: array[0..3] of byte;
   end;
-
-type byte_ptr = ^byte;
 
 type
   Image_T = record
