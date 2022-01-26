@@ -1,0 +1,110 @@
+unit image;
+interface
+
+type
+  BlendLUT_t = record
+    lut: array[0..4095] of byte;
+    downsampleLut: array[0..255] of byte;
+    multLut: array[0..4095] of byte;
+  end;
+
+type
+  BITMAPFILEHEADER = record
+    bfType: word;
+    bfSize: longint;
+    bfReserved1: word;
+    bfReserved2: word;
+    bfOffBits: longint;
+  end;
+
+  BITMAPINFOHEADER = record
+    biSize: longint;
+    biWidth: longint;
+    biHeight: longint;
+    biPlanes: word;
+    biBitCount: word;
+    biCompression: longint;
+    biSizeImage: longint;
+    biXPelsPerMeter: longint;
+    biYPelsPerMeter: longint;
+    biClrUsed: longint;
+    biClrImportant: longint;
+  end;
+
+  BITMAPPALENTRY = record
+    c: array[0..3] of byte;
+  end;
+
+type byte_ptr = ^byte;
+
+type
+  Image_T = record
+    Width: word;
+    Height: word;
+    data: byte_ptr;
+  end;
+
+procedure LoadBMP(filename: string; var image: Image_t);
+procedure Image_New(var image: Image_t; width, height: integer);
+procedure Image_Free(var image: Image_t);
+implementation
+
+
+procedure LoadBMP(filename: string; var image: Image_T);
+var
+  f: file;
+var
+  bfh: BITMAPFILEHEADER;
+var
+  bih: BITMAPINFOHEADER;
+var
+  pe: BITMAPPALENTRY;
+var
+  i, j: integer;
+var
+  p: byte_ptr;
+begin
+  Assign(f, filename);
+  Reset(f, 1);
+  BlockRead(f, bfh, sizeof(BITMAPFILEHEADER));
+  BlockRead(f, bih, sizeof(BITMAPINFOHEADER));
+
+{  writeln(bfh.bfSize, ' ', bfh.bfType, ' ', bfh.bfOffBits);
+  writeln(bih.biSize, ' ', bih.biWidth, ' ', bih.biHeight);
+ }
+  Image_New(image, bih.biWidth, bih.biHeight);
+
+  {biSize must be 40}
+
+  for i := 0 to 255 do
+  begin
+    BlockRead(f, pe, sizeof(BITMAPPALENTRY));
+         {writeln(pe.c[0], ' ', pe.c[1], ' ', pe.c[2], ' ', pe.c[3]);
+     } end;
+
+
+  for j := 0 to image.Height - 1 do
+  begin
+    p := image.Data;
+    Inc(p, (bih.biHeight - 1 - j) * bih.biWidth);
+    BlockRead(f, p^, bih.biWidth);
+  end;
+
+  Close(f);
+end;
+
+procedure Image_New(var image: Image_T; width, height: integer);
+begin
+  image.Width := width;
+  image.Height := height;
+
+  GetMem(image.Data, image.Width * image.Height);
+end;
+
+procedure Image_Free(var image: Image_T);
+begin
+  FreeMem(image.Data, image.Width * image.Height);
+end;
+
+begin
+end.

@@ -9,12 +9,11 @@
         <Filename Value="neo.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="167" Y="5"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="ASCII.PAS"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
@@ -23,7 +22,6 @@
       </Unit>
       <Unit>
         <Filename Value="ASM2.PAS"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="20"/>
       </Unit>
@@ -32,18 +30,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="gfx"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="396"/>
-        <CursorPos X="16" Y="438"/>
-        <UsageCount Value="20"/>
+        <CursorPos X="22" Y="5"/>
+        <UsageCount Value="21"/>
       </Unit>
       <Unit>
         <Filename Value="GFX_TB.PAS"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="21"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="KEYBRD.PAS"/>
@@ -52,11 +48,10 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit>
       <Unit>
         <Filename Value="PAL.PAS"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
@@ -66,15 +61,14 @@
       <Unit>
         <Filename Value="TEXTLIB.PAS"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UnitName Value="TextLib"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="15" Y="26"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="..\BMP.PAS"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="44"/>
         <CursorPos X="7" Y="75"/>
@@ -85,12 +79,35 @@
         <UnitName Value="gfx"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="178"/>
+        <CursorPos X="6" Y="330"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="IMAGE.PAS"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="image"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="22"/>
+        <CursorPos X="38" Y="57"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory HistoryIndex="2">
+      <Position>
+        <Filename Value="backup\GFX.PAS"/>
+        <Caret Line="187" Column="25" TopLine="179"/>
+      </Position>
+      <Position>
+        <Filename Value="GFX_TB.PAS"/>
+        <Caret Line="115" Column="3" TopLine="85"/>
+      </Position>
+      <Position>
+        <Filename Value="backup\GFX.PAS"/>
+        <Caret Line="86" Column="31" TopLine="67"/>
+      </Position>
+    </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes ActiveMode=""/>

@@ -30,14 +30,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="ASCII.PAS"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="ASM2.PAS"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="GFX.PAS"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="gfx"/>
@@ -51,16 +43,14 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="PAL.PAS"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="TEXTLIB.PAS"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="TextLib"/>
       </Unit>
       <Unit>
-        <Filename Value="..\BMP.PAS"/>
+        <Filename Value="IMAGE.PAS"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="image"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -74,6 +64,11 @@
       <IncludeFiles Value="$(ProjOutDir)"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions>

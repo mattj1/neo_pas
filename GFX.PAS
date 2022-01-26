@@ -3,54 +3,11 @@ unit gfx;
 
 interface
 
-uses crt;
+uses crt, image;
 
 type
   Palette = record
     c: array[0..255] of array[0..2] of byte;
-  end;
-
-  BlendLUT_t = record
-    lut: array[0..4095] of byte;
-    downsampleLut: array[0..255] of byte;
-    multLut: array[0..4095] of byte;
-  end;
-
-type
-  BITMAPFILEHEADER = record
-    bfType: word;
-    bfSize: longint;
-    bfReserved1: word;
-    bfReserved2: word;
-    bfOffBits: longint;
-  end;
-
-  BITMAPINFOHEADER = record
-    biSize: longint;
-    biWidth: longint;
-    biHeight: longint;
-    biPlanes: word;
-    biBitCount: word;
-    biCompression: longint;
-    biSizeImage: longint;
-    biXPelsPerMeter: longint;
-    biYPelsPerMeter: longint;
-    biClrUsed: longint;
-    biClrImportant: longint;
-  end;
-
-  BITMAPPALENTRY = record
-    c: array[0..3] of byte;
-  end;
-
-
-type
-  byte_ptr = ^byte;
-
-  Image = record
-    Width: word;
-    Height: word;
-    Data: byte_ptr;
   end;
 
 procedure FillColor(c: byte);
@@ -60,14 +17,12 @@ procedure WaitForRetrace2;
 procedure SwapBuffers;
 procedure DrawSpriteAlpha(
           dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
-          var img: Image);
-procedure DrawSprite(x, y: integer; var img: Image);
+          var img: Image_t);
+procedure DrawSprite(x, y: integer; var img: Image_t);
 procedure LoadPalette(filename: string; var pal: Palette);
 procedure SetPalette(var pal: Palette);
 
-procedure LoadBMP(filename: string; var image: Image);
-procedure Image_New(var image: Image; width, height: integer);
-procedure Image_Free(var image: Image);
+procedure SetPixel(x, y: word; c: integer);
 
 procedure InitGFX;
 procedure CloseGFX;
@@ -261,7 +216,7 @@ end;
 
 procedure DrawSpriteAlpha(
           dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
-          var img: Image);
+          var img: Image_t);
 var
   scrX, scrY, offs, spr_offs: integer;
   subLeft, subRight, subTop, subBottom: integer;
@@ -269,7 +224,7 @@ var
 var
   xi, yi, v: byte;
 var
-  bp: ^byte;
+  bp: byte_ptr;
   sprite_bp: byte_ptr;
 var
   r, g, b, r1, g1, b1: byte;
@@ -357,7 +312,7 @@ begin
 end;
 
 
-procedure DrawSprite(x, y: integer; var img: Image);
+procedure DrawSprite(x, y: integer; var img: Image_t);
 var
   scrX, scrY, offs, spr_offs: integer;
 var
@@ -551,60 +506,12 @@ begin
   FreeMem(blendLut, sizeof(BlendLUT_t));
 end;
 
-procedure LoadBMP(filename: string; var image: Image);
-var
-  f: file;
-var
-  bfh: BITMAPFILEHEADER;
-var
-  bih: BITMAPINFOHEADER;
-var
-  pe: BITMAPPALENTRY;
-var
-  i, j: integer;
-var
-  p: byte_ptr;
+procedure SetPixel(x, y: word; c: integer);
+var bp: byte_ptr;
 begin
-  Assign(f, filename);
-  Reset(f, 1);
-  BlockRead(f, bfh, sizeof(BITMAPFILEHEADER));
-  BlockRead(f, bih, sizeof(BITMAPINFOHEADER));
-
-{  writeln(bfh.bfSize, ' ', bfh.bfType, ' ', bfh.bfOffBits);
-  writeln(bih.biSize, ' ', bih.biWidth, ' ', bih.biHeight);
- }
-  Image_New(image, bih.biWidth, bih.biHeight);
-
-  {biSize must be 40}
-
-  for i := 0 to 255 do
-  begin
-    BlockRead(f, pe, sizeof(BITMAPPALENTRY));
-         {writeln(pe.c[0], ' ', pe.c[1], ' ', pe.c[2], ' ', pe.c[3]);
-     } end;
-
-
-  for j := 0 to image.Height - 1 do
-  begin
-    p := image.Data;
-    Inc(p, (bih.biHeight - 1 - j) * bih.biWidth);
-    BlockRead(f, p^, bih.biWidth);
-  end;
-
-  Close(f);
-end;
-
-procedure Image_New(var image: Image; width, height: integer);
-begin
-  image.Width := width;
-  image.Height := height;
-
-  GetMem(image.Data, image.Width * image.Height);
-end;
-
-procedure Image_Free(var image: Image);
-begin
-  FreeMem(image.Data, image.Width * image.Height);
+  bp := scrbuf;
+  inc(bp, y * 320 + x);
+  bp^ := c;
 end;
 
 begin
