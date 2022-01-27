@@ -2,12 +2,6 @@ unit image;
 interface
 uses common;
 
-type
-  BlendLUT_t = record
-    lut: array[0..4095] of byte;
-    downsampleLut: array[0..255] of byte;
-    multLut: array[0..4095] of byte;
-  end;
 
 type
   BITMAPFILEHEADER = record
@@ -46,8 +40,9 @@ type
 procedure LoadBMP(filename: string; var image: Image_t);
 procedure Image_New(var image: Image_t; width, height: integer);
 procedure Image_Free(var image: Image_t);
-implementation
+procedure Image_LoadRaw(var f: file; width, height: integer; var image: Image_T);
 
+implementation
 
 procedure LoadBMP(filename: string; var image: Image_T);
 var
@@ -90,6 +85,12 @@ begin
   end;
 
   Close(f);
+end;
+
+procedure Image_LoadRaw(var f: file; width, height: integer; var image: Image_T);
+begin
+  Image_New(image, width, height);
+  BlockRead(f, image.data^, width * height);
 end;
 
 procedure Image_New(var image: Image_T; width, height: integer);

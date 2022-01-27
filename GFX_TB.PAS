@@ -1,4 +1,4 @@
-uses crt, gfx, image, common;
+uses crt, gfx, gfxcom, image, common;
 var angle: Real;
 var i, j, k, col: integer;
 var pal: Palette;
@@ -10,13 +10,12 @@ var msg: string;
 var lsfr, start_state, bit: longint;
 begin
      msg := 'Hello from Pascal!!!';
-     LoadPalette('playpal.pal', pal);
+     GFX_LoadPalette('playpal.pal', pal);
      LoadBMP('test.bmp', img);
-     GFX.SetPalette(pal);
+     GFX_SetPalette(pal);
 
      Image_New(img2, 16, 16);
      bp := img2.data;
-
 
      for i := 0 to 255 do
      begin
@@ -42,10 +41,10 @@ begin
      end;
 
 
-   GFX.InitGFX;
+   GFX_Init;
    {GFX.double_buffer := false;}
 
-   GFX.SetPalette(pal);
+   GFX_SetPalette(pal);
 
    DirectVideo:=false;
 
@@ -120,5 +119,5 @@ begin
 
    writeln('Test');
    readln;
-   GFX.CloseGFX;
+   GFX_Close;
 end.
