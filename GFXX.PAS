@@ -160,7 +160,7 @@ begin
 
     destPtr := Ptr(SegA000, o);
     srcPtr := bp;
-    srcSkip := (16 - numCol);
+    srcSkip := ((img.width shr 2) - numCol);
     dstSkip := (80 - numCol);
     asm
 

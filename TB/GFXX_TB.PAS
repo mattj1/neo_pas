@@ -14,6 +14,12 @@ var x, y : longint;
 var stars: array[0..125] of star;
 
 begin
+
+	Assign(f, 'test.raw');
+  	Reset(f, 1);
+		Image_LoadRaw(f, img);
+	Close(f);
+
 	GFXX_Init;
 	GFX_LoadPalette('playpal.pal', pal);
 	GFX_SetPalette(pal);
@@ -30,10 +36,6 @@ begin
 		stars[i].z := Random(500) + 1;
 	end;
 
-	Assign(f, 'img.raw');
-  	Reset(f, 1);
-		Image_LoadRaw(f, 64, 64, img);
-	Close(f);
 
     for i := 10 to 1000 do begin
        GFX_FillColor(0);

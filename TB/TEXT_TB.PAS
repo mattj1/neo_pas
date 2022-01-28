@@ -7,7 +7,7 @@ uses
 var
   i, j: integer;
 begin
-  Text_Init(132, 60);
+  Text_Init(132, 43);
 
   HideCursor;
   ClrScr;

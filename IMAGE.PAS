@@ -40,7 +40,7 @@ type
 procedure LoadBMP(filename: string; var image: Image_t);
 procedure Image_New(var image: Image_t; width, height: integer);
 procedure Image_Free(var image: Image_t);
-procedure Image_LoadRaw(var f: file; width, height: integer; var image: Image_T);
+procedure Image_LoadRaw(var f: file; var image: Image_T);
 
 implementation
 
@@ -87,9 +87,14 @@ begin
   Close(f);
 end;
 
-procedure Image_LoadRaw(var f: file; width, height: integer; var image: Image_T);
+procedure Image_LoadRaw(var f: file; var image: Image_T);
+  var width, height: integer; 
 begin
+  BlockRead(f, width, sizeof(integer));
+  BlockRead(f, height, sizeof(integer));
+
   Image_New(image, width, height);
+
   BlockRead(f, image.data^, width * height);
 end;
 
