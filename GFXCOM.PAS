@@ -34,6 +34,8 @@ var c: integer;
 begin
   GFX_ClipRect := false;
 
+  if y >= 240 then Exit;
+
   if x < 0 then begin
       inc(subLeft, -x);
       x := 0;

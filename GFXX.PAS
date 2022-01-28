@@ -120,6 +120,8 @@ var x1: integer;
 var x, y, p, o: integer;
 var bp: byte_ptr;
 var numPlanes: integer;
+var srcSkip, dstSkip: word;
+var destPtr, srcPtr: pointer;
 begin
     numRow := (subBottom - subTop);
     dstPlane := dstX and 3;
@@ -156,6 +158,53 @@ begin
     }
     o := page_offset + dstY * 80 + x1;
 
+    destPtr := Ptr(SegA000, o);
+    srcPtr := bp;
+    srcSkip := (16 - numCol);
+    dstSkip := (80 - numCol);
+    asm
+
+      push ds
+      push si
+
+      les di, destPtr
+      lds si, srcPtr
+
+      mov cx, numRow
+
+      @@y_loop:
+
+      push cx
+      mov cx, numCol
+
+      @@x_loop:
+      mov     al, ds:[si]
+      cmp     al, 255
+      je      @@is_transparent
+
+      movsb
+      loop @@x_loop
+
+      jmp @@done
+
+      @@is_transparent:
+
+      inc si
+      inc di
+      loop @@x_loop
+
+      @@done:
+      add si, srcSkip
+      add di, dstSkip
+
+      pop cx
+      loop @@y_loop
+
+      pop si
+      pop ds
+    end;
+
+{
     for y := 0 to numRow-1 do begin
       for x := 0 to numCol - 1 do begin
 
@@ -169,6 +218,7 @@ begin
 
       inc(bp, 16 - numCol);
     end;
+  }
 
     inc(dstPlane);
     dstPlane := dstPlane and 3;

@@ -51,15 +51,10 @@ begin
     		inc(y, 120);
     		if (x < 0) or (x >= 320) or (y < 0) or (y >= 240) then continue;
 
-    		set_pixel(x, y, 80 + Round(stars[j].z) shr 4);
-
-
-
-    		
-    	
+    		set_pixel(x,  y, 80 + Round(stars[j].z) shr 4);
     	end;
 
-   		DrawSprite(64, 64, img);
+   		DrawSprite(64,  100 + Round(20.0 * sin(2 * i * 3.141/180.0)), img);
       
       GFXX_SwapBuffers;
 
