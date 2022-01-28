@@ -11,6 +11,8 @@ procedure GFXX_Init;
 procedure GFXX_Close;
 procedure GFXX_SwapBuffers;
 
+procedure set_pixel(x, y: integer; c: byte);
+
 implementation
 
 const SC_INDEX = $3C4;
@@ -53,8 +55,8 @@ end;
 procedure set_pixel(x, y: integer; c: byte);
 var offset: integer;
 begin
+  offset := page_offset + y * 80 + (x shr 2);
 
-  offset := (y * 320 + x) shr 2;
   word_out(SC_INDEX, MAP_MASK, 1 shl (x and 3));
 
   mem[$A000 : offset] := c;
@@ -112,26 +114,25 @@ begin
   end;
 end;
 
-procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
-var subLeft, subRight, subTop, subBottom, numCol, numRow, srcPlane, dstPlane, nc0, nc1, nc2: integer;
+procedure DrawSpriteSub(dstX, dstY: integer; subLeft, subTop, subRight, subBottom: integer; var img: Image_t);
+var numCol, numRow, srcPlane, dstPlane, nc0, nc1, nc2: integer;
 var x1: integer;
 var x, y, p, o: integer;
 var bp: byte_ptr;
+var numPlanes: integer;
 begin
-    subLeft := 0;  { 5 and 62}
-    subRight := img.width;
-
-    subTop := 0;
-    subBottom := img.height;
-
     numRow := (subBottom - subTop);
     dstPlane := dstX and 3;
 
     x1 := dstX shr 2; {x1 is X pos in plane}
 
+    numPlanes := (subRight - subLeft);
+    if numPlanes > 4 then numPlanes := 4;
+    if numPlanes = 0 then Exit;
+
     srcPlane := subLeft and 3;
 
-    for p := 0 to 3 do begin   
+    for p := 0 to numPlanes - 1 do begin   
     word_out(SC_INDEX, MAP_MASK, 1 shl dstPlane);
 
     bp := img.data;
@@ -158,7 +159,8 @@ begin
     for y := 0 to numRow-1 do begin
       for x := 0 to numCol - 1 do begin
 
-        mem[$A000 : o] := bp^;
+        if bp^ <> 255 then 
+          mem[$A000 : o] := bp^;
         inc(o);
         inc(bp);
       end;
@@ -177,7 +179,19 @@ begin
   end;
 end;
 
+procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
+var subLeft, subRight, subTop, subBottom: integer;
+begin
+    subLeft := 0;  { 5 and 62}
+    subRight := img.width;
 
+    subTop := 0;
+    subBottom := img.height;
+
+    if not GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom) then Exit;
+
+    DrawSpriteSub(dstX, dstY, subLeft, subTop, subRight, subBottom, img);
+end;
 
 procedure GFXX_Init;
 begin

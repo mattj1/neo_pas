@@ -23,44 +23,44 @@ var
 procedure GFX_Common_Init;
 procedure GFX_LoadPalette(filename: string; var pal: Palette);
 procedure GFX_SetPalette(var pal: Palette);
-procedure GFX_ClipRect(var x, y, subLeft, subTop, subRight, subBottom: integer);
+function GFX_ClipRect(var x, y, subLeft, subTop, subRight, subBottom: integer) : boolean;
 	
 implementation
 
+{ TODO: save the screen height and use it for clipping here }
 
-procedure GFX_ClipRect(var x, y, subLeft, subTop, subRight, subBottom: integer);
- var sw: integer;
+function GFX_ClipRect(var x, y, subLeft, subTop, subRight, subBottom: integer) : boolean;
+var c: integer;
 begin
-  sw := subRight - subLeft;
+  GFX_ClipRect := false;
 
   if x < 0 then begin
       inc(subLeft, -x);
       x := 0;
   end;
-  {
-  if x + subLeft < 0 then begin
-     inc(subLeft, -(x + subLeft));
-     x := 0;
-  end;
-  }
-  if subLeft > subRight then Exit;
 
-  sw := subRight - subLeft;
+  if subLeft >= subRight then Exit;
 
+  c := subRight - subLeft;
 
-  if x + sw >= 320 then begin
-     dec(subRight, (x + sw - 320));
+  if x + c >= 320 then begin
+     dec(subRight, (x + c - 320));
   end;
 
-  if y + subTop < 0 then begin
-     inc(subTop, -(y + subTop));
-{     inc(subTop, -y);           }
+  if y < 0 then begin
+     inc(subTop, -y);
      y := 0;
   end;
 
-  if y + subBottom > 200 then begin
-     subBottom := 200 - y;
+  if subTop >= subBottom then Exit;
+
+  c := subBottom - subTop;
+
+  if y + subBottom >= 240 then begin
+     dec(subBottom, (y + c - 240));
   end;
+
+  GFX_ClipRect := true;
 end;
 
 
