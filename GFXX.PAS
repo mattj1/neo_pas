@@ -6,12 +6,14 @@ uses GFXCom, Image, Common;
 procedure GFX_FillColor(c: byte);
 
 procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
+procedure DrawSpriteOpaqueFast(dstX, dstY: integer; var img: Image_t);
 
 procedure GFXX_Init;
 procedure GFXX_Close;
 procedure GFXX_SwapBuffers;
 
 procedure set_pixel(x, y: integer; c: byte);
+procedure GFX_Line(x0, y0, x1, y1, c: integer);
 
 implementation
 
@@ -32,6 +34,7 @@ const H_RETRACE_START     =$04;
 const H_RETRACE_END       =$05;
 const V_TOTAL             =$06;
 const OVERFLOW            =$07;
+const PRESET_ROW_SCAN     =$08;
 const MAX_SCAN_LINE       =$09;
 const V_RETRACE_START     =$10;
 const V_RETRACE_END       =$11;
@@ -241,6 +244,104 @@ begin
     if not GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom) then Exit;
 
     DrawSpriteSub(dstX, dstY, subLeft, subTop, subRight, subBottom, img);
+end;
+
+
+procedure DrawSpriteOpaqueFast(dstX, dstY: integer; var img: Image_t);
+var numCol, numRow, numCol2, srcPlane, dstPlane: integer;
+var x1: integer;
+var p, o: integer;
+var bp: byte_ptr;
+var numPlanes: integer;
+var srcSkip, dstSkip: word;
+var destPtr, srcPtr: pointer;
+begin
+    numCol := img.width shr 2;
+    numRow := img.height;
+    srcPlane := 0;
+    dstPlane := dstX and 3;
+    srcSkip := numCol * numRow;
+    dstSkip := (80 - numCol);
+
+    x1 := dstX shr 2; {x1 is X pos in plane}
+
+    numPlanes := img.width;
+    if numPlanes > 4 then numPlanes := 4;
+
+    bp := img.data;
+
+    numCol2 := numCol shr 1;
+
+    for p := 0 to numPlanes - 1 do begin   
+      word_out(SC_INDEX, MAP_MASK, 1 shl dstPlane);
+
+      o := page_offset + dstY * 80 + x1;
+
+      destPtr := Ptr(SegA000, o);
+      srcPtr := bp;
+      
+      asm
+        push ds
+        push si
+
+        les di, destPtr
+        lds si, srcPtr
+
+        mov cx, numRow
+
+        @@y_loop:
+
+        push cx
+        mov cx, numCol2
+        rep movsw
+
+        add di, dstSkip
+
+        pop cx
+        loop @@y_loop
+
+        pop si
+        pop ds
+      end;
+
+      inc(bp, srcSkip);
+
+      inc(dstPlane);
+      dstPlane := dstPlane and 3;
+      if dstPlane = 0 then inc(x1);
+
+      inc(srcPlane);
+    end;
+end;
+
+
+procedure GFX_Line(x0, y0, x1, y1, c: integer);
+  var x, y, dx, dy, sx, sy, err, e2: integer;
+  begin
+
+  if x1 >= x0 then dx := (x1-x0) else dx := (x0 - x1);
+  if y1 >= y0 then dy := (y0-y1) else dy := (y1 - y0);
+  if x0 < x1 then sx := 1 else sx := -1;
+  if y0 < y1 then sy := 1 else sy := -1;
+  
+  err := dx + dy;
+  x := x0;
+  y := y0;
+
+  while true do begin
+    set_pixel(x,y,c);
+    if (x = x1) and (y = y1) then break;
+    e2 := 2 * err;
+    if e2 >= dy then begin
+      inc(err, dy);
+      inc(x, sx);
+    end;
+
+    if(e2 <= dx) then begin
+      inc(err, dx);
+      inc(y, sy)
+    end;
+  end;
 end;
 
 procedure GFXX_Init;

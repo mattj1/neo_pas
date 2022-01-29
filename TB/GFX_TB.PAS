@@ -49,7 +49,7 @@ begin
    DirectVideo:=false;
 
    alpha := 0;
-        FillColor(0);
+    GFX_FillColor(0);
 
  for i := 0 to 720 do begin
  {       FillColor(0);}
@@ -62,7 +62,7 @@ begin
            col := 32;
            if ((j + k) mod 2 = 0) then col := 64;
 
-           FillRect(k * 16, j * 10, 17, 11, col);
+           GFX_FillRect(k * 16, j * 10, 17, 11, col);
        end;
    end;
 
