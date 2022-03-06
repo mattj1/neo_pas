@@ -13,6 +13,9 @@ procedure SwapBuffers;
 procedure DrawSpriteAlpha(
           dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
           var img: Image_t);
+procedure DrawSpriteAlpha2(
+          dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
+          var img: Image_t);
 procedure DrawSprite(x, y: integer; var img: Image_t);
 
 procedure SetPixel(x, y: word; c: integer);
@@ -86,8 +89,12 @@ begin
            push    si
            lds     si, scrbuf
 
-           mov     cx, 32000
+           {mov     cx, 32000
            rep     movsw
+}
+           mov cx, 16000
+           rep
+           DB $66; movsw
 
            pop     si
            pop     ds
@@ -155,6 +162,90 @@ begin
 end;
 
 
+procedure DrawSpriteAlpha2(
+          dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
+          var img: Image_t);
+var
+  scrX, scrY, offs, spr_offs: integer;
+  subLeft, subRight, subTop, subBottom: integer;
+  sx, sy: integer;
+var
+  xi, yi: byte;
+var current_color, v, one_minus_a: integer;
+var
+  bp: byte_ptr;
+  sprite_bp: byte_ptr;
+var
+  r, g, b, r1, g1, b1, pixCount: byte;
+var
+  o: integer;
+var pal_color_pointer, multlut_pointer: Pointer;
+begin
+
+  if a < 0 then Exit;
+  if a > 15 then Exit;
+
+  subLeft := srcX;
+  subRight := srcX + srcWidth;
+  subTop := srcY;
+  subBottom := srcY + srcHeight;
+
+  GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom);
+
+  if subLeft >= subRight then Exit;
+
+  if (dstX > 319)
+     or (dstY > 199)
+     or (dstX + (subRight - subLeft) < 0) or (dstY + (subBottom - subTop) < 0)
+   then Exit;
+
+  scrY := dstY;
+  yi := subBottom - subTop;
+  sy := subTop;
+  spr_offs := 0;
+
+  pixCount := a;
+  repeat
+
+    xi := subRight - subLeft;
+    sx := subLeft;
+
+    scrX := dstX;
+
+    bp := scrbuf;
+    Inc(bp, scrY * 320 + scrX);
+
+    sprite_bp := img.data;
+    inc(sprite_bp, sy * img.width + subLeft);
+
+    repeat
+      v := sprite_bp^;
+      current_color := bp^;
+{(v <> 255) and }
+      if (pixCount = 1) then
+      begin
+        bp^ := v;
+      end;
+
+      dec(pixCount);
+
+      if pixCount = 0 then
+        pixCount := a;
+      
+
+      Inc(sprite_bp);
+      Inc(bp);
+      Dec(xi);
+    until xi = 0;
+    Inc(scrY);
+    inc(sy);
+    Dec(yi);
+  until yi = 0;
+
+end;
+
+
+
 procedure DrawSpriteAlpha(
           dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
           var img: Image_t);
@@ -163,7 +254,8 @@ var
   subLeft, subRight, subTop, subBottom: integer;
   sx, sy: integer;
 var
-  xi, yi, v: byte;
+  xi, yi: byte;
+var current_color, v, one_minus_a: integer;
 var
   bp: byte_ptr;
   sprite_bp: byte_ptr;
@@ -171,6 +263,7 @@ var
   r, g, b, r1, g1, b1: byte;
 var
   o: integer;
+var pal_color_pointer, multlut_pointer: Pointer;
 begin
 
   if a < 0 then Exit;
@@ -199,6 +292,11 @@ begin
   sy := subTop;
   spr_offs := 0;
 
+  pal_color_pointer := @cur_pal.c;
+  multlut_pointer := @blendlut^.multlut;
+
+  one_minus_a := 15 - a;
+
   repeat
     xi := subRight - subLeft;
     sx := subLeft;
@@ -213,17 +311,119 @@ begin
 
     repeat
       v := sprite_bp^;
+      current_color := bp^;
 
       if (v <> 255) then
       begin
+        
+        v := 3 * v;
+        current_color := 3 * current_color;
+
+        asm
+            push ds
+            push si
+
+          mov ah, 0
+
+          lds si, pal_color_pointer
+          mov bx, si
+          add si, current_color
+          lodsb
+          mov r, al
+          lodsb
+          mov g, al
+          lodsb
+          mov b, al
+
+          mov si, bx
+          add si, v
+          lodsb
+          mov r1, al
+          lodsb
+          mov g1, al
+          lodsb
+          mov b1, al
+
+            mov ah, 0
+            mov al, r
+            shl ax, 4
+            add ax, one_minus_a
+
+            lds si, multlut_pointer
+            mov bx, si
+            add si, ax
+            lodsb
+            mov r, al
+
+            { r += multlut[r1 * 16 + a] }
+            mov si, bx
+            mov ah, 0
+            mov al, r1
+            shl ax, 4
+            add ax, a
+            add si, ax
+            lodsb
+            add r, al
+
+            { GREEN }
+
+            mov ah, 0
+            mov al, g
+            shl ax, 4
+            add ax, one_minus_a
+
+            {lds si, multlut_pointer}
+            mov si, bx
+            add si, ax
+            lodsb
+            mov g, al
+
+            { g += multlut[g1 * 16 + a] }
+            mov si, bx
+            mov ah, 0
+            mov al, g1
+            shl ax, 4
+            add ax, a
+            add si, ax
+            lodsb
+            add g, al
+
+            { BLUE }
+
+            mov ah, 0
+            mov al, b
+            shl ax, 4
+            add ax, one_minus_a
+
+            {lds si, multlut_pointer}
+            mov si, bx
+            add si, ax
+            lodsb
+            mov b, al
+            
+            { b += multlut[b1 * 16 + a] }
+            mov si, bx
+            mov ah, 0
+            mov al, b1
+            shl ax, 4
+            add ax, a
+            add si, ax
+            lodsb
+            add b, al
+
+            pop si
+            pop ds
+        end;
+
         { Get RGB under current pixel }
-        r := cur_pal.c[bp^][0];
+       (* r := cur_pal.c[bp^][0];
         g := cur_pal.c[bp^][1];
         b := cur_pal.c[bp^][2];
 
         r1 := cur_pal.c[v][0];
         g1 := cur_pal.c[v][1];
         b1 := cur_pal.c[v][2];
+      
 
         r := blendlut^.multlut[r * 16 + (15 - a)];
         Inc(r, blendlut^.multlut[r1 * 16 + a]);
@@ -233,12 +433,34 @@ begin
 
         b := blendlut^.multlut[b * 16 + (15 - a)];
         Inc(b, blendlut^.multlut[b1 * 16 + a]);
+        *)
 
         r := blendlut^.downsampleLUT[r];
         g := blendlut^.downsampleLUT[g];
         b := blendlut^.downsampleLUT[b];
 
-        o := b * 256 + g * 16 + r;
+        asm
+          mov dx, 0
+          mov ah, 0
+          mov al, b
+          shl ax, 8
+
+          add dx, ax
+
+          mov ah, 0
+          mov al, g
+          shl ax, 4
+
+          add dx, ax
+
+          mov ah, 0
+          mov al, r
+
+          add dx, ax
+
+          mov word ptr o, dx
+        end;
+        {o := b * 256 + g * 16 + r;}
 
         bp^ := blendlut^.lut[o];
       end;

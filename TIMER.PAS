@@ -41,7 +41,7 @@ begin
   begin
     port[$20] := $20;
   end;
-
+{
   Dec(soundTicks);
   if soundTicks = 0 then
   begin
@@ -59,7 +59,7 @@ begin
     end;
 
   end;
-
+}
 end;
 
 procedure Timer_SetClockRate(bits: integer);
@@ -67,7 +67,7 @@ var
   ticks: longint;
 begin
   ticks := 65536 shr bits;
-
+  {1193182}
   oldTimerTicks := 1 shl bits;
   oldTimerTickCount := oldTimerTicks;
 
@@ -85,7 +85,7 @@ begin
 
   soundTicks := 1;
 
-  Timer_SetClockRate(5);
+  Timer_SetClockRate(3);
 end;
 
 procedure Timer_Close;

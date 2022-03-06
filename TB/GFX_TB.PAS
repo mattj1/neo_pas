@@ -9,7 +9,7 @@ var bp: byte_ptr;
 var msg: string;
 var lsfr, start_state, bit: longint;
 begin
-     msg := 'Hello from Pascal!!!';
+     msg := 'ÛHello from Pascal!!!';
      GFX_LoadPalette('playpal.pal', pal);
      LoadBMP('test.bmp', img);
      GFX_SetPalette(pal);
@@ -62,7 +62,7 @@ begin
            col := 32;
            if ((j + k) mod 2 = 0) then col := 64;
 
-           GFX_FillRect(k * 16, j * 10, 17, 11, col);
+           GFX_FillRect(k * 16, j * 10, 17, 11, col); 
        end;
    end;
 
@@ -76,7 +76,6 @@ begin
    DrawSpriteAlpha( round(140 + cos(angle) * 48),
                round(72 + sin(angle) * 48), j, img2);
 
-
    DrawSpriteAlpha(20 + j * 18, 80, j, img2);
 }
 
@@ -84,7 +83,7 @@ begin
 
    for j := 0 to Length(msg)-1 do begin
        k := ord(msg[j+1]);
-           DrawSpriteAlpha(320 - (i) + j * 15,
+           DrawSpriteAlpha2(320 - (i) + j * 15,
        100 + round(10 * sin(20 * (i * 0.2 + j) * 3.141/180)),
                            8 * (k mod 16),
                            8 * (k div 16),
