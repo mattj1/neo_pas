@@ -21,6 +21,7 @@ var
   blendlut: ^BlendLUT_t;
 
 procedure GFX_Common_Init;
+procedure GFX_Common_Close;
 procedure GFX_LoadPalette(filename: string; var pal: Palette);
 procedure GFX_SetPalette(var pal: Palette);
 function GFX_ClipRect(var x, y, subLeft, subTop, subRight, subBottom: integer) : boolean;
@@ -114,10 +115,15 @@ var
 begin
   GetMem(blendLut, sizeof(BlendLUT_t));
   
-  Assign(lutfile, 'lut.dat');
+  {Assign(lutfile, 'lut.dat');
   Reset(lutfile, 1);
   BlockRead(lutFile, blendLut^, sizeof(BlendLUT_t));
-  Close(lutfile);
+  Close(lutfile);}
+end;
+
+procedure GFX_Common_Close;
+begin
+  FreeMem(blendLut, sizeof(BlendLUT_t));
 end;
 
 begin

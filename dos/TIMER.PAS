@@ -18,15 +18,24 @@ var
 
 var soundDebug: integer;
 
-procedure Timer_Init;
-procedure Timer_Close;
+{$i timer.inc}
 
 implementation
+
+var accum: integer;
 
 procedure TimerInt; interrupt;
 begin
   Dec(oldTimerTickCount);
-  Inc(time, 1);{7}
+  inc(time, 1);
+  inc(accum, 72);
+
+  while (accum > 99) do
+  begin
+    inc(time, 1);
+    dec(accum, 100);
+  end;
+
   {write('.');}
   if oldTimerTickCount = 0 then
   begin
@@ -72,6 +81,7 @@ begin
   oldTimerTickCount := oldTimerTicks;
 
   soundTicks := 1;
+  accum := 1;
 
   port[$43] := $36;
   port[$40] := lo(ticks);
@@ -85,13 +95,23 @@ begin
 
   soundTicks := 1;
 
-  Timer_SetClockRate(3);
+  Timer_SetClockRate(5);
 end;
 
 procedure Timer_Close;
 begin
   Timer_SetClockRate(0);
   setIntVec($08, oldTimerInt);
+end;
+
+function Timer_GetTicks: longint;
+begin
+    Timer_GetTicks := time;
+end;
+
+procedure Timer_Delay(ms: longint);
+begin
+    Delay(ms);
 end;
 
 begin

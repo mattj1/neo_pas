@@ -1,3 +1,5 @@
+{ Image - DOS }
+
 unit image;
 interface
 uses common;
@@ -37,8 +39,10 @@ type
     data: byte_ptr;
   end;
 
+{$I image.inc}
+
 procedure LoadBMP(filename: string; var image: Image_t);
-procedure Image_New(var image: Image_t; width, height: integer);
+procedure Image_New(var image: image_t; width, height: integer);
 procedure Image_Free(var image: Image_t);
 procedure Image_LoadRaw(var f: file; var image: Image_T);
 
@@ -63,9 +67,9 @@ begin
   BlockRead(f, bfh, sizeof(BITMAPFILEHEADER));
   BlockRead(f, bih, sizeof(BITMAPINFOHEADER));
 
-{  writeln(bfh.bfSize, ' ', bfh.bfType, ' ', bfh.bfOffBits);
+  writeln(bfh.bfSize, ' ', bfh.bfType, ' ', bfh.bfOffBits);
   writeln(bih.biSize, ' ', bih.biWidth, ' ', bih.biHeight);
- }
+ 
   Image_New(image, bih.biWidth, bih.biHeight);
 
   {biSize must be 40}
@@ -73,12 +77,15 @@ begin
   for i := 0 to 255 do
   begin
     BlockRead(f, pe, sizeof(BITMAPPALENTRY));
-         {writeln(pe.c[0], ' ', pe.c[1], ' ', pe.c[2], ' ', pe.c[3]);
-     } end;
+         
+    if i < 10 then writeln(pe.c[0], ' ', pe.c[1], ' ', pe.c[2], ' ', pe.c[3]);
+
+      end;
 
 
   for j := 0 to image.Height - 1 do
   begin
+    writeln('load ', j, ' ', FilePos(f), ' read ', bih.biWidth);
     p := image.Data;
     Inc(p, (bih.biHeight - 1 - j) * bih.biWidth);
     BlockRead(f, p^, bih.biWidth);
@@ -86,6 +93,21 @@ begin
 
   Close(f);
 end;
+
+
+function Image_Load(filename: string): pimage_t;
+
+var
+  img: pimage_t;
+begin
+
+  GetMem(img, SizeOf(image_t));
+
+  LoadBMP(filename, img^);
+
+  Image_Load := img;
+end;
+
 
 procedure Image_LoadRaw(var f: file; var image: Image_T);
   var width, height: integer; 
@@ -98,10 +120,12 @@ begin
   BlockRead(f, image.data^, width * height);
 end;
 
-procedure Image_New(var image: Image_T; width, height: integer);
+procedure Image_New(var image: image_t; width, height: integer);
 begin
   image.Width := width;
   image.Height := height;
+
+  writeln('allocate ', width, ' ', height);
 
   GetMem(image.Data, image.Width * image.Height);
 end;

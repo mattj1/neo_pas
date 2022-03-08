@@ -1,9 +1,7 @@
 program timer_tb;
 
-uses dos, crt, timer2, gfx;
+uses dos, crt, timer, gfx;
    
-
-
 var
   t: longint;
 
@@ -39,7 +37,8 @@ begin
 
      {writeln('test...'); delay(1000); writeln('test 2...'); delay(1000);}
 
-     tb2;
+     tb1;
+     {tb2;}
 
      readln;
 

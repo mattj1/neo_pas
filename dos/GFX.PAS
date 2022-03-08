@@ -1,27 +1,12 @@
+{ Graphics - DOS }
+
 {$G+}
+
 unit gfx;
-
 interface
-
 uses crt, image, common, GFXCom;
 
-procedure GFX_FillColor(c: byte);
-procedure GFX_FillRect(x, y, w, h: integer; color: byte);
-procedure WaitForRetrace;
-procedure WaitForRetrace2;
-procedure SwapBuffers;
-procedure DrawSpriteAlpha(
-          dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
-          var img: Image_t);
-procedure DrawSpriteAlpha2(
-          dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
-          var img: Image_t);
-procedure DrawSprite(x, y: integer; var img: Image_t);
-
-procedure SetPixel(x, y: word; c: integer);
-
-procedure GFX_Init;
-procedure GFX_Close;
+{$I GFX.inc}
 
 var double_buffer: boolean;
 
@@ -628,8 +613,8 @@ begin
            int     $10
   end;
 
+  GFX_Common_Close;
   FreeMem(scrbuf, 64000);
-  FreeMem(blendLut, sizeof(BlendLUT_t));
 end;
 
 procedure SetPixel(x, y: word; c: integer);

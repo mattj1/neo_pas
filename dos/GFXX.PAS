@@ -3,6 +3,8 @@ interface
 
 uses GFXCom, Image, Common;
 
+{$I GFX.inc}
+
 procedure GFX_FillColor(c: byte);
 
 procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
