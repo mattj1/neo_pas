@@ -25,19 +25,22 @@ var
   currentPalette: Palette;
 
 
-procedure SDL_RectCreate(var rect: TSDL_Rect; x, y, w, h: integer); inline;
+function SDL_RectCreate(x, y, w, h: integer):TSDL_Rect; inline;
+var rect: TSDL_Rect;
 begin
   rect.x := x;
   rect.y := y;
   rect.w := w;
   rect.h := h;
+
+  SDL_RectCreate := rect;
 end;
 
 procedure GFX_FillColor(c: byte);
 var
   rect: TSDL_Rect;
 begin
-  SDL_RectCreate(rect, 0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
+  rect := SDL_RectCreate(0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
   SDL_FillRect(indexedBackbuffer, @rect, c);
 end;
 
@@ -62,8 +65,8 @@ var
   texture: PSDL_Texture;
   srcRect, dstRect: TSDL_Rect;
 begin
-  SDL_RectCreate(srcRect, 0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
-  SDL_RectCreate(dstRect, 0, 0, sdlWindow1^.w, sdlWindow1^.h);
+  srcRect := SDL_RectCreate(0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
+  dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
 
   //SDL_SetPaletteColors(indexedBackbuffer^.format^.palette, colors, 0, 256);
 
@@ -91,18 +94,26 @@ begin
 
 end;
 
-
-procedure DrawSprite(x, y: integer; var img: image_t);
+procedure DrawSubImageTransparent(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
 var
   srcRect: TSDL_Rect;
   dstRect: TSDL_Rect;
 begin
-
-  SDL_RectCreate(srcRect, 0, 0, img.surface^.w, img.surface^.h);
-  SDL_RectCreate(dstRect, x, y, img.surface^.w, img.surface^.h);
+  srcRect := SDL_RectCreate(srcX, srcY, srcWidth, srcHeight);
+  dstRect := SDL_RectCreate(dstX, dstY, srcRect.w, srcRect.h);
 
   SDL_SetSurfacePalette(img.surface, currentPalette.sdlPalette);
   SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);
+end;
+
+procedure DrawSubImageOpaque(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+begin
+  DrawSubImageTransparent(img, dstX, dstY, srcX, srcY, srcWidth, srcHeight);
+end;
+
+procedure DrawSprite(x, y: integer; var img: image_t);
+begin
+  DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
 end;
 
 procedure SetPixel(x, y: word; c: integer);

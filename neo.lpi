@@ -59,6 +59,10 @@
         <UnitName Value="Timer"/>
       </Unit>
       <Unit>
+        <Filename Value="inc\gfx.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
         <Filename Value="gameloop.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>

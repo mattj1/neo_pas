@@ -469,8 +469,8 @@ begin
 end;
 
 
-procedure DrawSprite(x, y: integer; var img: Image_t);
-var
+procedure DrawSubImageTransparent(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+  var
   scrX, scrY, offs, spr_offs: integer;
 var
   xi, yi, v: byte;
@@ -484,18 +484,18 @@ var
   var rowSkip, subRowSkip: integer;
 begin
 
-  if (x > 319) or (y > (screen_height - 1)) or (x + img.width < 0) or (y + img.height < 0)
+  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)
    then Exit;
 
   if double_buffer then begin destPtr := scrBuf; end
   else begin destPtr := Ptr(SegA000, 0); end;
 
-  subLeft := 0;
-  subRight := img.width;
-  subTop := 0;
-  subBottom := img.height;
+  subLeft := srcX;
+  subRight := srcX + srcWidth;
+  subTop := srcY;
+  subBottom := srcY + srcHeight;
 
-  GFX_ClipRect(x, y, subLeft, subTop, subRight, subBottom);
+  GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom);
 
   subWidth := subRight - subLeft;
   subHeight := subBottom - subTop;
@@ -538,8 +538,8 @@ begin
      Exit;
 
  }
-  scrY := y;
-  scrX := x;
+  scrY := dstY;
+  scrX := dstX;
 
 
   asm
@@ -596,6 +596,96 @@ begin
            pop     si
            pop     ds
   end;
+end;
+
+procedure DrawSubImageOpaque(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);      
+var
+  scrX, scrY, offs, spr_offs: integer;
+var
+  xi, yi, v: byte;
+
+  var bp, scrp: byte_ptr;
+  var p2, destPtr: pointer;
+
+  var subLeft, subRight, subTop, subBottom: integer;
+
+  var subWidth, subHeight: integer;
+  var rowSkip, subRowSkip: integer;
+begin
+  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)
+   then Exit;
+
+  if double_buffer then begin destPtr := scrBuf; end
+  else begin destPtr := Ptr(SegA000, 0); end;
+
+  subLeft := srcX;
+  subRight := srcX + srcWidth;
+  subTop := srcY;
+  subBottom := srcY + srcHeight;
+
+  GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom);
+
+  subWidth := subRight - subLeft;
+  subHeight := subBottom - subTop;
+
+  rowSkip := 320 - subWidth;
+  subRowSkip := img.width - subWidth;
+
+  bp := img.data;
+  p2 := img.data;
+
+  inc(bp, subTop * img.Width + subLeft);
+  p2 := bp;
+
+  scrY := dstY;
+  scrX := dstX;
+
+  asm
+           cld
+           push    ds
+           push    si
+
+           { Get screen buffer offs to di }
+
+           mov     ax, scrY
+           shl     ax, 8
+           mov     bx, scrY
+           shl     bx, 6
+           add     ax, bx
+           add     ax, scrX
+
+           les     di, destPtr
+           add     di, ax
+
+           lds si, p2
+
+           mov     cx, subHeight
+
+           @@y_loop:
+           push    cx
+           mov     cx, subWidth
+
+           rep movsb
+
+           { Move screen offset to next correct x position }
+           add     di, rowSkip
+           add     si, subRowSkip
+
+           pop     cx
+           loop    @@y_loop
+
+
+           pop     si
+           pop     ds
+  end;  
+end;
+
+procedure DrawSprite(x, y: integer; var img: Image_t);
+
+begin
+
+  DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
+
 end;
 
 procedure GFX_Init;

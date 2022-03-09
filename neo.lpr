@@ -30,8 +30,12 @@ var
   procedure Draw;
   begin
     GFX_FillColor(1);
-    DrawSprite(0, 0, tileset^);
+
+    GFX.DrawSubImageTransparent(tileset^, 32, 32, 0, 0, 128, 128);
+
+    {DrawSprite(0, 0, tileset^);}
     DrawSprite(x, 0, img^);
+
     if x > 256 then x := 0;
   end;
 

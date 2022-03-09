@@ -23,3 +23,6 @@ procedure GFX_SetPaletteColor(index: integer; r, g, b: byte);
 
 procedure GFX_Init;
 procedure GFX_Close;
+
+procedure DrawSubImageTransparent(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+procedure DrawSubImageOpaque(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
