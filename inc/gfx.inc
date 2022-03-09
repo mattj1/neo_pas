@@ -15,5 +15,11 @@ procedure DrawSprite(x, y: integer; var img: Image_t);
 
 procedure SetPixel(x, y: word; c: integer);
 
+{ Palette }
+procedure GFX_AllocPalette(var pal: Palette);
+procedure GFX_LoadPalette(filename: string; var pal: Palette);
+procedure GFX_SetPalette(var pal: Palette);
+procedure GFX_SetPaletteColor(index: integer; r, g, b: byte);
+
 procedure GFX_Init;
 procedure GFX_Close;

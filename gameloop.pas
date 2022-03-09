@@ -1,10 +1,14 @@
 unit gameloop;
+
 {$F+}
 
 interface
 
 uses
-  {SDL2,} Timer, GFX;
+  {$ifdef fpc}
+  SDL2,
+  {$endif}
+  Timer, GFX;
 
 type
   UpdateProc = procedure(deltaTime: integer);
@@ -33,40 +37,60 @@ end;
 
 procedure Loop_Cancel;
 begin
-  _done := true;
+  _done := True;
 end;
 
 procedure Loop_Run;
 var
-  accum, lastFrameTime, frameTime: longint;
+  lastFrameTime, frameTime: longint;
+var
+  accum: real;
+const
+  dt: real = 1000 / 60;
+const
+  dt_int: integer = 16;
+
 begin
-  _done := false;
+  _done := False;
 
   accum := 0;
   lastTime := Timer_GetTicks;
   lastFrameTime := lastTime;
 
   repeat
-    {SDL_PumpEvents;}
 
+        {$ifdef fpc}
+        SDL_PumpEvents;
+        {$endif}
     frameTime := Timer_GetTicks;
 
-    inc(accum, frameTime - lastFrameTime);
+    accum := accum + (frameTime - lastFrameTime);
 
-    while accum >= 16 do
+    if accum > 2000 then accum := 2000;
+
+    while accum >= dt do
     begin
-      _updateProc(16);
-      dec(accum, 16);
+      _updateProc(dt_int);
+      accum := accum - dt;
     end;
 
     _drawProc;
+
     SwapBuffers;
 
     lastFrameTime := frameTime;
 
-    repeat
+    {$ifdef fpc}
+    {repeat
+
+          SDL_PumpEvents;
+
       Timer_Delay(1);
-    until Timer_GetTicks - frameTime >= 15;
+
+    until Timer_GetTicks - frameTime >= 8;}
+    SDL_Delay(8);
+    {$endif}
+    {writeln('update + draw time: ', Timer_GetTicks - frameTime);}
 
   until _done;
 end;

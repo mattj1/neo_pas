@@ -62,13 +62,18 @@
         <Filename Value="gameloop.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="GFXCOM.PAS"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GFXCom"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="neo"/>
+      <Filename Value="neo_sdl"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);inc;sdl"/>

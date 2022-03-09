@@ -6,14 +6,23 @@ unit gfx;
 interface
 uses crt, image, common, GFXCom;
 
-{$I GFX.inc}
+type
+  {Palette = record
+    c: array[0..255] of array[0..2] of byte;
+  end;}
+
+  Palette = RawPalette;
 
 var double_buffer: boolean;
+
+{$I GFX.inc}
 
 implementation
 
 var
   scrbuf: pointer;
+
+var cur_pal: Palette;
 
 procedure GFX_FillColor(c: byte);
 var destPtr: pointer;
@@ -475,7 +484,7 @@ var
   var rowSkip, subRowSkip: integer;
 begin
 
-  if (x > 319) or (y > 199) or (x + img.width < 0) or (y + img.height < 0)
+  if (x > 319) or (y > (screen_height - 1)) or (x + img.width < 0) or (y + img.height < 0)
    then Exit;
 
   if double_buffer then begin destPtr := scrBuf; end
@@ -560,7 +569,7 @@ begin
 
            @@x_loop:
            mov     al, ds:[si]
-           cmp     al, 255
+           cmp     al, 0
            je      @@is_transparent
 
            movsb
@@ -593,7 +602,10 @@ procedure GFX_Init;
 var
   numRead: word;
 begin
-  GetMem(scrbuf, 64000);
+  screen_width := 320;
+  screen_height := 200;
+
+  GetMem(scrbuf, screen_width * screen_height);
   
   GFX_Common_Init;
 
@@ -614,7 +626,7 @@ begin
   end;
 
   GFX_Common_Close;
-  FreeMem(scrbuf, 64000);
+  FreeMem(scrbuf, screen_width * screen_height);
 end;
 
 procedure SetPixel(x, y: word; c: integer);
@@ -624,6 +636,62 @@ begin
   inc(bp, y * 320 + x);
   bp^ := c;
 end;
+
+
+
+procedure GFX_LoadPalette(filename: string; var pal: Palette);
+var
+  palFile: file;
+begin
+  GFX_LoadRawPalette(filename, pal);
+end;
+
+procedure GFX_SetPalette(var pal: Palette);
+var
+  i: integer;
+begin
+  cur_pal := pal;
+     {for i:= 16 to 47 do begin
+        writeln(i, ' ', cur_pal.c[i][0], ' ', cur_pal.c[i][1], ' ', cur_pal.c[i][2]);
+
+        if i = 32 then Readln;
+     end;}
+{
+asm
+
+   mov ax, $1012
+   mov bx, 0
+   mov cx, 256
+   les dx, pal
+   int $10
+end
+}
+
+  port[$3c6] := $ff;
+  port[$3c8] := $00;
+  for i := 0 to 255 do
+  begin
+    port[$3c9] := pal.c[i][0] shr 2;
+    port[$3c9] := pal.c[i][1] shr 2;
+    port[$3c9] := pal.c[i][2] shr 2;
+
+  end;
+end;
+
+procedure GFX_AllocPalette(var pal: Palette);
+begin
+
+end; 
+
+procedure GFX_SetPaletteColor(index: integer; r, g, b: byte);
+begin
+  cur_pal.c[index][0] := r;
+  cur_pal.c[index][1] := g;
+  cur_pal.c[index][2] := b;
+
+  { FIX! }
+  GFX_SetPalette(cur_pal);
+end; 
 
 begin
 end.

@@ -9,9 +9,12 @@ program test;
 {$endif}
 
 var
-  img: pimage_t;
+  img, tileset: pimage_t;
 var
   x, lastTime: integer;
+
+var
+  pal: Palette;
 
   procedure Update(deltaTime: integer);
   begin
@@ -20,14 +23,16 @@ var
     {$IfNDef fpc}
     if KeyPressed then Loop_Cancel;
     {$else}
-           writeln('Update ', deltaTime);
+         {  writeln('Update ', deltaTime);}
     {$endif}
   end;
 
   procedure Draw;
   begin
-    DrawSprite(x * 2, x * 2, img^);
-
+    GFX_FillColor(1);
+    DrawSprite(0, 0, tileset^);
+    DrawSprite(x, 0, img^);
+    if x > 256 then x := 0;
   end;
 
 begin
@@ -35,7 +40,17 @@ begin
   GFX_Init;
   Timer_Init;
 
+  GFX_AllocPalette(pal);
+  GFX_LoadPalette('test.pal', pal);
+  GFX_SetPalette(pal);
+  {
+  GFX_SetPaletteColor(0, 0, 0, 0);
+  GFX_SetPaletteColor(1, 255, 0, 0);
+  GFX_SetPaletteColor(2, 0, 255, 0);
+  GFX_SetPaletteColor(3, 255, 255, 255);
+   }
   img := Image_Load('test2.bmp');
+  tileset := Image_Load('tileset.bmp');
 
   {$ifdef fpc}
   Loop_SetUpdateProc(@Update);
