@@ -1,21 +1,21 @@
 unit keybrd;
 
 interface
-uses crt, dos;
+uses common, crt, dos;
 
 type
  scanCode = byte;
 
-procedure KeyInit;
-procedure KeyClose;
+procedure Init;
+procedure Close;
 
 implementation
 
 var
   oldKeyInt : Pointer;
   ExitSave: Pointer;
-  keyTable: array [0..127] of boolean;
-
+ { keyTable: array [0..127] of boolean;
+}
 procedure keyISR; interrupt;
 var
  k: scanCode;
@@ -33,20 +33,21 @@ begin
 
      memW[$40 : $1A] := memW[$40 : $1C];
 
-     writeln('got ', k, ' ', b, ' ', (b and 128) = 0);
-
+     {writeln('got ', k, ' ', b, ' ', (b and 128) = 0);
+}
      keyTable[k] := (b and $80) = 0;
 
      if k = 28 then begin
-        writeln('done...');
-        KeyClose;
+        {writeln('done...');}
+        Keybrd.Close;
      end;
 end;
 
 
-procedure KeyInit;
+procedure Init;
 var i: integer;
 begin
+     writeln('--- Keyboard Init ---');
      for i := 0 to 127 do
          keyTable[i] := False;
 
@@ -54,7 +55,7 @@ begin
      setIntVec(9, @keyISR);
 end;
 
-procedure KeyClose;
+procedure Close;
 begin
      setIntVec(9, oldKeyInt);
 end;

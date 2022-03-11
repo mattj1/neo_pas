@@ -1,9 +1,14 @@
-uses crt, keybrd;
-
+uses crt, common, keybrd, timer;
+var t: integer;
 begin
-     clrscr;
+ clrscr;
+ Timer.Init;
+ Keybrd.Init;
 
- KeyInit;
-
- readln;
+ repeat
+ 
+ until time > 3000;
+ 
+ Keybrd.Close;
+ Timer.Close;
 end.

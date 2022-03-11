@@ -18,15 +18,14 @@ type
 
 implementation
 
-
-
 var
   colors: array[0..256] of TSDL_Color;
   currentPalette: Palette;
 
 
-function SDL_RectCreate(x, y, w, h: integer):TSDL_Rect; inline;
-var rect: TSDL_Rect;
+function SDL_RectCreate(x, y, w, h: integer): TSDL_Rect; inline;
+var
+  rect: TSDL_Rect;
 begin
   rect.x := x;
   rect.y := y;
@@ -94,7 +93,8 @@ begin
 
 end;
 
-procedure DrawSubImageTransparent(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+procedure DrawSubImageTransparent(var img: image_t;
+  dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
 var
   srcRect: TSDL_Rect;
   dstRect: TSDL_Rect;
@@ -106,14 +106,15 @@ begin
   SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);
 end;
 
-procedure DrawSubImageOpaque(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+procedure DrawSubImageOpaque(var img: image_t;
+  dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
 begin
   DrawSubImageTransparent(img, dstX, dstY, srcX, srcY, srcWidth, srcHeight);
 end;
 
 procedure DrawSprite(x, y: integer; var img: image_t);
 begin
-  DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
+  DrawSubImageTransparent(img, x, y, 0, 0, img.Width, img.Height);
 end;
 
 procedure SetPixel(x, y: word; c: integer);

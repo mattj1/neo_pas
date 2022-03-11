@@ -88,8 +88,9 @@ begin
   port[$40] := hi(ticks);
 end;
 
-procedure Timer_Init;
+procedure Init;
 begin
+  writeln('--- Timer Init ---');
   getIntVec($08, oldTimerInt);
   setIntVec($08, @TimerInt);
 
@@ -98,7 +99,7 @@ begin
   Timer_SetClockRate(5);
 end;
 
-procedure Timer_Close;
+procedure Close;
 begin
   Timer_SetClockRate(0);
   setIntVec($08, oldTimerInt);

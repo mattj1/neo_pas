@@ -681,11 +681,8 @@ begin
 end;
 
 procedure DrawSprite(x, y: integer; var img: Image_t);
-
 begin
-
   DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
-
 end;
 
 procedure GFX_Init;

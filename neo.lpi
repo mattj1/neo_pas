@@ -71,6 +71,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="GFXCom"/>
       </Unit>
+      <Unit>
+        <Filename Value="sdl\keybrd.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Keybrd"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

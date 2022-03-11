@@ -1,0 +1,2 @@
+procedure Init;
+procedure Close;

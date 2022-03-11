@@ -10,12 +10,12 @@ uses
 {$I timer.inc}
 implementation
 
-procedure Timer_Init;
+procedure Init;
 begin
 
 end;
 
-procedure Timer_Close;
+procedure Close;
 begin
 
 end;

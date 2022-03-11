@@ -11,7 +11,7 @@ program test;
 var
   img, tileset: pimage_t;
 var
-  x, lastTime: integer;
+  x, y, lastTime: integer;
 
 var
   pal: Palette;
@@ -20,9 +20,14 @@ var
   begin
     Inc(x, 2);
 
+    if Common.keyTable[72] then inc(y,-1);
+    if Common.keyTable[80] then inc(y,1);
+
+    if Common.keyTable[28] = true then Loop_Cancel;
+
     {$IfNDef fpc}
-    if KeyPressed then Loop_Cancel;
-    {$else}
+    {if KeyPressed then Loop_Cancel;
+   } {$else}
          {  writeln('Update ', deltaTime);}
     {$endif}
   end;
@@ -31,7 +36,7 @@ var
   begin
     GFX_FillColor(1);
 
-    GFX.DrawSubImageTransparent(tileset^, 32, 32, 0, 0, 128, 128);
+    GFX.DrawSubImageTransparent(tileset^, 32, y, 0, 0, 128, 128);
 
     {DrawSprite(0, 0, tileset^);}
     DrawSprite(x, 0, img^);
@@ -42,7 +47,9 @@ var
 begin
   writeln('--- Init ---');
   GFX_Init;
-  Timer_Init;
+  Timer.Init;
+  Keybrd.Init;
+
 
   GFX_AllocPalette(pal);
   GFX_LoadPalette('test.pal', pal);
@@ -56,6 +63,7 @@ begin
   img := Image_Load('test2.bmp');
   tileset := Image_Load('tileset.bmp');
 
+  y := 0;
   {$ifdef fpc}
   Loop_SetUpdateProc(@Update);
   Loop_SetDrawProc(@Draw);
@@ -66,7 +74,8 @@ begin
 
   Loop_Run;
 
-  Timer_Close;
+  Keybrd.Close;
+  Timer.Close;
   GFX_Close;
 
 end.
