@@ -76,6 +76,15 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Keybrd"/>
       </Unit>
+      <Unit>
+        <Filename Value="com_kb.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sdl\sys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Sys"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -1,1 +1,1 @@
-uses crt, GFXCom, GFX, Keybrd, Image, Timer, GameLoop;
+uses crt, com_kb, GFXCom, GFX, Keybrd, Image, Timer, GameLoop;

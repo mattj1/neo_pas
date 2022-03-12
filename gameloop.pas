@@ -5,10 +5,8 @@ unit gameloop;
 interface
 
 uses
-  Common,
-  {$ifdef fpc}
-  SDL2,
-  {$endif}
+  Sys,
+  com_kb,
   Timer, GFX;
 
 type
@@ -43,83 +41,69 @@ end;
 
 procedure Loop_Run;
 var
-  lastFrameTime, frameTime: longint;
+  lastFrameTime, frameTime, fpsTimer: longint;
 var
-  accum: real;
+  fpsCount, numUpdates: integer;
+var
+  accum, accum_saved: real;
+
 const
   dt: real = 1000 / 60;
 const
   dt_int: integer = 16;
-  {$ifdef fpc}
-var event: TSDL_Event;
-  {$endif}
+
 begin
   _done := False;
+  fpsCount := 0;
 
   accum := 0;
   lastTime := Timer_GetTicks;
+  fpsTimer := lastTime;
+
   lastFrameTime := lastTime;
 
   repeat
+    SYS_PollEvents;
 
-        {$ifdef fpc}
-        {SDL_PumpEvents; }
-
-        while SDL_PollEvent(@event) <> 0 do begin
-
-          writeln('event ', event.type_);
-          case(event.type_) of
-          SDL_KEYDOWN:
-            begin
-            writeln('key down ', event.key.keysym.sym, ' ', event.key.keysym.scancode);
-
-            if (event.key.keysym.sym = SDLK_RETURN) then Common.keyTable[28] := true;
-
-              if (event.key.keysym.sym = SDLK_UP) then Common.keyTable[72] := true;
-            end;
-
-
-          SDL_KEYUP:
-            begin
-            writeln('key up ', event.key.keysym.sym, ' ', event.key.keysym.scancode);
-            if (event.key.keysym.sym = SDLK_UP) then Common.keyTable[72] := false;
-                 end;
-          end;
-
-        end;
-
-        {$endif}
+    numUpdates := 0;
     frameTime := Timer_GetTicks;
 
     accum := accum + (frameTime - lastFrameTime);
 
     if accum > 2000 then accum := 2000;
 
+    accum_saved := accum;
+
     while accum >= dt do
     begin
+      inc(numUpdates);
       _updateProc(dt_int);
       accum := accum - dt;
     end;
 
+{    writeln('accum ', accum_saved:3:0, ' delta time ', (frameTime - lastFrameTime), ' num updates: ', numUpdates);
+ }
     _drawProc;
 
     SwapBuffers;
 
     lastFrameTime := frameTime;
 
+    Move(com_kb.keys, com_kb.prevKeys, sizeof(com_kb.keys));
+
+    inc(fpsCount, 1);
+    if frameTime - fpsTimer >= 1000 then begin
+      fpsTimer := frameTime;
+      writeln('fps: ', fpsCount);
+      fpsCount := 0;
+    end;
+
     {$ifdef fpc}
-    {repeat
-
-          SDL_PumpEvents;
-
-      Timer_Delay(1);
-
-    until Timer_GetTicks - frameTime >= 8;}
-    SDL_Delay(8);
+    repeat
+           Timer_Delay(1);
+    until Timer_GetTicks - frameTime >= 16;
+    {Timer_Delay(8);}
     {$endif}
-    {writeln('update + draw time: ', Timer_GetTicks - frameTime);}
-
-    Move(Common.keyTable, Common.prevKeyTable, SizeOf(Common.keyTable));
 
   until _done;
 end;

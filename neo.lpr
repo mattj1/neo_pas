@@ -11,37 +11,33 @@ program test;
 var
   img, tileset: pimage_t;
 var
-  x, y, lastTime: integer;
+  x, x1, y, lastTime: integer;
 
 var
   pal: Palette;
 
   procedure Update(deltaTime: integer);
   begin
-    Inc(x, 2);
+    Inc(x1, 1);
 
-    if Common.keyTable[72] then inc(y,-1);
-    if Common.keyTable[80] then inc(y,1);
+    if I_IsKeyDown(kUp) then inc(y, -1);
+    if I_IsKeyDown(kDn) then inc(y, 1);
+    if I_IsKeyDown(kLf) then inc(x, -1);
+    if I_IsKeyDown(kRt) then inc(x, 1);
 
-    if Common.keyTable[28] = true then Loop_Cancel;
-
-    {$IfNDef fpc}
-    {if KeyPressed then Loop_Cancel;
-   } {$else}
-         {  writeln('Update ', deltaTime);}
-    {$endif}
+    if I_IsKeyDown(kEnter) then Loop_Cancel;
   end;
 
   procedure Draw;
   begin
     GFX_FillColor(1);
 
-    GFX.DrawSubImageTransparent(tileset^, 32, y, 0, 0, 128, 128);
+    GFX.DrawSubImageTransparent(tileset^, x, y, 0, 0, 128, 128);
 
     {DrawSprite(0, 0, tileset^);}
-    DrawSprite(x, 0, img^);
+    DrawSprite(x1, 0, img^);
 
-    if x > 256 then x := 0;
+    if x1 > 256 then x1 := 0;
   end;
 
 begin
@@ -49,7 +45,6 @@ begin
   GFX_Init;
   Timer.Init;
   Keybrd.Init;
-
 
   GFX_AllocPalette(pal);
   GFX_LoadPalette('test.pal', pal);

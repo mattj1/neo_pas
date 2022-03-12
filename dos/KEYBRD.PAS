@@ -1,10 +1,7 @@
 unit keybrd;
 
 interface
-uses common, crt, dos;
-
-type
- scanCode = byte;
+uses common, com_kb, crt, dos;
 
 procedure Init;
 procedure Close;
@@ -35,11 +32,11 @@ begin
 
      {writeln('got ', k, ' ', b, ' ', (b and 128) = 0);
 }
-     keyTable[k] := (b and $80) = 0;
-
-     if k = 28 then begin
-        {writeln('done...');}
-        Keybrd.Close;
+     {keyTable[k] := ;}
+     if (b and $80) = 0 then begin
+          com_kb.keys := com_kb.keys + [k];
+     end else begin
+          com_kb.keys := com_kb.keys - [k];
      end;
 end;
 
@@ -48,8 +45,7 @@ procedure Init;
 var i: integer;
 begin
      writeln('--- Keyboard Init ---');
-     for i := 0 to 127 do
-         keyTable[i] := False;
+     com_kb.keys := [];
 
      getIntVec(9, oldKeyInt);
      setIntVec(9, @keyISR);
