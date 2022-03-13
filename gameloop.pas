@@ -65,6 +65,7 @@ begin
   repeat
     SYS_PollEvents;
 
+
     numUpdates := 0;
     frameTime := Timer_GetTicks;
 
@@ -89,7 +90,11 @@ begin
 
     lastFrameTime := frameTime;
 
-    Move(com_kb.keys, com_kb.prevKeys, sizeof(com_kb.keys));
+
+
+
+      {  com_kb.prevKeys := com_kb.keys;  }
+    {Move(com_kb.keys, com_kb.prevKeys, sizeof(com_kb.keys));}
 
     inc(fpsCount, 1);
     if frameTime - fpsTimer >= 1000 then begin
@@ -104,6 +109,8 @@ begin
     until Timer_GetTicks - frameTime >= 16;
     {Timer_Delay(8);}
     {$endif}
+
+    com_kb.prevKeys := [] + com_kb.keys;
 
   until _done;
 end;

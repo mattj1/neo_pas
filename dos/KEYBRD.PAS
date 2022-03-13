@@ -34,9 +34,9 @@ begin
 }
      {keyTable[k] := ;}
      if (b and $80) = 0 then begin
-          com_kb.keys := com_kb.keys + [k];
+          Include(com_kb.keys, k);
      end else begin
-          com_kb.keys := com_kb.keys - [k];
+          Exclude(com_kb.keys, k);
      end;
 end;
 

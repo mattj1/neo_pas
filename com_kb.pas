@@ -37,6 +37,7 @@ var
 
 function I_IsKeyDown(sc: scanCode) : boolean;
 function I_WasKeyReleased(sc: scanCode) : boolean;
+function I_WasKeyPressed(sc: scanCode) : boolean;
 
 implementation
 
@@ -48,6 +49,11 @@ end;
 function I_WasKeyReleased(sc: scanCode) : boolean;
 begin
      I_WasKeyReleased := (not (sc in keys)) and (sc in prevKeys);
+end;
+
+function I_WasKeyPressed(sc: scanCode) : boolean;
+begin
+     I_WasKeyPressed := (sc in keys) and (not(sc in prevKeys));
 end;
 
 end.

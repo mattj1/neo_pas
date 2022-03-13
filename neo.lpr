@@ -16,6 +16,8 @@ var
 var
   pal: Palette;
 
+  var tempSound: PSoundEffect;
+
   procedure font_printstr(x, y: integer; str: string);
   var i: integer;
   begin
@@ -35,6 +37,8 @@ var
     if I_IsKeyDown(kRt) then Inc(x, 1);
 
     if I_IsKeyDown(kEnter) then Loop_Cancel;
+
+    if I_IsKeyDown(kRt) and not SND_IsPlaying then SND_PlaySound(tempSound);
   end;
 
   procedure Draw;
@@ -50,6 +54,8 @@ var
     if x1 > 256 then x1 := 0;
   end;
 
+
+  var i, j: integer;
 begin
   writeln('--- Init ---');
 
@@ -85,6 +91,25 @@ begin
   R_AllocPalette(pal);
   R_LoadPalette('test.pal', pal);
   R_SetPalette(pal);
+
+
+  tempSound := SND_AllocSoundEffect(256);
+  tempSound^.length := 30;
+
+{  for i := 0 to 15 do begin
+    tempSound^[i] := 2000 - i * 200;
+  end;
+ }
+
+  i := 0;
+  for j := 0 to 15 do begin
+    tempSound^.data^[i] := 40 + Random(100);
+    inc(i, 1);
+    tempSound^.data^[i] := tempSound^.data^[i-1];
+    inc(i, 1);
+  end;
+
+  SND_PlaySound(tempSound);
 
   {$ifdef fpc}
   Loop_SetUpdateProc(@Update);

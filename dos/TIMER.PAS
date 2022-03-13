@@ -2,7 +2,7 @@ unit timer;
 
 interface
 
-uses dos, crt;
+uses dos, crt, common, SFX;
 
 var
   oldTimerInt: pointer;
@@ -50,25 +50,15 @@ begin
   begin
     port[$20] := $20;
   end;
-{
+
+
   Dec(soundTicks);
   if soundTicks = 0 then
   begin
-    soundTicks := 8;
-
-    inc(soundDebug, 1);
-    if soundDebug = 10 then soundDebug := 0;
-
-    if (soundDebug mod 2) = 0 then
-       begin
-         Sound(50 + Random(50));
-       end
-    else begin
-      Sound(100 + soundDebug * 30);
-    end;
-
+    soundTicks := 4; { if 8, the tone changes every ~13 ms}
+    SND_Update;
   end;
-}
+
 end;
 
 procedure Timer_SetClockRate(bits: integer);
@@ -88,7 +78,10 @@ begin
   port[$40] := hi(ticks);
 end;
 
+
+
 procedure Init;
+  var i, j: integer;
 begin
   writeln('--- Timer Init ---');
   getIntVec($08, oldTimerInt);
@@ -96,13 +89,14 @@ begin
 
   soundTicks := 1;
 
-  Timer_SetClockRate(5);
+  Timer_SetClockRate(5);  
 end;
 
 procedure Close;
 begin
   Timer_SetClockRate(0);
   setIntVec($08, oldTimerInt);
+  NoSound;
 end;
 
 function Timer_GetTicks: longint;
