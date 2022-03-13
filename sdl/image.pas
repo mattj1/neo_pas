@@ -46,8 +46,6 @@ begin
   img^.surface := loadedSurface;
   SDL_SetColorKey(img^.surface, SDL_RLEACCEL, 0);
 
-  //img^.texture := SDL_CreateTextureFromSurface(GFX_SDL_Core.sdlRenderer, loadedSurface);
-
   Image_Load := img;
 
 end;

@@ -1,21 +1,16 @@
 { Graphics - DOS }
 
+{$F+}  
 {$G+}
 
-unit gfx;
+unit GFX13;
 interface
-uses crt, image, common, GFXCom;
 
-type
-  {Palette = record
-    c: array[0..255] of array[0..2] of byte;
-  end;}
-
-  Palette = RawPalette;
+uses crt, gfx, image, common, R_Pal;
 
 var double_buffer: boolean;
 
-{$I GFX.inc}
+procedure InitDriver;
 
 implementation
 
@@ -24,7 +19,7 @@ var
 
 var cur_pal: Palette;
 
-procedure GFX_FillColor(c: byte);
+procedure FillColor(c: byte);
 var destPtr: pointer;
 begin
   if double_buffer then begin destPtr := scrBuf; end
@@ -685,7 +680,7 @@ begin
   DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
 end;
 
-procedure GFX_Init;
+procedure Init;
 var
   numRead: word;
 begin
@@ -705,7 +700,7 @@ begin
 
 end;
 
-procedure GFX_Close;
+procedure Close;
 begin
   asm
            mov     ax, $3
@@ -726,14 +721,23 @@ end;
 
 
 
-procedure GFX_LoadPalette(filename: string; var pal: Palette);
+procedure LoadPalette(filename: string; var pal: Palette);
 var
   palFile: file;
+var rawPal: RawPalette;
+var i: integer;
 begin
-  GFX_LoadRawPalette(filename, pal);
+  GFX_LoadRawPalette(filename, rawPal);
+
+  for i := 0 to 255 do
+  begin
+    pal.c[i][0] := rawPal.c[i][0];
+    pal.c[i][1] := rawPal.c[i][1];
+    pal.c[i][2] := rawPal.c[i][2];
+  end;  
 end;
 
-procedure GFX_SetPalette(var pal: Palette);
+procedure SetPalette(var pal: Palette);
 var
   i: integer;
 begin
@@ -765,20 +769,35 @@ end
   end;
 end;
 
-procedure GFX_AllocPalette(var pal: Palette);
+procedure AllocPalette(var pal: Palette);
 begin
 
 end; 
 
-procedure GFX_SetPaletteColor(index: integer; r, g, b: byte);
+procedure SetPaletteColor(index: integer; r, g, b: byte);
 begin
   cur_pal.c[index][0] := r;
   cur_pal.c[index][1] := g;
   cur_pal.c[index][2] := b;
 
   { FIX! }
-  GFX_SetPalette(cur_pal);
+  SetPalette(cur_pal);
 end; 
+
+
+procedure InitDriver;
+begin
+  R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSprite := DrawSprite;
+  R_AllocPalette := AllocPalette;
+  R_LoadPalette := LoadPalette;
+  R_SetPaletteColor := SetPaletteColor;
+  R_SetPalette := SetPalette;
+  R_SwapBuffers := SwapBuffers;
+  R_FillColor := FillColor;
+  R_Init := Init;
+  R_Close := Close;
+end;   
 
 begin
 end.

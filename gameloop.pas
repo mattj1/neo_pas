@@ -85,7 +85,7 @@ begin
  }
     _drawProc;
 
-    SwapBuffers;
+    R_SwapBuffers;
 
     lastFrameTime := frameTime;
 

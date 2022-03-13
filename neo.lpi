@@ -35,11 +35,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="sdl\gfx.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GFX"/>
-      </Unit>
-      <Unit>
         <Filename Value="sdl\image.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Image"/>
@@ -59,17 +54,24 @@
         <UnitName Value="Timer"/>
       </Unit>
       <Unit>
-        <Filename Value="inc\gfx.inc"/>
+        <Filename Value="GFX.PAS"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="inc\image.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="inc\timer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="inc\gameloop.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="gameloop.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="GFXCOM.PAS"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GFXCom"/>
       </Unit>
       <Unit>
         <Filename Value="sdl\keybrd.pas"/>
@@ -84,6 +86,24 @@
         <Filename Value="sdl\sys.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Sys"/>
+      </Unit>
+      <Unit>
+        <Filename Value="inc\keybrd.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="inc\sys.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sdl\gfx_sdl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GFX_SDL"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sdl\r_pal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="R_Pal"/>
       </Unit>
     </Units>
   </ProjectOptions>

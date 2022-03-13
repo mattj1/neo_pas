@@ -77,10 +77,7 @@ begin
   for i := 0 to 255 do
   begin
     BlockRead(f, pe, sizeof(BITMAPPALENTRY));
-         
-    if i < 10 then writeln(pe.c[0], ' ', pe.c[1], ' ', pe.c[2], ' ', pe.c[3]);
-
-      end;
+  end;
 
 
   for j := 0 to image.Height - 1 do
@@ -99,12 +96,36 @@ function Image_Load(filename: string): pimage_t;
 
 var
   img: pimage_t;
+
+var newData, src, dst: byte_ptr;
+
+var p, i, n: integer;
 begin
 
   GetMem(img, SizeOf(image_t));
 
   LoadBMP(filename, img^);
 
+  GetMem(newData, img^.width * img^.height);
+
+  { Mode x images should have a width multiple of 4 }
+
+  dst := newData;
+
+  n := (img^.width * img^.height) shr 2;
+
+  for p := 0 to 3 do begin
+    src := img^.data;
+    inc(src, p);
+    for i := 0 to n - 1 do 
+    begin
+      dst^ := src^;
+      inc(src, 4);
+      inc(dst);
+    end
+  end;
+
+  img^.data := newData;
   Image_Load := img;
 end;
 

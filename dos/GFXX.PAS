@@ -1,21 +1,13 @@
 unit GFXX;
+
+{$F+}  
+{$G+}
+
 interface
 
-uses GFXCom, Image, Common;
+uses crt, gfx, image, common, R_Pal;
 
-{$I GFX.inc}
-
-procedure GFX_FillColor(c: byte);
-
-procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
-procedure DrawSpriteOpaqueFast(dstX, dstY: integer; var img: Image_t);
-
-procedure GFXX_Init;
-procedure GFXX_Close;
-procedure GFXX_SwapBuffers;
-
-procedure set_pixel(x, y: integer; c: byte);
-procedure GFX_Line(x0, y0, x1, y1, c: integer);
+procedure InitDriver;
 
 implementation
 
@@ -48,6 +40,7 @@ const V_BLANK_END         =$16;
 const MODE_CONTROL        =$17;
 
 var active_page, visible_page, page_offset: integer;
+var cur_pal: Palette;
 
 procedure word_out(_port: integer; register: byte; value: integer);
 begin
@@ -67,7 +60,7 @@ begin
   mem[$A000 : offset] := c;
 end;
 
-procedure GFX_FillColor(c: byte);
+procedure FillColor(c: byte);
 var o: integer;
 var destPtr: pointer;
 begin
@@ -100,7 +93,7 @@ begin
   page_offset := active_page * 19200;
 end;
 
-procedure GFXX_SwapBuffers;
+procedure SwapBuffers;
 begin
       GFX_SetActivePage(active_page xor 1);
       GFX_SetVisiblePage(visible_page xor 1);
@@ -119,7 +112,8 @@ begin
   end;
 end;
 
-procedure DrawSpriteSub(dstX, dstY: integer; subLeft, subTop, subRight, subBottom: integer; var img: Image_t);
+procedure DrawSubImageTransparent(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+  var subLeft, subRight, subTop, subBottom: integer;
 var numCol, numRow, srcPlane, dstPlane, nc0, nc1, nc2: integer;
 var x1: integer;
 var x, y, p, o: integer;
@@ -128,6 +122,17 @@ var numPlanes: integer;
 var srcSkip, dstSkip: word;
 var destPtr, srcPtr: pointer;
 begin
+  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)
+   then Exit;
+
+  subLeft := srcX;
+  subRight := srcX + srcWidth;
+  subTop := srcY;
+  subBottom := srcY + srcHeight;
+
+  GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom);
+
+
     numRow := (subBottom - subTop);
     dstPlane := dstX and 3;
 
@@ -184,7 +189,7 @@ begin
 
       @@x_loop:
       mov     al, ds:[si]
-      cmp     al, 255
+      cmp     al, 0
       je      @@is_transparent
 
       movsb
@@ -234,18 +239,9 @@ begin
   end;
 end;
 
-procedure DrawSprite(dstX, dstY: integer; var img: Image_t);
-var subLeft, subRight, subTop, subBottom: integer;
+procedure DrawSprite(x, y: integer; var img: Image_t);
 begin
-    subLeft := 0;  { 5 and 62}
-    subRight := img.width;
-
-    subTop := 0;
-    subBottom := img.height;
-
-    if not GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom) then Exit;
-
-    DrawSpriteSub(dstX, dstY, subLeft, subTop, subRight, subBottom, img);
+  DrawSubImageTransparent(img, x, y, 0, 0, img.width, img.height);
 end;
 
 
@@ -346,9 +342,12 @@ procedure GFX_Line(x0, y0, x1, y1, c: integer);
   end;
 end;
 
-procedure GFXX_Init;
+procedure Init;
 begin
 	GFX_Common_Init;
+
+    screen_width := 320;
+  screen_height := 240;
 
 	 asm
 	  mov ax, $13
@@ -376,13 +375,93 @@ begin
 	GFX_SetActivePage(1);
 end;
 
-procedure GFXX_Close;
+procedure Close;
 begin
 	asm
 		mov ax, $3
 		int 10h
 	end;
 end;
+
+
+
+procedure LoadPalette(filename: string; var pal: Palette);
+var
+  palFile: file;
+var rawPal: RawPalette;
+var i: integer;
+begin
+  GFX_LoadRawPalette(filename, rawPal);
+
+  for i := 0 to 255 do
+  begin
+    pal.c[i][0] := rawPal.c[i][0];
+    pal.c[i][1] := rawPal.c[i][1];
+    pal.c[i][2] := rawPal.c[i][2];
+  end;  
+end;
+
+procedure SetPalette(var pal: Palette);
+var
+  i: integer;
+begin
+  cur_pal := pal;
+     {for i:= 16 to 47 do begin
+        writeln(i, ' ', cur_pal.c[i][0], ' ', cur_pal.c[i][1], ' ', cur_pal.c[i][2]);
+
+        if i = 32 then Readln;
+     end;}
+{
+asm
+
+   mov ax, $1012
+   mov bx, 0
+   mov cx, 256
+   les dx, pal
+   int $10
+end
+}
+
+  port[$3c6] := $ff;
+  port[$3c8] := $00;
+  for i := 0 to 255 do
+  begin
+    port[$3c9] := pal.c[i][0] shr 2;
+    port[$3c9] := pal.c[i][1] shr 2;
+    port[$3c9] := pal.c[i][2] shr 2;
+
+  end;
+end;
+
+procedure AllocPalette(var pal: Palette);
+begin
+
+end; 
+
+procedure SetPaletteColor(index: integer; r, g, b: byte);
+begin
+  cur_pal.c[index][0] := r;
+  cur_pal.c[index][1] := g;
+  cur_pal.c[index][2] := b;
+
+  { FIX! }
+  SetPalette(cur_pal);
+end; 
+
+
+procedure InitDriver;
+begin
+  R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSprite := DrawSprite;
+  R_AllocPalette := AllocPalette;
+  R_LoadPalette := LoadPalette;
+  R_SetPaletteColor := SetPaletteColor;
+  R_SetPalette := SetPalette;
+  R_SwapBuffers := SwapBuffers;
+  R_FillColor := FillColor;
+  R_Init := Init;
+  R_Close := Close;
+end;   
 
 begin
 end.

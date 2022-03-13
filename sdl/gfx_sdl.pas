@@ -1,20 +1,16 @@
 { Graphics - SDL }
 
-unit GFX;
+unit GFX_SDL;
 
 interface
 
 uses
+  gfx,
   SDL2,
   SDL2_Image,
-  Image, gfxcom, GFX_SDL_Core;
+  Image, R_Pal, GFX_SDL_Core;
 
-type
-  Palette = record
-    sdlPalette: PSDL_Palette;
-  end;
-
-{$I GFX.inc}
+procedure InitDriver;
 
 implementation
 
@@ -35,7 +31,7 @@ begin
   SDL_RectCreate := rect;
 end;
 
-procedure GFX_FillColor(c: byte);
+procedure FillColor(c: byte);
 var
   rect: TSDL_Rect;
 begin
@@ -122,12 +118,18 @@ begin
 
 end;
 
-procedure GFX_Init;
+
+procedure AllocPalette(var pal: Palette);
+begin
+  pal.sdlPalette := SDL_AllocPalette(256);
+end;
+
+procedure Init;
 begin
   if SDL_Init(SDL_INIT_VIDEO) < 0 then Halt;
 
   screen_width := 320;
-  screen_height := 200;
+  screen_height := 240;
 
   sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, screen_width * 2,
     screen_height * 2, 0);
@@ -138,9 +140,9 @@ begin
 
   if (sdlWindow1 = nil) or (sdlRenderer = nil) then Halt;
 
-  GFX_AllocPalette(currentPalette);
+  AllocPalette(currentPalette);
 
-  indexedBackbuffer := SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+  indexedBackbuffer := SDL_CreateRGBSurface(SDL_SWSURFACE, screen_width, screen_height, 8, 0, 0, 0, 0);
 
   currentPalette.sdlPalette := SDL_AllocPalette(256);
 
@@ -149,7 +151,7 @@ begin
 end;
 
 
-procedure GFX_Close;
+procedure Close;
 begin
   SDL_DestroyRenderer(sdlRenderer);
   SDL_DestroyWindow(sdlWindow1);
@@ -158,12 +160,8 @@ begin
   SDL_Quit;
 end;
 
-procedure GFX_AllocPalette(var pal: Palette);
-begin
-  pal.sdlPalette := SDL_AllocPalette(256);
-end;
 
-procedure GFX_LoadPalette(filename: string; var pal: Palette);
+procedure LoadPalette(filename: string; var pal: Palette);
 var
   rawPal: RawPalette;
   i: integer;
@@ -180,12 +178,12 @@ begin
   end;
 end;
 
-procedure GFX_SetPalette(var pal: Palette);
+procedure SetPalette(var pal: Palette);
 begin
   currentPalette := pal;
 end;
 
-procedure GFX_SetPaletteColor(index: integer; r, g, b: byte);
+procedure SetPaletteColor(index: integer; r, g, b: byte);
 var
   color: TSDL_Color;
 begin
@@ -194,6 +192,20 @@ begin
   color.b := b;
   color.a := 255;
   SDL_SetPaletteColors(currentPalette.sdlPalette, @color, index, 1);
+end;
+
+procedure InitDriver;
+begin
+  R_DrawSubImageTransparent := @DrawSubImageTransparent;
+  R_DrawSprite := @DrawSprite;
+  R_AllocPalette := @AllocPalette;
+  R_LoadPalette := @LoadPalette;
+  R_SetPaletteColor := @SetPaletteColor;
+  R_SetPalette := @SetPalette;
+  R_SwapBuffers := @SwapBuffers;
+  R_FillColor := @FillColor;
+  R_Init := @Init;
+  R_Close := @Close;
 end;
 
 begin

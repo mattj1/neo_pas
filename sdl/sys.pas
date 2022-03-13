@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses SDL2, com_kb;
+uses SDL2, com_kb, GFX_SDL;
 
 {$I sys.inc}
 
@@ -54,6 +54,11 @@ begin
 
   end;
 
+end;
+
+procedure SYS_InitGraphicsDriver(driverType: integer);
+begin
+     GFX_SDL.InitDriver;
 end;
 
 end.
