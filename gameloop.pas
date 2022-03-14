@@ -7,7 +7,7 @@ interface
 uses
   Sys,
   com_kb,
-  Timer, GFX;
+  Timer, GFX, Event;
 
 type
   UpdateProc = procedure(deltaTime: integer);
@@ -64,6 +64,7 @@ begin
 
   repeat
     SYS_PollEvents;
+    Event_ProcessEvents;
 
 
     numUpdates := 0;
@@ -77,7 +78,7 @@ begin
 
     while accum >= dt do
     begin
-      inc(numUpdates);
+      Inc(numUpdates);
       _updateProc(dt_int);
       accum := accum - dt;
     end;
@@ -90,14 +91,9 @@ begin
 
     lastFrameTime := frameTime;
 
-
-
-
-      {  com_kb.prevKeys := com_kb.keys;  }
-    {Move(com_kb.keys, com_kb.prevKeys, sizeof(com_kb.keys));}
-
-    inc(fpsCount, 1);
-    if frameTime - fpsTimer >= 1000 then begin
+    Inc(fpsCount, 1);
+    if frameTime - fpsTimer >= 1000 then
+    begin
       fpsTimer := frameTime;
       writeln('fps: ', fpsCount);
       fpsCount := 0;
@@ -109,9 +105,7 @@ begin
     until Timer_GetTicks - frameTime >= 16;
     {Timer_Delay(8);}
     {$endif}
-
-    com_kb.prevKeys := [] + com_kb.keys;
-
+    com_kb.prevKeys := com_kb.keys;
   until _done;
 end;
 

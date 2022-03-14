@@ -1,7 +1,7 @@
 unit keybrd;
 
 interface
-uses common, com_kb, crt, dos;
+uses common, com_kb, crt, dos, event;
 
 procedure Init;
 procedure Close;
@@ -34,9 +34,11 @@ begin
 }
      {keyTable[k] := ;}
      if (b and $80) = 0 then begin
-          Include(com_kb.keys, k);
+          Event_Add(SE_KEYDOWN, ord(k));  
+          {Include(com_kb.keys, k);}
      end else begin
-          Exclude(com_kb.keys, k);
+          Event_Add(SE_KEYUP, ord(k)); 
+          {Exclude(com_kb.keys, k);}
      end;
 end;
 

@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses SDL2, com_kb, GFX_SDL;
+uses SDL2, com_kb, GFX_SDL, Event;
 
 {$I sys.inc}
 
@@ -39,15 +39,21 @@ begin
     case (event.type_) of
       SDL_KEYDOWN:
       begin
+
         sc := sdl_to_scancode(event.key.keysym.sym);
-        com_kb.keys := com_kb.keys + [sc];
+
+        if event.key._repeat = 0 then begin
+               Event_Add(SE_KEYDOWN, ord(sc));
+        end;
+
         //writeln('key down... ', Ord(sc));
       end;
 
       SDL_KEYUP:
       begin
         sc := sdl_to_scancode(event.key.keysym.sym);
-        com_kb.keys := com_kb.keys - [sc];
+        Event_Add(SE_KEYUP, ord(sc));
+
         //writeln('key up... ', Ord(sc));
       end;
     end;

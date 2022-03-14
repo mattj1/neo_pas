@@ -15,16 +15,20 @@ var
 
 var
   pal: Palette;
+  {$ifndef fpc}
+var
+  tempSound: PSoundEffect;
 
-  var tempSound: PSoundEffect;
-
+  {$endif}
   procedure font_printstr(x, y: integer; str: string);
-  var i: integer;
+  var
+    i: integer;
   begin
-       for i := 1 to Length(str) do begin
-           R_DrawSubImageTransparent(img_font^, x, y, 8 * (ord(str[i]) - 32), 0, 8, 10);
-           inc(x, 8);
-       end;
+    for i := 1 to Length(str) do
+    begin
+      R_DrawSubImageTransparent(img_font^, x, y, 8 * (Ord(str[i]) - 32), 0, 8, 10);
+      Inc(x, 8);
+    end;
   end;
 
   procedure Update(deltaTime: integer);
@@ -38,7 +42,10 @@ var
 
     if I_IsKeyDown(kEnter) then Loop_Cancel;
 
-    if I_IsKeyDown(kRt) and not SND_IsPlaying then SND_PlaySound(tempSound);
+    {$ifndef fpc}
+    if I_WasKeyPressed(kRt) then SND_PlaySound(tempSound);
+    {$endif}
+
   end;
 
   procedure Draw;
@@ -55,7 +62,8 @@ var
   end;
 
 
-  var i, j: integer;
+var
+  i, j: integer;
 begin
   writeln('--- Init ---');
 
@@ -63,11 +71,11 @@ begin
   tileset := Image_Load('tileset.bmp');
   img_font := Image_Load('font.bmp');
   {$ifndef fpc}
-          {readln;}
+  {readln;}
   {$endif}
 
   {$ifndef fpc}
-           SYS_InitGraphicsDriver(1);
+  SYS_InitGraphicsDriver(1);
   {$else}
          SYS_InitGraphicsDriver(0);
   {$endif}
@@ -92,7 +100,7 @@ begin
   R_LoadPalette('test.pal', pal);
   R_SetPalette(pal);
 
-
+  {$ifndef fpc}
   tempSound := SND_AllocSoundEffect(256);
   tempSound^.length := 30;
 
@@ -102,14 +110,16 @@ begin
  }
 
   i := 0;
-  for j := 0 to 15 do begin
-    tempSound^.data^[i] := 40 + Random(100);
-    inc(i, 1);
-    tempSound^.data^[i] := tempSound^.data^[i-1];
-    inc(i, 1);
+  for j := 0 to 15 do
+  begin
+    tempSound^.Data^[i] := 40 + Random(100);
+    Inc(i, 1);
+    tempSound^.Data^[i] := tempSound^.Data^[i - 1];
+    Inc(i, 1);
   end;
 
   SND_PlaySound(tempSound);
+  {$endif}
 
   {$ifdef fpc}
   Loop_SetUpdateProc(@Update);

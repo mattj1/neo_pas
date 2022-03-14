@@ -105,6 +105,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="R_Pal"/>
       </Unit>
+      <Unit>
+        <Filename Value="event.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Event"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
