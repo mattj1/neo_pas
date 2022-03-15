@@ -8,6 +8,8 @@ uses
 var
   entities: array[0..63] of ent_t;
 
+function Entity_Alloc(entity_type: integer): pent_t;
+
 implementation
 
 function Entity_Alloc(entity_type: integer): pent_t;

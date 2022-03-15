@@ -32,6 +32,10 @@ var
   end;
 
   procedure Update(deltaTime: integer);
+  var
+    i: integer;
+    e: pent_t;
+    es: ^entity_state_t;
   begin
     Inc(x1, 1);
 
@@ -46,15 +50,28 @@ var
     if I_WasKeyPressed(kRt) then SND_PlaySound(tempSound);
     {$endif}
 
+    for i := 0 to MAX_ENT - 1 do
+    begin
+      e := @entities[i];
+      if e^.entity_type <> 0 then begin
+        es := @entity_states[0];
+        if (@es^.onFrameProc) <> nil then begin
+           es^.onFrameProc(e^);
+        end;
+      end;
+    end;
   end;
 
-  procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState; direction: integer);
-  var si: ^sprite_info_t;
+  procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState;
+    direction: integer);
+  var
+    si: ^sprite_info_t;
     ss: ^sprite_state_t;
   begin
-    ss := @sprite_states[ord(_spriteState)];
-    si := @sprite_infos[ord(ss^.sprites[direction])];
-    R_DrawSubImageTransparent(tileset^, x + si^.offsX, y + si^.offsY, si^.srcX, si^.srcY, si^.width, si^.height);
+    ss := @sprite_states[Ord(_spriteState)];
+    si := @sprite_infos[Ord(ss^.sprites[direction])];
+    R_DrawSubImageTransparent(tileset^, x + si^.offsX, y + si^.offsY,
+      si^.srcX, si^.srcY, si^.Width, si^.Height);
 
   end;
 
@@ -70,7 +87,7 @@ var
     font_printstr(32, 32, 'Hello World! 123456');
     if x1 > 256 then x1 := 0;
 
-    Draw_Sprite_State( 64, 64, SPRITE_PLAYER0, 0);
+    Draw_Sprite_State(64, 64, SPRITE_PLAYER0, 0);
   end;
 
 
@@ -80,7 +97,7 @@ begin
   writeln('--- Init ---');
 
   img := Image_Load('test2.bmp');
-  tileset := Image_Load('tileset.bmp');
+  tileset := Image_Load('test3.bmp');
   img_font := Image_Load('font.bmp');
   {$ifndef fpc}
   {readln;}
@@ -132,6 +149,8 @@ begin
 
   SND_PlaySound(tempSound);
   {$endif}
+
+  Entity_Alloc(0);
 
   {$ifdef fpc}
   Loop_SetUpdateProc(@Update);

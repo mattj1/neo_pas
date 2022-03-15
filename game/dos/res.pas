@@ -28,7 +28,7 @@ const
 		( sprites: (SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0); tileSet: 0 )
 	);
 
-	entity_state: array[0..0] of entity_state_t = (
+	entity_states: array[0..0] of entity_state_t = (
 		(
 		state: STATE_NONE;
 		nextState: STATE_NONE;

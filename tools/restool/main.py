@@ -172,7 +172,7 @@ class ResTool:
                 w(s)
             w('\t);')
             w('')
-            w(f'\tentity_state: array[0..{len(self.entity_states) - 1}] of entity_state_t = (')
+            w(f'\tentity_states: array[0..{len(self.entity_states) - 1}] of entity_state_t = (')
             for es in self.entity_states:
                 def adjust_proc(proc):
                     if proc == 'nil':

@@ -1,5 +1,5 @@
 unit gtypes;
-
+ {$F+}
 interface
 
 uses res_enum;

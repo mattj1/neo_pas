@@ -1,2 +1,2 @@
 uses crt, Common, Image, Timer, GameLoop,
-          Keybrd, com_kb, gfx, Sys, R_Pal, SFX, gtypes, res, res_enum;        
+          Keybrd, com_kb, gfx, Sys, R_Pal, SFX, gtypes, res, res_enum, entity;        
