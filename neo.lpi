@@ -110,6 +110,28 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Event"/>
       </Unit>
+      <Unit>
+        <Filename Value="game\player.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Player"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\gtypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res_enum.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\sdl\res.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\entity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Entity"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -120,7 +142,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);inc;sdl"/>
-      <OtherUnitFiles Value="sdl;C:\lazarus\fpc\3.2.2\units\SDL2\"/>
+      <OtherUnitFiles Value="sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game;game\sdl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

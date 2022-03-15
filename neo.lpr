@@ -48,6 +48,16 @@ var
 
   end;
 
+  procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState; direction: integer);
+  var si: ^sprite_info_t;
+    ss: ^sprite_state_t;
+  begin
+    ss := @sprite_states[ord(_spriteState)];
+    si := @sprite_infos[ord(ss^.sprites[direction])];
+    R_DrawSubImageTransparent(tileset^, x + si^.offsX, y + si^.offsY, si^.srcX, si^.srcY, si^.width, si^.height);
+
+  end;
+
   procedure Draw;
   begin
     R_FillColor(1);
@@ -59,6 +69,8 @@ var
     R_DrawSprite(0, 0, img_font^);
     font_printstr(32, 32, 'Hello World! 123456');
     if x1 > 256 then x1 := 0;
+
+    Draw_Sprite_State( 64, 64, SPRITE_PLAYER0, 0);
   end;
 
 
@@ -97,7 +109,7 @@ begin
 
   R_Init;
   R_AllocPalette(pal);
-  R_LoadPalette('test.pal', pal);
+  R_LoadPalette('cica26.pal', pal);
   R_SetPalette(pal);
 
   {$ifndef fpc}
