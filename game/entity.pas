@@ -3,12 +3,13 @@ unit Entity;
 interface
 
 uses
-  gtypes;
+  gtypes, res_enum;
 
 var
   entities: array[0..63] of ent_t;
 
 function Entity_Alloc(entity_type: integer): pent_t;
+procedure Entity_SetState(var e: ent_t; state: entityState);
 
 implementation
 
@@ -28,6 +29,12 @@ begin
       Exit;
     end;
   end;
+end;
+
+procedure Entity_SetState(var e: ent_t; state: entityState);
+begin
+  e.stateTime := 0;
+  e.state := state;
 end;
 
 end.

@@ -68,9 +68,9 @@ class ResTool:
         # since there's no support for flipping sprites, etc...
         sprite_info.use_direction = use_direction
 
-    def write_enums(self):
+    def write_enums(self, filename):
 
-        with open('C:\\Users\\Matt\\dos\\neo\\game\\res_enum.pas', 'w') as myfile:
+        with open(filename, 'w') as myfile:
             def w(_s):
                 myfile.write(f'{_s}\n')
 
@@ -208,24 +208,26 @@ class ResTool:
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER0")
-        self.sprite_info(direction=0, src_rect=(0, 0, 16, 16), offset=(0, 0))
-        self.sprite_info(direction=1, src_rect=(0, 16, 16, 16), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(0, 0, 16, 32), offset=(0, 0))
+        self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER1")
-        self.sprite_info(direction=0, src_rect=(16, 0, 16, 16), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(16, 0, 16, 32), offset=(0, 0))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.entity_states.append(['NONE', 'NONE', 60, 'nil', 'nil', 'NONE'])
+        self.entity_states.append(['PLAYER0', 'PLAYER1', 20, 'nil', 'nil', 'PLAYER0'])
+        self.entity_states.append(['PLAYER1', 'PLAYER0', 20, 'nil', 'nil', 'PLAYER1'])
 
         # write the resource files
-        self.write_enums()
+        self.write_enums(filename='../../game/res_enum.pas')
 
-        self.write_res(filename="C:\\Users\\Matt\\dos\\neo\\game\\sdl\\res.pas", is_fpc=True)
-        self.write_res(filename="C:\\Users\\Matt\\dos\\neo\\game\\dos\\res.pas", is_fpc=False)
+        self.write_res(filename="../../game/sdl/res.pas", is_fpc=True)
+        self.write_res(filename='../../game/dos/res.pas', is_fpc=False)
 
 
 if __name__ == '__main__':

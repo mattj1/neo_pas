@@ -21,9 +21,7 @@ type
     state: entityState;
   end;
 
-  pent_t = ^ent_t;
-
-  sprite_info_t = record
+ sprite_info_t = record
     offsX, offsY: integer;
     srcX, srcY: integer;
     Width, Height: integer;
@@ -43,6 +41,9 @@ type
     spriteState_: spriteState;
   end;
 
+  pent_t = ^ent_t;
+
+ 
 
 implementation
 

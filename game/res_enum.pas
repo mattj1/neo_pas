@@ -8,7 +8,6 @@ type
 	spriteInfo = (
 		SPRITE_NONE_0,
 		SPRITE_PLAYER0_0,
-		SPRITE_PLAYER0_1,
 		SPRITE_PLAYER1_0
 	);
 
@@ -19,7 +18,9 @@ type
 	);
 
 	entityState = (
-		STATE_NONE
+		STATE_NONE,
+		STATE_PLAYER0,
+		STATE_PLAYER1
 	);
 
 implementation
