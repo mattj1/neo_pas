@@ -36,7 +36,7 @@ begin
 
   if loadedSurface = nil then
   begin
-    writeln(IMG_GetError);
+    writeln('IMG_Load error: ', IMG_GetError);
     SDL_Delay(2000);
     Halt;
   end;

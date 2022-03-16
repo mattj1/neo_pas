@@ -1,4 +1,5 @@
 unit gtypes;
+
  {$F+}
 interface
 
@@ -21,13 +22,26 @@ type
     state: entityState;
   end;
 
- sprite_info_t = record
+  sprite_info_t = record
     offsX, offsY: integer;
     srcX, srcY: integer;
     Width, Height: integer;
   end;
 
-type
+
+ MapTileLayer = array[0..1024] of integer;
+  MapInfoLayer = array[0..1024] of byte;
+  PMapTileLayer = ^MapTileLayer;
+  PMapInfoLayer = ^MapInfoLayer;
+
+  TLevelMap = record
+    width, height: integer;
+    fg: PMapTileLayer;
+    info: PMapInfoLayer;
+  end;
+
+  PLevelMap = ^TLevelMap;
+
   entityOnStateProc = procedure(var e: ent_t);
   entityOnFrameProc = procedure(var e: ent_t);
 
@@ -43,7 +57,8 @@ type
 
   pent_t = ^ent_t;
 
- 
+
+
 
 implementation
 

@@ -1,3 +1,7 @@
+import csv
+import struct
+
+
 class Tileset:
 
     def __init__(self, name) -> None:
@@ -208,13 +212,13 @@ class ResTool:
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER0")
-        self.sprite_info(direction=0, src_rect=(0, 0, 16, 32), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(0, 80, 16, 32), offset=(0, 0))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER1")
-        self.sprite_info(direction=0, src_rect=(16, 0, 16, 32), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(16, 80, 16, 32), offset=(0, 0))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
@@ -230,5 +234,20 @@ class ResTool:
         self.write_res(filename='../../game/dos/res.pas', is_fpc=False)
 
 
+def run_csv_import():
+    rows = []
+    with open('../../dev/main.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            rows.append(row)
+
+    print(rows)
+    with open('../../dev/m_main.bin', 'wb') as f:
+        for row in rows:
+            for val in row:
+                f.write(struct.pack("<h", int(val)))
+
+
 if __name__ == '__main__':
     ResTool().run()
+    run_csv_import()

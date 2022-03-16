@@ -132,6 +132,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Entity"/>
       </Unit>
+      <Unit>
+        <Filename Value="game\g_map.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -145,6 +149,11 @@
       <OtherUnitFiles Value="sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game;game\sdl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="tp"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>

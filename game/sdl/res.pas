@@ -12,9 +12,9 @@ const
 		{ SPRITE_NONE_0 }
 		(offsX: 0; offsY: 0; srcX: 0; srcY: 0; Width: 0; Height: 0),
 		{ SPRITE_PLAYER0_0 }
-		(offsX: 0; offsY: 0; srcX: 0; srcY: 0; Width: 16; Height: 32),
+		(offsX: 0; offsY: 0; srcX: 0; srcY: 80; Width: 16; Height: 32),
 		{ SPRITE_PLAYER1_0 }
-		(offsX: 0; offsY: 0; srcX: 16; srcY: 0; Width: 16; Height: 32)
+		(offsX: 0; offsY: 0; srcX: 16; srcY: 80; Width: 16; Height: 32)
 	);
 
 	sprite_states: array[0..2] of sprite_state_t = (

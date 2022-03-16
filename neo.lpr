@@ -1,18 +1,20 @@
 program test;
 
-{$F+}
+
 
 {$ifdef fpc}
         {$I neo_sdl.inc}
 {$else}
+{$F+}
         {$I neo_dos.inc}
 {$endif}
 
 var
-  img, tileset, img_font: pimage_t;
+  tileset, img_font: pimage_t;
 var
   x, x1, y, lastTime: integer;
 
+  map: TLevelMap;
 var
   pal: Palette;
   {$ifndef fpc}
@@ -63,18 +65,19 @@ var
 
       if e^.entity_type = 0 then continue;
 
-      es := @entity_states[ord(e^.state)];
-      
-      inc(e^.stateTime);
-      
-      if e^.stateTime = es^.numFrames then begin
+      es := @entity_states[Ord(e^.state)];
+
+      Inc(e^.stateTime);
+
+      if e^.stateTime = es^.numFrames then
+      begin
         Entity_SetState(e^, es^.nextState);
       end;
 
 
-
-      if (@es^.onFrameProc) <> nil then begin
-         es^.onFrameProc(e^);
+      if (@es^.onFrameProc) <> nil then
+      begin
+        es^.onFrameProc(e^);
       end;
     end;
   end;
@@ -93,20 +96,27 @@ var
   end;
 
   procedure Draw;
-  var 
+  var
     i: integer;
     e: pent_t;
     es: ^entity_state_t;
     ss: ^sprite_state_t;
-    tx, ty: integer;
+    tx, ty, sx, sy: integer;
+    tile_index: integer;
+
   begin
     R_FillColor(1);
 
-    R_DrawSubImageTransparent(tileset^, x, y, 80, 16, 16, 16);
+    {R_DrawSubImageTransparent(tileset^, x, y, 0, 0, 256, 256);}
 
-    for ty := 0 to 16 do begin
-      for tx := 0 to 16 do begin
-        R_DrawSubImageTransparent(tileset^, x + tx * 16, y + ty * 16, 80, 16, 16, 16);
+    for ty := 0 to 15 do
+    begin
+      for tx := 0 to 15 do
+      begin
+        tile_index := map.fg^[tx + ty * map.width];
+        sx := tile_index mod 16;
+        sy := tile_index div 16;
+        R_DrawSubImageTransparent(tileset^, x + tx * 16, y + ty * 16, sx * 16, sy * 16, 16, 16);
       end;
     end;
     { R_DrawSprite(x1, 0, img^); }
@@ -115,12 +125,13 @@ var
     font_printstr(32, 32, 'Hello World! 123456');
     if x1 > 256 then x1 := 0;
 
-  
+
     for i := 0 to MAX_ENT - 1 do
     begin
       e := @entities[i];
-      if e^.entity_type <> 0 then begin
-        es := @entity_states[ord(e^.state)];
+      if e^.entity_type <> 0 then
+      begin
+        es := @entity_states[Ord(e^.state)];
 
         Draw_Sprite_State(64, 64, es^.spriteState_, 0);
       end;
@@ -134,8 +145,7 @@ var
   e: pent_t;
 begin
   writeln('--- Init ---');
-
-  img := Image_Load('test2.bmp');
+  writeln(sizeof(integer));
   tileset := Image_Load('test3.bmp');
   img_font := Image_Load('font.bmp');
   {$ifndef fpc}
@@ -189,17 +199,12 @@ begin
   SND_PlaySound(tempSound);
   {$endif}
 
+  LoadMap('./dev/m_main.bin', map);
   e := Entity_Alloc(1);
   Entity_SetState(e^, STATE_PLAYER0);
 
-  {$ifdef fpc}
-  Loop_SetUpdateProc(@Update);
-  Loop_SetDrawProc(@Draw);
-  {$else}
-
   Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);
-  {$endif}
 
   Loop_Run;
 

@@ -98,7 +98,8 @@ begin
   srcRect := SDL_RectCreate(srcX, srcY, srcWidth, srcHeight);
   dstRect := SDL_RectCreate(dstX, dstY, srcRect.w, srcRect.h);
 
-  SDL_SetSurfacePalette(img.surface, currentPalette.sdlPalette);
+  {SDL_SetSurfacePalette(img.surface, currentPalette.sdlPalette);}
+  SDL_SetPixelFormatPalette(img.surface^.format, currentPalette.sdlPalette);
   SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);
 end;
 
@@ -196,16 +197,16 @@ end;
 
 procedure InitDriver;
 begin
-  R_DrawSubImageTransparent := @DrawSubImageTransparent;
-  R_DrawSprite := @DrawSprite;
-  R_AllocPalette := @AllocPalette;
-  R_LoadPalette := @LoadPalette;
-  R_SetPaletteColor := @SetPaletteColor;
-  R_SetPalette := @SetPalette;
-  R_SwapBuffers := @SwapBuffers;
-  R_FillColor := @FillColor;
-  R_Init := @Init;
-  R_Close := @Close;
+  R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSprite := DrawSprite;
+  R_AllocPalette := AllocPalette;
+  R_LoadPalette := LoadPalette;
+  R_SetPaletteColor := SetPaletteColor;
+  R_SetPalette := SetPalette;
+  R_SwapBuffers := SwapBuffers;
+  R_FillColor := FillColor;
+  R_Init := Init;
+  R_Close := Close;
 end;
 
 begin
