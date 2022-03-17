@@ -114,9 +114,11 @@ var
       for tx := 0 to 15 do
       begin
         tile_index := map.fg^[tx + ty * map.width];
-        sx := tile_index mod 16;
-        sy := tile_index div 16;
-        R_DrawSubImageTransparent(tileset^, x + tx * 16, y + ty * 16, sx * 16, sy * 16, 16, 16);
+        if tile_index <> -1 then begin
+          sx := tile_index mod 16;
+          sy := tile_index div 16;
+          R_DrawSubImageTransparent(tileset^, x + tx * 16, y + ty * 16, sx * 16, sy * 16, 16, 16);
+        end;
       end;
     end;
     { R_DrawSprite(x1, 0, img^); }
