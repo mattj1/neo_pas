@@ -31,86 +31,6 @@
         <UnitName Value="test"/>
       </Unit>
       <Unit>
-        <Filename Value="common.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\image.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Image"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\gfx_sdl_core.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GFX_SDL_Core"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\neo_sdl.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\timer.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Timer"/>
-      </Unit>
-      <Unit>
-        <Filename Value="GFX.PAS"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="inc\image.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="inc\timer.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="inc\gameloop.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="gameloop.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\keybrd.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Keybrd"/>
-      </Unit>
-      <Unit>
-        <Filename Value="com_kb.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\sys.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Sys"/>
-      </Unit>
-      <Unit>
-        <Filename Value="inc\keybrd.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="inc\sys.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\gfx_sdl.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GFX_SDL"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\r_pal.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="R_Pal"/>
-      </Unit>
-      <Unit>
-        <Filename Value="event.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Event"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\player.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Player"/>
@@ -136,6 +56,78 @@
         <Filename Value="game\g_map.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="engine\com_kb.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\common.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\event.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\GFX.PAS"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\gameloop.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\gfx_sdl.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\gfx_sdl_core.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\image.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\keybrd.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\neo_sdl.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\r_pal.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\sys.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\sdl\timer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\inc\gameloop.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\inc\image.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\inc\keybrd.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\inc\sys.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\inc\timer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -145,8 +137,8 @@
       <Filename Value="neo_sdl"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);inc;sdl"/>
-      <OtherUnitFiles Value="sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game;game\sdl"/>
+      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl"/>
+      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
