@@ -236,12 +236,11 @@ class ResTool:
 
 def run_csv_import():
     rows = []
-    with open('../../dev/main.csv', newline='') as csvfile:
+    with open('../../dev/proto.csv', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             rows.append(row)
 
-    print(rows)
     with open('../../dev/m_main.bin', 'wb') as f:
         for row in rows:
             for val in row:

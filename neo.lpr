@@ -14,10 +14,14 @@ var
 var
   x, x1, y, lastTime: integer;
 
-  map: TLevelMap;
+
+
 var
   pal: Palette;
   {$ifndef fpc}
+
+
+
 var
   tempSound: PSoundEffect;
 
@@ -48,10 +52,11 @@ var
   begin
     Inc(x1, 1);
 
-    if I_IsKeyDown(kUp) then Inc(y, -1);
-    if I_IsKeyDown(kDn) then Inc(y, 1);
-    if I_IsKeyDown(kLf) then Inc(x, -1);
-    if I_IsKeyDown(kRt) then Inc(x, 1);
+    player_input := 0;
+    if I_IsKeyDown(kUp) then player_input := player_input or 1;
+    if I_IsKeyDown(kDn) then player_input := player_input or 2;
+    if I_IsKeyDown(kLf) then player_input := player_input or 4;
+    if I_IsKeyDown(kRt) then player_input := player_input or 8;
 
     if I_IsKeyDown(kEnter) then Loop_Cancel;
 
@@ -79,6 +84,8 @@ var
       begin
         es^.onFrameProc(e^);
       end;
+
+      Player_Frame(player^);
     end;
   end;
 
@@ -109,15 +116,17 @@ var
 
     {R_DrawSubImageTransparent(tileset^, x, y, 0, 0, 256, 256);}
 
-    for ty := 0 to 15 do
+    for ty := 0 to map.Height - 1 do
     begin
-      for tx := 0 to 15 do
+      for tx := 0 to map.Width - 1 do
       begin
-        tile_index := map.fg^[tx + ty * map.width];
-        if tile_index <> -1 then begin
+        tile_index := map.fg^[tx + ty * map.Width];
+        if tile_index <> -1 then
+        begin
           sx := tile_index mod 16;
           sy := tile_index div 16;
-          R_DrawSubImageTransparent(tileset^, x + tx * 16, y + ty * 16, sx * 16, sy * 16, 16, 16);
+          R_DrawSubImageTransparent(tileset^, 0 + tx * 16, 0 + ty *
+            16, sx * 16, sy * 16, 16, 16);
         end;
       end;
     end;
@@ -135,7 +144,7 @@ var
       begin
         es := @entity_states[Ord(e^.state)];
 
-        Draw_Sprite_State(64, 64, es^.spriteState_, 0);
+        Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, 0);
       end;
     end;
 
@@ -148,7 +157,7 @@ var
 begin
   writeln('--- Init ---');
   writeln(sizeof(integer));
-  tileset := Image_Load('test3.bmp');
+  tileset := Image_Load('proto.bmp');
   img_font := Image_Load('font.bmp');
   {$ifndef fpc}
   {readln;}
@@ -160,8 +169,6 @@ begin
          SYS_InitGraphicsDriver(0);
   {$endif}
 
-
-
   Timer.Init;
   Keybrd.Init;
 
@@ -170,14 +177,13 @@ begin
   GFX_SetPaletteColor(1, 255, 0, 0);
   GFX_SetPaletteColor(2, 0, 255, 0);
   GFX_SetPaletteColor(3, 255, 255, 255);
-   }
-
+  }
 
   y := 0;
 
   R_Init;
   R_AllocPalette(pal);
-  R_LoadPalette('cica26.pal', pal);
+  R_LoadPalette('proto.pal', pal);
   R_SetPalette(pal);
 
   {$ifndef fpc}
@@ -202,8 +208,11 @@ begin
   {$endif}
 
   LoadMap('./dev/m_main.bin', map);
-  e := Entity_Alloc(1);
-  Entity_SetState(e^, STATE_PLAYER0);
+  player := Entity_Alloc(1);
+  player^.origin.x := intToFix32(32);
+  player^.origin.y := intToFix32(32);
+
+  Entity_SetState(player^, STATE_PLAYER0);
 
   Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);

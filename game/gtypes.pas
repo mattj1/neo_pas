@@ -3,7 +3,7 @@ unit gtypes;
  {$F+}
 interface
 
-uses res_enum;
+uses res_enum, fixedint;
 
 const
   MAX_ENT: integer = 64;
@@ -16,7 +16,7 @@ type
   end;
 
   ent_t = record
-    x, y: integer;
+    origin: Vec2D_f32;
     entity_type: integer;
     stateTime: integer;
     state: entityState;
@@ -26,6 +26,11 @@ type
     offsX, offsY: integer;
     srcX, srcY: integer;
     Width, Height: integer;
+  end;
+
+  rect_t = record
+    origin: Vec2D_f32;
+    size: Vec2D_f32;
   end;
 
 

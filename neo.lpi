@@ -24,6 +24,11 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+    </RequiredPackages>
     <Units>
       <Unit>
         <Filename Value="neo.lpr"/>
@@ -31,9 +36,8 @@
         <UnitName Value="test"/>
       </Unit>
       <Unit>
-        <Filename Value="game\player.pas"/>
+        <Filename Value="game\g_player.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Player"/>
       </Unit>
       <Unit>
         <Filename Value="game\gtypes.pas"/>
@@ -126,6 +130,14 @@
       </Unit>
       <Unit>
         <Filename Value="engine\inc\timer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\fixedint.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\g_common.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="fixed_test.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="6" Y="13"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="FIXED.PAS"/>
+        <UnitName Value="fixed_test"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\fixed.pas"/>
+        <UnitName Value="fixedint"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="20"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\fixedint.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="28" Y="50"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="6" Column="11"/>
+      </Position>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="9" Column="3"/>
+      </Position>
+      <Position>
+        <Filename Value="..\fixedint.pas"/>
+        <Caret Line="14" Column="17"/>
+      </Position>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="8" Column="23"/>
+      </Position>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="10" Column="31"/>
+      </Position>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="16" Column="3"/>
+      </Position>
+      <Position>
+        <Filename Value="fixed_test.lpr"/>
+        <Caret Line="9" Column="47"/>
+      </Position>
+      <Position>
+        <Filename Value="..\fixedint.pas"/>
+        <Caret Line="20" Column="49"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>
