@@ -2,7 +2,7 @@ unit g_player;
 
 interface
 
-uses gtypes, g_common, g_map, fixedint;
+uses gtypes, g_common, g_map, fixedint, vect2d, rect;
 
 procedure Player_Move(var e: ent_t);
 procedure Player_Frame(var e: ent_t);
@@ -45,7 +45,7 @@ begin
 
 
 
-  //writeln(player^.origin.x, ' ', player^.origin.y);
+  {writeln(player^.origin.x, ' ', player^.origin.y);}
 end;
 
 end.

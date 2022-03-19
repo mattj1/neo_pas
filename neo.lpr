@@ -1,12 +1,16 @@
 program test;
 
-
-
 {$ifdef fpc}
-        {$I neo_sdl.inc}
+  {$IFDEF DARWIN}
+    {$linkFramework SDL2}
+    {$linkFramework SDL2_image}
+  {$endif}
+
+  {$I neo_sdl.inc}
 {$else}
-{$F+}
-        {$I neo_dos.inc}
+  {$F+}
+
+{$I neo_dos.inc}
 {$endif}
 
 var
@@ -209,8 +213,8 @@ begin
 
   LoadMap('./dev/m_main.bin', map);
   player := Entity_Alloc(1);
-  player^.origin.x := intToFix32(32);
-  player^.origin.y := intToFix32(32);
+  player^.origin.x := intToFix32(64);
+  player^.origin.y := intToFix32(64);
 
   Entity_SetState(player^, STATE_PLAYER0);
 

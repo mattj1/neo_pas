@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses SDL2, com_kb, GFX_SDL, Event;
+uses SDL2, com_kb, GFX_SDL, Event, common;
 
 {$I sys.inc}
 
@@ -37,13 +37,28 @@ begin
 
     //writeln('event ', event.type_);
     case (event.type_) of
+      SDL_WINDOWEVENT:
+
+      begin
+        case (event.window.event) of
+          SDL_WINDOWEVENT_CLOSE:
+
+          begin
+            shouldQuit := True;
+
+          end;
+
+        end;
+
+      end;
       SDL_KEYDOWN:
       begin
 
         sc := sdl_to_scancode(event.key.keysym.sym);
 
-        if event.key._repeat = 0 then begin
-               Event_Add(SE_KEYDOWN, ord(sc));
+        if event.key._repeat = 0 then
+        begin
+          Event_Add(SE_KEYDOWN, Ord(sc));
         end;
 
         //writeln('key down... ', Ord(sc));
@@ -52,7 +67,7 @@ begin
       SDL_KEYUP:
       begin
         sc := sdl_to_scancode(event.key.keysym.sym);
-        Event_Add(SE_KEYUP, ord(sc));
+        Event_Add(SE_KEYUP, Ord(sc));
 
         //writeln('key up... ', Ord(sc));
       end;
@@ -64,7 +79,7 @@ end;
 
 procedure SYS_InitGraphicsDriver(driverType: integer);
 begin
-     GFX_SDL.InitDriver;
+  GFX_SDL.InitDriver;
 end;
 
 end.

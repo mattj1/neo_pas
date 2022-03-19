@@ -1,7 +1,5 @@
 unit g_common;
 
-{$mode tp}{$H+}
-
 interface
 
 uses gtypes;

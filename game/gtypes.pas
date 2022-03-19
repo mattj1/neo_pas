@@ -3,7 +3,7 @@ unit gtypes;
  {$F+}
 interface
 
-uses res_enum, fixedint;
+uses res_enum, fixedint, Vect2D;
 
 const
   MAX_ENT: integer = 64;
@@ -28,10 +28,7 @@ type
     Width, Height: integer;
   end;
 
-  rect_t = record
-    origin: Vec2D_f32;
-    size: Vec2D_f32;
-  end;
+
 
 
  MapTileLayer = array[0..1024] of integer;

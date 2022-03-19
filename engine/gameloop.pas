@@ -5,7 +5,7 @@ unit gameloop;
 interface
 
 uses
-  Sys,
+  Sys, common,
   com_kb,
   Timer, GFX, Event;
 
@@ -106,7 +106,7 @@ begin
     {Timer_Delay(8);}
     {$endif}
     com_kb.prevKeys := com_kb.keys;
-  until _done;
+  until _done or shouldQuit;
 end;
 
 end.

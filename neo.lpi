@@ -83,6 +83,7 @@
       <Unit>
         <Filename Value="engine\sdl\gfx_sdl.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GFX_SDL"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\gfx_sdl_core.pas"/>
@@ -91,6 +92,7 @@
       <Unit>
         <Filename Value="engine\sdl\image.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Image"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\keybrd.pas"/>
@@ -107,6 +109,7 @@
       <Unit>
         <Filename Value="engine\sdl\sys.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Sys"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\timer.pas"/>
@@ -140,6 +143,15 @@
         <Filename Value="game\g_common.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="engine\vect2d.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Vect2D"/>
+      </Unit>
+      <Unit>
+        <Filename Value="engine\rect.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -149,8 +161,8 @@
       <Filename Value="neo_sdl"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl"/>
-      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game"/>
+      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2"/>
+      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2;game;external\sdl2"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
@@ -162,6 +174,10 @@
       <Debugging>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
+      <Options>
+        <PassLinkerOptions Value="True"/>
+        <LinkerOptions Value="-F external\macos -rpath @loader_path\external\macos"/>
+      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>
