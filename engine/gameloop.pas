@@ -95,7 +95,7 @@ begin
     if frameTime - fpsTimer >= 1000 then
     begin
       fpsTimer := frameTime;
-      writeln('fps: ', fpsCount);
+      {writeln('fps: ', fpsCount);}
       fpsCount := 0;
     end;
 

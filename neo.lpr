@@ -129,14 +129,14 @@ var
         begin
           sx := tile_index mod 16;
           sy := tile_index div 16;
-          R_DrawSubImageTransparent(tileset^, 0 + tx * 16, 0 + ty *
+          R_DrawSubImageOpaque(tileset^, 0 + tx * 16, 0 + ty *
             16, sx * 16, sy * 16, 16, 16);
         end;
       end;
     end;
     { R_DrawSprite(x1, 0, img^); }
 
-    R_DrawSprite(0, 0, img_font^);
+    {R_DrawSprite(0, 0, img_font^);}
     font_printstr(32, 32, 'Hello World! 123456');
     if x1 > 256 then x1 := 0;
 

@@ -162,7 +162,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2"/>
-      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2;game;external\sdl2"/>
+      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game;external\sdl2"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

@@ -21,6 +21,8 @@ type
 type
   R_DrawSubImageTransparentProc = procedure(var img: image_t;
     dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+  R_DrawSubImageOpaqueProc = procedure(var img: image_t;
+    dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
   R_DrawSpriteProc = procedure(x, y: integer; var img: image_t);
   R_AllocPaletteProc = procedure(var pal: Palette);
   R_LoadPaletteProc = procedure(filename: string; var pal: Palette);
@@ -39,6 +41,7 @@ var
 
 var
   R_DrawSubImageTransparent: R_DrawSubImageTransparentProc;
+  R_DrawSubImageOpaque: R_DrawSubImageOpaqueProc;
   R_DrawSprite: R_DrawSpriteProc;
   R_AllocPalette: R_AllocPaletteProc;
   R_LoadPalette: R_LoadPaletteProc;

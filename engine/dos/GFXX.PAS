@@ -245,41 +245,67 @@ begin
 end;
 
 
-procedure DrawSpriteOpaqueFast(dstX, dstY: integer; var img: Image_t);
-var numCol, numRow, numCol2, srcPlane, dstPlane: integer;
+procedure DrawSubImageOpaque(var img: image_t; dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+  var subLeft, subRight, subTop, subBottom: integer;
+var numCol, numRow, srcPlane, dstPlane, nc0, nc1, nc2: integer;
 var x1: integer;
-var p, o: integer;
+var x, y, p, o: integer;
 var bp: byte_ptr;
 var numPlanes: integer;
 var srcSkip, dstSkip: word;
 var destPtr, srcPtr: pointer;
 begin
-    numCol := img.width shr 2;
-    numRow := img.height;
-    srcPlane := 0;
-    dstPlane := dstX and 3;
-    srcSkip := numCol * numRow;
-    dstSkip := (80 - numCol);
+  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)
+   then Exit;
 
-    x1 := dstX shr 2; {x1 is X pos in plane}
+  subLeft := srcX;
+  subRight := srcX + srcWidth;
+  subTop := srcY;
+  subBottom := srcY + srcHeight;
 
-    numPlanes := img.width;
-    if numPlanes > 4 then numPlanes := 4;
+  GFX_ClipRect(dstX, dstY, subLeft, subTop, subRight, subBottom);
+
+  numRow := (subBottom - subTop);
+  dstPlane := dstX and 3;
+
+  x1 := dstX shr 2; {x1 is X pos in plane}
+
+  numPlanes := (subRight - subLeft);
+  if numPlanes > 4 then numPlanes := 4;
+  if numPlanes = 0 then Exit;
+
+  srcPlane := subLeft and 3;
+
+  for p := 0 to numPlanes - 1 do begin   
+    word_out(SC_INDEX, MAP_MASK, 1 shl dstPlane);
 
     bp := img.data;
+    inc(bp, ((img.width shr 2) * img.height) * srcPlane);            {64 >> 2 = 16 per row * 64 rows}
 
-    numCol2 := numCol shr 1;
+    { Offset into the image plane }
+    { should this be srcPlane + p? }
+    inc(bp, (subLeft + p) shr 2 + (subTop * (img.width shr 2)));
 
-    for p := 0 to numPlanes - 1 do begin   
-      word_out(SC_INDEX, MAP_MASK, 1 shl dstPlane);
+    { How many columns are we drawing for this plane? }
+    { e.g. how many will be memcpy'd for this row? }
 
-      o := page_offset + dstY * 80 + x1;
+    nc0 := ((subLeft + p) shr 2);
+    nc1 := ((subRight - srcPlane - 1) shr 2);
 
-      destPtr := Ptr(SegA000, o);
-      srcPtr := bp;
-      
-      asm
-        push ds
+    numCol := (nc1 - nc0) + 1;
+    {writeln('srcPlane ', srcPlane, 
+    ' leftmost ', nc0,
+    ' rightmost ', nc1 , 
+    ' numCol: ', numCol);
+    }
+    o := page_offset + dstY * 80 + x1;
+
+    destPtr := Ptr(SegA000, o);
+    srcPtr := bp;
+    srcSkip := ((img.width shr 2) - numCol);
+    dstSkip := (80 - numCol);
+    asm        
+      push ds
         push si
 
         les di, destPtr
@@ -290,26 +316,27 @@ begin
         @@y_loop:
 
         push cx
-        mov cx, numCol2
-        rep movsw
+        mov cx, numCol
+        rep movsb
 
         add di, dstSkip
+      add si, srcSkip
 
         pop cx
         loop @@y_loop
 
         pop si
         pop ds
-      end;
-
-      inc(bp, srcSkip);
-
-      inc(dstPlane);
-      dstPlane := dstPlane and 3;
-      if dstPlane = 0 then inc(x1);
-
-      inc(srcPlane);
     end;
+
+    inc(bp, srcSkip);
+
+    inc(dstPlane);
+    dstPlane := dstPlane and 3;
+    if dstPlane = 0 then inc(x1);
+
+    inc(srcPlane);
+  end;
 end;
 
 
@@ -452,6 +479,7 @@ end;
 procedure InitDriver;
 begin
   R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSubImageOpaque := DrawSubImageOpaque;
   R_DrawSprite := DrawSprite;
   R_AllocPalette := AllocPalette;
   R_LoadPalette := LoadPalette;

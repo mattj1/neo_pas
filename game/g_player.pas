@@ -2,7 +2,11 @@ unit g_player;
 
 interface
 
-uses gtypes, g_common, g_map, fixedint, vect2d, rect;
+uses
+  {$ifdef fpc}
+     SysUtils,
+  {$endif}
+  gtypes, g_common, g_map, fixedint, vect2d, rect;
 
 procedure Player_Move(var e: ent_t);
 procedure Player_Frame(var e: ent_t);
@@ -39,13 +43,15 @@ begin
   begin
     World_Move(r0, vel, Result);
 
+  {  writeln(format('will move %d %d', [Result.x, Result.y]));}
     Inc(e.origin.x, Result.x);
     Inc(e.origin.y, Result.y);
+
+{    writeln(format('%d %d, %d %d', [player^.origin.x, player^.origin.y,
+      player^.origin.x >> 10, player^.origin.y >> 10]));
+ }
   end;
 
-
-
-  {writeln(player^.origin.x, ' ', player^.origin.y);}
 end;
 
 end.

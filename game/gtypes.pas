@@ -3,7 +3,7 @@ unit gtypes;
  {$F+}
 interface
 
-uses res_enum, fixedint, Vect2D;
+uses res_enum, fixedint, Vect2D, rect;
 
 const
   MAX_ENT: integer = 64;
@@ -22,22 +22,43 @@ type
     state: entityState;
   end;
 
+  pent_t = ^ent_t;
+
   sprite_info_t = record
     offsX, offsY: integer;
     srcX, srcY: integer;
     Width, Height: integer;
   end;
 
+type
+  CollisionType = (kCollisionTypeNone, kCollisionTypeTile, kCollisionTypeEntity);
+
+  TCollisionItem = record
+    collisionType: CollisionType;
+    entity: pent_t;
+    tileIndex: integer;
+  end;
+
+const
+  MAX_COLLISION_ITEMS = 32;
+
+type
+  TMoveInfo = record
+    rect: rect_t;     { The rectangle being moved }
+    delta: Vec2D_f32;
+    numItems: integer;
+    collisionSet: array[0..MAX_COLLISION_ITEMS - 1] of TCollisionItem;
+  end;
 
 
 
- MapTileLayer = array[0..1024] of integer;
+  MapTileLayer = array[0..1024] of integer;
   MapInfoLayer = array[0..1024] of byte;
   PMapTileLayer = ^MapTileLayer;
   PMapInfoLayer = ^MapInfoLayer;
 
   TLevelMap = record
-    width, height: integer;
+    Width, Height: integer;
     fg: PMapTileLayer;
     info: PMapInfoLayer;
   end;
@@ -56,8 +77,6 @@ type
 
     spriteState_: spriteState;
   end;
-
-  pent_t = ^ent_t;
 
 
 

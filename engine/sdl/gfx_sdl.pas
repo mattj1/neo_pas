@@ -143,7 +143,8 @@ begin
 
   AllocPalette(currentPalette);
 
-  indexedBackbuffer := SDL_CreateRGBSurface(SDL_SWSURFACE, screen_width, screen_height, 8, 0, 0, 0, 0);
+  indexedBackbuffer := SDL_CreateRGBSurface(SDL_SWSURFACE, screen_width,
+    screen_height, 8, 0, 0, 0, 0);
 
   currentPalette.sdlPalette := SDL_AllocPalette(256);
 
@@ -198,6 +199,7 @@ end;
 procedure InitDriver;
 begin
   R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSubImageOpaque := DrawSubImageOpaque;
   R_DrawSprite := DrawSprite;
   R_AllocPalette := AllocPalette;
   R_LoadPalette := LoadPalette;
