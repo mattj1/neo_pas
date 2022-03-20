@@ -12,7 +12,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="113"/>
-        <CursorPos X="17" Y="119"/>
+        <CursorPos X="68" Y="133"/>
         <UsageCount Value="481"/>
         <Loaded Value="True"/>
       </Unit>
@@ -569,13 +569,6 @@
         <TopLine Value="2"/>
         <CursorPos X="43" Y="38"/>
         <UsageCount Value="18"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit>
-      <Unit>
-        <Filename Value="sdl\res.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="13"/>
-        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
