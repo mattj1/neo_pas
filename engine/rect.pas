@@ -17,6 +17,7 @@ function RectLeft(var r: rect_t): fix32;
 function RectRight(var r: rect_t): fix32;
 procedure RectInflate(var rect: rect_t; x, y: fix32);
 procedure RectUnion(r0, r1: rect_t; var outRect: rect_t);
+procedure RectGetCenter(var rect: rect_t; var center: Vec2D_f32);
 
 implementation
 
@@ -80,5 +81,11 @@ begin
   Inc(rect.size.y, 2 * y);
 end;
 
+procedure RectGetCenter(var rect: rect_t; var center: Vec2D_f32);
+begin
+  center.x := (RectLeft(rect) + RectRight(rect)) shr 1;
+  center.y := (RectBottom(rect) + RectTop(rect)) shr 1;
+
+end;
 
 end.

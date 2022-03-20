@@ -10,31 +10,42 @@ procedure World_Move(rect: rect_t; delta: Vec2D_f32; var move_delta: Vec2D_f32);
 implementation
 
 procedure AllocMap(Width, Height: integer; var m: TLevelMap);
+var mapSize: integer;
 begin
 
   m.Width := Width;
   m.Height := Height;
-
-  GetMem(m.fg, sizeof(integer) * Width * Height);
-  GetMem(m.info, sizeof(byte) * Width * Height);
+  mapSize := sizeOf(TMapTile) * Width * Height;
+  writeln('allocate ', mapSize, ' bytes for map');
+  GetMem(m.tiles, mapSize);
 end;
 
 procedure LoadMap(filename: string; var m: TLevelMap);
 var
   f: file;
+  i: integer;
+  tile: PMapTile;
 begin
   AllocMap(18, 13, m);
 
   Assign(f, filename);
   Reset(f, 1);
-  BlockRead(f, m.fg^, sizeof(integer) * m.Width * m.Height);
+
+  for i := 0 to m.Width * m.Height - 1 do
+  begin
+    tile := @m.tiles^[i];
+    tile^.x := i mod m.Width;
+    tile^.y := i div m.Width;
+
+    BlockRead(f, tile^.fg, sizeof(integer));
+  end;
   Close(f);
 end;
 
-procedure RectForTile(tx, ty: integer; var outRect: rect_t);
+procedure RectForTile(var tile: TMapTile; var outRect: rect_t);
 begin
-  outRect.origin.x := intToFix32(tx * 16);
-  outRect.origin.y := intToFix32(ty * 16);
+  outRect.origin.x := intToFix32(tile.x * 16);
+  outRect.origin.y := intToFix32(tile.y * 16);
   outRect.size.x := intToFix32(16);
   outRect.size.y := intToFix32(16);
 end;
@@ -117,11 +128,18 @@ begin
   end;}
 end;
 
-procedure AddTileToMoveInfo(var moveInfo: TMoveInfo; tile: integer);
+procedure AddTileToMoveInfo(var moveInfo: TMoveInfo; tile: PMapTile);
 begin
   moveInfo.collisionSet[moveInfo.numItems].collisionType := kCollisionTypeTile;
-  moveInfo.collisionSet[moveInfo.numItems].tileIndex := tile;
+  moveInfo.collisionSet[moveInfo.numItems].tile := tile;
   Inc(moveInfo.numItems);
+end;
+
+procedure SlideAgainstTile;
+var
+  tileCenter: Vec2D_f32;
+begin
+
 end;
 
 procedure World_Move1D(var moveInfo: TMoveInfo; delta: Vec2D_f32);
@@ -140,13 +158,18 @@ begin
     case (ci^.collisionType) of
       kCollisionTypeTile:
       begin
-        RectForTile(ci^.tileIndex mod map.Width, ci^.tileIndex div map.Width, otherRect);
+        RectForTile(ci^.tile^, otherRect);
       end;
     end;
 
     if IsRectIntersect(moveInfo.rect, otherRect) then
     begin
       AdjustCollisionRect(moveInfo.rect, otherRect, delta);
+
+      if (ci^.collisionType = kCollisionTypeTile) then
+      begin
+        SlideAgainstTile;
+      end;
     end;
   end;
 end;
@@ -159,7 +182,8 @@ var
   moveInfo: TMoveInfo;
   v: Vec2D_f32;
 var
-  tx0, ty0, tx1, ty1, tx, ty, t: integer;
+  tx0, ty0, tx1, ty1, tx, ty: integer;
+  t: PMapTile;
 begin
   InitMoveInfo(moveInfo);
   moveInfo.rect := rect;
@@ -179,10 +203,10 @@ begin
   begin
     for tx := tx0 to tx1 do
     begin
-      t := map.fg^[tx + ty * map.Width];
-      if t = 2 then
+      t := @map.tiles^[tx + ty * map.Width];
+      if t^.fg = 2 then
       begin
-        AddTileToMoveInfo(moveInfo, tx + ty * map.Width);
+        AddTileToMoveInfo(moveInfo, t);
       end;
     end;
   end;

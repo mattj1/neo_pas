@@ -95,7 +95,7 @@ begin
 
   c := subBottom - subTop;
 
-  if y + subBottom >= screen_height then
+  if y + c >= screen_height then
   begin
     Dec(subBottom, (y + c - screen_height));
   end;

@@ -31,16 +31,24 @@ type
   end;
 
 type
+  TMapTile = record
+    x, y: byte;
+    fg: integer;
+    info: byte;
+  end;
+
+  PMapTile = ^TMapTile;
+
   CollisionType = (kCollisionTypeNone, kCollisionTypeTile, kCollisionTypeEntity);
 
   TCollisionItem = record
     collisionType: CollisionType;
     entity: pent_t;
-    tileIndex: integer;
+    tile: PMapTile;
   end;
 
 const
-  MAX_COLLISION_ITEMS = 32;
+  MAX_COLLISION_ITEMS = 16;
 
 type
   TMoveInfo = record
@@ -52,15 +60,13 @@ type
 
 
 
-  MapTileLayer = array[0..1024] of integer;
-  MapInfoLayer = array[0..1024] of byte;
-  PMapTileLayer = ^MapTileLayer;
-  PMapInfoLayer = ^MapInfoLayer;
+
+  TMapTiles = array[0..1024] of TMapTile;
+  PMapTiles = ^TMapTiles;
 
   TLevelMap = record
     Width, Height: integer;
-    fg: PMapTileLayer;
-    info: PMapInfoLayer;
+    tiles: PMapTiles;
   end;
 
   PLevelMap = ^TLevelMap;

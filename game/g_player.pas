@@ -35,9 +35,11 @@ begin
   if player_input and 4 <> 0 then vel.x := intToFix32(-1);
   if player_input and 8 <> 0 then vel.x := intToFix32(1);
 
-  r0.origin := e.origin;
-  r0.size.x := intToFix32(16);
-  r0.size.y := intToFix32(16);
+  r0.origin.x := e.origin.x - intToFix32(7);
+  r0.origin.y := e.origin.y - intToFix32(8);
+
+  r0.size.x := intToFix32(14);
+  r0.size.y := intToFix32(8);
 
   if player_input and 15 <> 0 then
   begin

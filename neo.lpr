@@ -101,7 +101,7 @@ var
   begin
     ss := @sprite_states[Ord(_spriteState)];
     si := @sprite_infos[Ord(ss^.sprites[direction])];
-    R_DrawSubImageTransparent(tileset^, x + si^.offsX, y + si^.offsY,
+    R_DrawSubImageTransparent(tileset^, x - si^.offsX, y - si^.offsY,
       si^.srcX, si^.srcY, si^.Width, si^.Height);
 
   end;
@@ -124,7 +124,7 @@ var
     begin
       for tx := 0 to map.Width - 1 do
       begin
-        tile_index := map.fg^[tx + ty * map.Width];
+        tile_index := map.tiles^[tx + ty * map.Width].fg;
         if tile_index <> -1 then
         begin
           sx := tile_index mod 16;
@@ -163,6 +163,8 @@ begin
   writeln(sizeof(integer));
   tileset := Image_Load('proto.bmp');
   img_font := Image_Load('font.bmp');
+  LoadMap('./dev/m_main.bin', map);
+
   {$ifndef fpc}
   {readln;}
   {$endif}
@@ -211,7 +213,7 @@ begin
   SND_PlaySound(tempSound);
   {$endif}
 
-  LoadMap('./dev/m_main.bin', map);
+
   player := Entity_Alloc(1);
   player^.origin.x := intToFix32(64);
   player^.origin.y := intToFix32(64);
