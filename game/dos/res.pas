@@ -8,26 +8,29 @@ interface
 uses gtypes, res_enum;
 
 const
-	sprite_infos: array[0..2] of sprite_info_t = (
+	sprite_infos: array[0..3] of sprite_info_t = (
 		{ SPRITE_NONE_0 }
-		(offsX: 8; offsY: 16; srcX: 0; srcY: 0; Width: 0; Height: 0),
+		(offsX: 0; offsY: 0; srcX: 0; srcY: 0; Width: 0; Height: 0),
 		{ SPRITE_PLAYER0_0 }
-		(offsX: 8; offsY: 16; srcX: 0; srcY: 80; Width: 16; Height: 16),
+		(offsX: 8; offsY: 16; srcX: 0; srcY: 0; Width: 16; Height: 16),
 		{ SPRITE_PLAYER1_0 }
-		(offsX: 8; offsY: 16; srcX: 0; srcY: 80; Width: 16; Height: 16)
-	);     
+		(offsX: 8; offsY: 16; srcX: 16; srcY: 0; Width: 16; Height: 16),
+		{ SPRITE_PLAYER2_0 }
+		(offsX: 8; offsY: 16; srcX: 32; srcY: 0; Width: 16; Height: 16)
+	);
 
-
-	sprite_states: array[0..2] of sprite_state_t = (
+	sprite_states: array[0..3] of sprite_state_t = (
 		{ SPRITE_NONE }
 		( sprites: (SPRITE_NONE_0, SPRITE_NONE_0, SPRITE_NONE_0, SPRITE_NONE_0); tileSet: 0 ),
 		{ SPRITE_PLAYER0 }
 		( sprites: (SPRITE_PLAYER0_0, SPRITE_PLAYER0_0, SPRITE_PLAYER0_0, SPRITE_PLAYER0_0); tileSet: 0 ),
 		{ SPRITE_PLAYER1 }
-		( sprites: (SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0); tileSet: 0 )
+		( sprites: (SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0, SPRITE_PLAYER1_0); tileSet: 0 ),
+		{ SPRITE_PLAYER2 }
+		( sprites: (SPRITE_PLAYER2_0, SPRITE_PLAYER2_0, SPRITE_PLAYER2_0, SPRITE_PLAYER2_0); tileSet: 0 )
 	);
 
-	entity_states: array[0..2] of entity_state_t = (
+	entity_states: array[0..4] of entity_state_t = (
 		(
 		state: STATE_NONE;
 		nextState: STATE_NONE;
@@ -46,6 +49,22 @@ const
 		),
 		(
 		state: STATE_PLAYER1;
+		nextState: STATE_PLAYER2;
+		numFrames: 20; 
+		onStateProc: nil; 
+		onFrameProc: nil; 
+		spriteState_: SPRITE_PLAYER1 
+		),
+		(
+		state: STATE_PLAYER2;
+		nextState: STATE_PLAYER3;
+		numFrames: 20; 
+		onStateProc: nil; 
+		onFrameProc: nil; 
+		spriteState_: SPRITE_PLAYER2 
+		),
+		(
+		state: STATE_PLAYER3;
 		nextState: STATE_PLAYER0;
 		numFrames: 20; 
 		onStateProc: nil; 

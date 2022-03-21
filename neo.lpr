@@ -14,7 +14,7 @@ program test;
 {$endif}
 
 var
-  tileset, img_font: pimage_t;
+  tileset, sprites, img_font: pimage_t;
 var
   x, x1, y, lastTime: integer;
 
@@ -34,7 +34,7 @@ var
   var
     i: integer;
   begin
-    for i := 1 to Length(str) do
+    for i := 1 to System.Length(str) do
     begin
       R_DrawSubImageTransparent(img_font^, x, y, 8 * (Ord(str[i]) - 32), 0, 8, 10);
       Inc(x, 8);
@@ -65,7 +65,7 @@ var
     if I_IsKeyDown(kEnter) then Loop_Cancel;
 
     {$ifndef fpc}
-    if I_WasKeyPressed(kRt) then SND_PlaySound(tempSound);
+    {if I_WasKeyPressed(kRt) then SND_PlaySound(tempSound);}
     {$endif}
 
     for i := 0 to MAX_ENT - 1 do
@@ -101,7 +101,7 @@ var
   begin
     ss := @sprite_states[Ord(_spriteState)];
     si := @sprite_infos[Ord(ss^.sprites[direction])];
-    R_DrawSubImageTransparent(tileset^, x - si^.offsX, y - si^.offsY,
+    R_DrawSubImageTransparent(sprites^, x - si^.offsX, y - si^.offsY,
       si^.srcX, si^.srcY, si^.Width, si^.Height);
 
   end;
@@ -127,8 +127,8 @@ var
         tile_index := map.tiles^[tx + ty * map.Width].fg;
         if tile_index <> -1 then
         begin
-          sx := tile_index mod 16;
-          sy := tile_index div 16;
+          sx := tile_index mod 19;
+          sy := tile_index div 19;
           R_DrawSubImageOpaque(tileset^, 0 + tx * 16, 0 + ty *
             16, sx * 16, sy * 16, 16, 16);
         end;
@@ -160,8 +160,8 @@ var
   e: pent_t;
 begin
   writeln('--- Init ---');
-  writeln(sizeof(integer));
-  tileset := Image_Load('proto.bmp');
+  tileset := Image_Load('proto2.bmp');
+  sprites := Image_Load('proto2s.bmp');
   img_font := Image_Load('font.bmp');
   LoadMap('./dev/m_main.bin', map);
 
@@ -189,7 +189,7 @@ begin
 
   R_Init;
   R_AllocPalette(pal);
-  R_LoadPalette('proto.pal', pal);
+  R_LoadPalette('proto2.pal', pal);
   R_SetPalette(pal);
 
   {$ifndef fpc}
@@ -210,7 +210,7 @@ begin
     Inc(i, 1);
   end;
 
-  SND_PlaySound(tempSound);
+ { SND_PlaySound(tempSound);    }
   {$endif}
 
 

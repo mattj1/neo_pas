@@ -212,20 +212,28 @@ class ResTool:
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER0")
-        self.sprite_info(direction=0, src_rect=(0, 80, 16, 32), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(0, 0, 16, 16), offset=(8, 16))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.sprite_state("PLAYER1")
-        self.sprite_info(direction=0, src_rect=(16, 80, 16, 32), offset=(0, 0))
+        self.sprite_info(direction=0, src_rect=(16, 0, 16, 16), offset=(8, 16))
+        self.sprite_info_use(direction=1, use_direction=0)
+        self.sprite_info_use(direction=2, use_direction=0)
+        self.sprite_info_use(direction=3, use_direction=0)
+
+        self.sprite_state("PLAYER2")
+        self.sprite_info(direction=0, src_rect=(32, 0, 16, 16), offset=(8, 16))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
         self.entity_states.append(['NONE', 'NONE', 60, 'nil', 'nil', 'NONE'])
         self.entity_states.append(['PLAYER0', 'PLAYER1', 20, 'nil', 'nil', 'PLAYER0'])
-        self.entity_states.append(['PLAYER1', 'PLAYER0', 20, 'nil', 'nil', 'PLAYER1'])
+        self.entity_states.append(['PLAYER1', 'PLAYER2', 20, 'nil', 'nil', 'PLAYER1'])
+        self.entity_states.append(['PLAYER2', 'PLAYER3', 20, 'nil', 'nil', 'PLAYER2'])
+        self.entity_states.append(['PLAYER3', 'PLAYER0', 20, 'nil', 'nil', 'PLAYER1'])
 
         # write the resource files
         self.write_enums(filename='../../game/res_enum.pas')
@@ -235,16 +243,26 @@ class ResTool:
 
 
 def run_csv_import():
-    rows = []
-    with open('../../dev/proto.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            rows.append(row)
 
     with open('../../dev/m_main.bin', 'wb') as f:
-        for row in rows:
-            for val in row:
-                f.write(struct.pack("<h", int(val)))
+        with open('../../dev/proto_FG.csv', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for row in reader:
+                for val in row:
+                    f.write(struct.pack("<h", int(val)))
+
+        with open('../../dev/proto_SOLID.csv', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for row in reader:
+                for val in row:
+
+                    if int(val) == 1:
+                        # f.write(bytes([1]))
+                        f.write(struct.pack("B", 1))
+                    else:
+                        f.write(struct.pack("B", 0))
+
+
 
 
 if __name__ == '__main__':

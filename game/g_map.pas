@@ -5,12 +5,16 @@ interface
 uses gtypes, fixedint, g_common, Vect2D, rect;
 
 procedure LoadMap(filename: string; var m: TLevelMap);
-procedure World_Move(rect: rect_t; delta: Vec2D_f32; var move_delta: Vec2D_f32);
+procedure World_Move(rect: rect_t; delta: Vec2D_f32; var moveInfo: TMoveInfo);
 
 implementation
 
+const
+  SLIDE_FAC: fix32 = 256;
+
 procedure AllocMap(Width, Height: integer; var m: TLevelMap);
-var mapSize: integer;
+var
+  mapSize: integer;
 begin
 
   m.Width := Width;
@@ -39,6 +43,13 @@ begin
 
     BlockRead(f, tile^.fg, sizeof(integer));
   end;
+
+  for i := 0 to m.Width * m.Height - 1 do
+  begin
+    tile := @m.tiles^[i];
+    BlockRead(f, tile^.info, sizeof(byte));
+  end;
+
   Close(f);
 end;
 
@@ -121,11 +132,8 @@ var
   i: integer;
 begin
   moveInfo.numItems := 0;
-
-  {for i := 0 to 32 do
-  begin
-    moveInfo.collisionSet[i].collisionType := kCollisionTypeNone;
-  end;}
+  moveInfo.allowedSlideDirection := DirectionNone;
+  Vect2D.Zero(moveInfo.result_delta);
 end;
 
 procedure AddTileToMoveInfo(var moveInfo: TMoveInfo; tile: PMapTile);
@@ -135,11 +143,69 @@ begin
   Inc(moveInfo.numItems);
 end;
 
-procedure SlideAgainstTile;
-var
-  tileCenter: Vec2D_f32;
+function Map_TileAt(x, y: integer): PMapTile;
+begin
+  Map_TileAt := nil;
+  if (x < 0) or (y < 0) or (x >= map.Width) or (y >= map.Height) then Exit;
+
+  Map_TileAt := @map.tiles^[x + y * map.Width];
+end;
+
+function Map_TileNear(var tile: TMapTile; dir: TDirection): PMapTile;
 begin
 
+  Map_TileNear := nil;
+
+  case (dir) of
+    DirectionUp: Map_TileNear := Map_TileAt(tile.x, tile.y - 1);
+    DirectionDown: Map_TileNear := Map_TileAt(tile.x, tile.y + 1);
+    DirectionLeft: Map_TileNear := Map_TileAt(tile.x - 1, tile.y);
+    DirectionRight: Map_TileNear := Map_TileAt(tile.x + 1, tile.y);
+  end;
+end;
+
+procedure SlideAgainstTile(var tile: TMapTile; delta: Vec2D_f32;
+  var moveInfo: TMoveInfo);
+var
+  tileRect: rect_t;
+  tc, c: Vec2D_f32;
+  fac: fix32;
+  checkDirection: TDirection;
+  tileNear: PMapTile;
+begin
+  checkDirection := DirectionNone;
+
+  RectForTile(tile, tileRect);
+  RectGetCenter(moveInfo.rect, c);
+  RectGetCenter(tileRect, tc);
+
+  if (delta.X <> 0) then
+  begin
+    fac := fix32Div(c.y - tc.y, tileRect.size.y);
+    if fac <= -SLIDE_FAC then checkDirection := DirectionUp;
+    if fac >= SLIDE_FAC then checkDirection := DirectionDown;
+  end;
+
+  if (delta.Y <> 0) then
+  begin
+    fac := fix32Div(c.x - tc.x, tileRect.size.x);
+    if fac <= -SLIDE_FAC then checkDirection := DirectionLeft;
+    if fac >= SLIDE_FAC then checkDirection := DirectionRight;
+  end;
+
+  if checkDirection <> DirectionNone then
+  begin
+
+    tileNear := Map_TileNear(tile, checkDirection);
+
+    { Only slide if the adjacent tile is not solid }
+
+    if (tileNear <> nil) and (tileNear^.info = 0)  then
+    begin
+      {writeln('clear to slide ', ord(checkDirection));}
+      moveInfo.allowedSlideDirection := checkDirection;
+    end;
+  end;
 end;
 
 procedure World_Move1D(var moveInfo: TMoveInfo; delta: Vec2D_f32);
@@ -168,7 +234,7 @@ begin
 
       if (ci^.collisionType = kCollisionTypeTile) then
       begin
-        SlideAgainstTile;
+        SlideAgainstTile(ci^.tile^, delta, moveInfo);
       end;
     end;
   end;
@@ -176,10 +242,9 @@ end;
 
 
 
-procedure World_Move(rect: rect_t; delta: Vec2D_f32; var move_delta: Vec2D_f32);
+procedure World_Move(rect: rect_t; delta: Vec2D_f32; var moveInfo: TMoveInfo);
 var
   bounds: rect_t;
-  moveInfo: TMoveInfo;
   v: Vec2D_f32;
 var
   tx0, ty0, tx1, ty1, tx, ty: integer;
@@ -204,7 +269,7 @@ begin
     for tx := tx0 to tx1 do
     begin
       t := @map.tiles^[tx + ty * map.Width];
-      if t^.fg = 2 then
+      if t^.info = 1 then
       begin
         AddTileToMoveInfo(moveInfo, t);
       end;
@@ -218,7 +283,9 @@ begin
   v.y := delta.y;
   World_Move1D(moveInfo, v);
 
-  Vect2D.Subtract(moveInfo.rect.origin, rect.origin, move_delta);
+  Vect2D.Subtract(moveInfo.rect.origin, rect.origin, moveInfo.result_delta);
 end;
+
+begin
 
 end.

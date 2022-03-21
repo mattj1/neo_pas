@@ -10,28 +10,31 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="test"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="79"/>
-        <CursorPos X="59" Y="104"/>
+        <TopLine Value="81"/>
+        <CursorPos X="38" Y="104"/>
         <UsageCount Value="481"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_player.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="25"/>
-        <CursorPos X="53" Y="29"/>
+        <TopLine Value="37"/>
+        <CursorPos X="63" Y="64"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\gtypes.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="23"/>
-        <CursorPos X="42" Y="38"/>
+        <TopLine Value="25"/>
+        <CursorPos X="5" Y="41"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\res_enum.pas"/>
@@ -47,9 +50,10 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <TopLine Value="5"/>
-        <CursorPos X="27" Y="9"/>
+        <CursorPos X="52" Y="18"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\entity.pas"/>
@@ -63,30 +67,35 @@
           <Item0 X="22" Y="15" ID="9"/>
         </Bookmarks>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_map.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="15"/>
-        <TopLine Value="22"/>
-        <CursorPos X="24" Y="42"/>
-        <UsageCount Value="185"/>
+        <EditorIndex Value="17"/>
+        <TopLine Value="187"/>
+        <CursorPos X="46" Y="203"/>
+        <UsageCount Value="201"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\com_kb.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="16"/>
         <CursorPos Y="7"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\common.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="15"/>
         <CursorPos X="23" Y="12"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\event.pas"/>
@@ -95,7 +104,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -104,8 +113,9 @@
         <EditorIndex Value="5"/>
         <TopLine Value="74"/>
         <CursorPos X="27" Y="91"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\gameloop.pas"/>
@@ -113,8 +123,9 @@
         <EditorIndex Value="6"/>
         <TopLine Value="75"/>
         <CursorPos X="36" Y="98"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\gfx_sdl.pas"/>
@@ -123,17 +134,18 @@
         <EditorIndex Value="1"/>
         <TopLine Value="182"/>
         <CursorPos X="47" Y="205"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\gfx_sdl_core.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="94"/>
+        <UnitName Value="GFX_SDL_Core"/>
+        <EditorIndex Value="12"/>
+        <CursorPos X="62"/>
+        <UsageCount Value="114"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -142,8 +154,9 @@
         <UnitName Value="Image"/>
         <EditorIndex Value="7"/>
         <CursorPos X="65" Y="25"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\keybrd.pas"/>
@@ -152,16 +165,17 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\neo_sdl.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="19" Y="3"/>
-        <UsageCount Value="94"/>
+        <CursorPos X="27" Y="3"/>
+        <UsageCount Value="114"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\r_pal.pas"/>
@@ -170,7 +184,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -180,7 +194,8 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="36" Y="7"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\timer.pas"/>
@@ -189,7 +204,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="114"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -199,7 +214,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -209,7 +224,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -219,7 +234,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -229,7 +244,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -239,41 +254,45 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="112"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\fixedint.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="16"/>
-        <CursorPos Y="50"/>
-        <UsageCount Value="54"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="7"/>
+        <CursorPos X="10" Y="13"/>
+        <UsageCount Value="74"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_common.pas"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="14"/>
-        <UsageCount Value="53"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\vect2d.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Vect2D"/>
-        <EditorIndex Value="12"/>
-        <CursorPos X="59" Y="15"/>
-        <UsageCount Value="44"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="38"/>
+        <CursorPos X="10" Y="21"/>
+        <UsageCount Value="64"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\rect.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="14"/>
-        <CursorPos Y="21"/>
-        <UsageCount Value="44"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="9"/>
+        <UsageCount Value="64"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\fixed.pas"/>
@@ -281,14 +300,14 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="19"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="common.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="29" Y="18"/>
-        <UsageCount Value="473"/>
+        <UsageCount Value="471"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -296,7 +315,7 @@
         <UnitName Value="GFX"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="25" Y="5"/>
-        <UsageCount Value="209"/>
+        <UsageCount Value="207"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -305,21 +324,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="19"/>
         <CursorPos X="29" Y="39"/>
-        <UsageCount Value="216"/>
+        <UsageCount Value="214"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="sdl\gfx_sdl_core.pas"/>
         <UnitName Value="GFX_SDL_Core"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="214"/>
+        <UsageCount Value="212"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="sdl\neo_sdl.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="6"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="196"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -327,7 +346,7 @@
         <UnitName Value="Timer"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11" Y="18"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="197"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -335,14 +354,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos X="31" Y="106"/>
-        <UsageCount Value="447"/>
+        <UsageCount Value="445"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="GFX_TB.PAS"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="29"/>
-        <UsageCount Value="422"/>
+        <UsageCount Value="420"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -351,7 +370,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="19"/>
         <CursorPos X="47" Y="39"/>
-        <UsageCount Value="422"/>
+        <UsageCount Value="420"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -359,14 +378,14 @@
         <UnitName Value="image"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="13" Y="7"/>
-        <UsageCount Value="423"/>
+        <UsageCount Value="421"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="kb_tb.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="9"/>
-        <UsageCount Value="421"/>
+        <UsageCount Value="419"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -375,28 +394,28 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="25"/>
         <CursorPos X="70" Y="28"/>
-        <UsageCount Value="425"/>
+        <UsageCount Value="423"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="timer_tb.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="75" Y="12"/>
-        <UsageCount Value="421"/>
+        <UsageCount Value="419"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="GAME.PAS"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="18" Y="9"/>
-        <UsageCount Value="421"/>
+        <UsageCount Value="419"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="TEXT.PAS"/>
         <UnitName Value="Text"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="421"/>
+        <UsageCount Value="419"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -404,14 +423,14 @@
         <UnitName Value="Text_TB"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="6"/>
-        <UsageCount Value="421"/>
+        <UsageCount Value="419"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="inc\gfx.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="90" Y="5"/>
-        <UsageCount Value="195"/>
+        <UsageCount Value="193"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -420,14 +439,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="30"/>
         <CursorPos X="53" Y="106"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="115"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="inc\image.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="20" Y="3"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="196"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -435,33 +454,33 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="106"/>
         <CursorPos X="30" Y="110"/>
-        <UsageCount Value="67"/>
+        <UsageCount Value="65"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\units\SDL2\sdl2.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="103"/>
+        <UsageCount Value="101"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\strings.pp"/>
         <UnitName Value="Strings"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="68"/>
+        <UsageCount Value="66"/>
       </Unit>
       <Unit>
         <Filename Value="inc\timer.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11"/>
-        <UsageCount Value="258"/>
+        <UsageCount Value="256"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="inc\gameloop.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="258"/>
+        <UsageCount Value="256"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -469,7 +488,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos X="61" Y="32"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="194"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -477,7 +496,7 @@
         <UnitName Value="GFX"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="9"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="180"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -485,7 +504,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="137"/>
         <CursorPos X="3" Y="157"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="95"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -493,21 +512,21 @@
         <UnitName Value="Keybrd"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="5" Y="9"/>
-        <UsageCount Value="205"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="kb.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="33" Y="8"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="60"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="com_kb.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11" Y="8"/>
-        <UsageCount Value="204"/>
+        <UsageCount Value="202"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -516,7 +535,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="24"/>
         <CursorPos X="24" Y="45"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="197"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -525,14 +544,14 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="258"/>
+        <UsageCount Value="256"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="inc\sys.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11" Y="2"/>
-        <UsageCount Value="258"/>
+        <UsageCount Value="256"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -541,7 +560,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="88"/>
         <CursorPos X="19" Y="96"/>
-        <UsageCount Value="258"/>
+        <UsageCount Value="256"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -549,7 +568,7 @@
         <UnitName Value="R_Pal"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="8" Y="16"/>
-        <UsageCount Value="257"/>
+        <UsageCount Value="255"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -558,7 +577,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos X="29" Y="46"/>
-        <UsageCount Value="220"/>
+        <UsageCount Value="218"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -566,7 +585,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos X="43" Y="38"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -574,14 +593,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="14"/>
         <CursorPos X="38" Y="34"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="engine\math.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="6"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="41"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -590,14 +609,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="49" Y="16"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="engine\tests\fixed_test.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="35" Y="10"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="15"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -605,7 +624,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="13" Y="113"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -613,21 +632,23 @@
         <EditorIndex Value="2"/>
         <TopLine Value="85"/>
         <CursorPos X="7" Y="105"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="external\sdl2\sdlevents.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="62"/>
         <CursorPos X="3" Y="62"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="17"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="unit3.pas"/>
         <UnitName Value="Unit3"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="18"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -635,129 +656,129 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="133"/>
         <CursorPos X="10" Y="151"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="183" Column="58" TopLine="170"/>
+        <Filename Value="engine\vect2d.pas"/>
+        <Caret Line="19" Column="64"/>
+      </Position>
+      <Position>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="45" TopLine="37"/>
+      </Position>
+      <Position>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="50" Column="51" TopLine="40"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="194" Column="66" TopLine="166"/>
+        <Caret Line="8" Column="11" TopLine="2"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="145" Column="19" TopLine="122"/>
+        <Caret Line="228" Column="51" TopLine="212"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="103" Column="119" TopLine="87"/>
+        <Caret Line="197" Column="5" TopLine="174"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="127" Column="49" TopLine="119"/>
+        <Caret Line="198" Column="9" TopLine="124"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="42" Column="10" TopLine="26"/>
+        <Caret Line="85" Column="50" TopLine="61"/>
       </Position>
       <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="163" TopLine="150"/>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="58" Column="36" TopLine="40"/>
+      </Position>
+      <Position>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="52" Column="63" TopLine="42"/>
+      </Position>
+      <Position>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="68" Column="42" TopLine="43"/>
+      </Position>
+      <Position>
+        <Filename Value="game\g_player.pas"/>
+        <Caret Line="54" Column="17" TopLine="43"/>
       </Position>
       <Position>
         <Filename Value="neo.lpr"/>
-        <Caret Line="133" Column="43" TopLine="116"/>
-      </Position>
-      <Position>
-        <Filename Value="engine\rect.pas"/>
-        <Caret Line="88" Column="54" TopLine="56"/>
-      </Position>
-      <Position>
-        <Filename Value="engine\rect.pas"/>
-        <Caret Line="86" Column="55" TopLine="57"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="12" Column="55"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="33" Column="21" TopLine="8"/>
-      </Position>
-      <Position>
-        <Filename Value="game\gtypes.pas"/>
-        <Caret Line="65" Column="5" TopLine="40"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="34" Column="6" TopLine="8"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="180" Column="15" TopLine="172"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="201" Column="13" TopLine="182"/>
+        <Caret Line="171" Column="29" TopLine="154"/>
       </Position>
       <Position>
         <Filename Value="neo.lpr"/>
-        <Caret Line="167" TopLine="160"/>
+        <Caret Line="161" Column="6" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="engine\sdl\neo_sdl.inc"/>
+        <Caret Line="3" Column="19"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="37" Column="26" TopLine="8"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="171" Column="45" TopLine="144"/>
+      </Position>
+      <Position>
+        <Filename Value="engine\vect2d.pas"/>
+        <Caret Line="56" Column="62" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="engine\fixedint.pas"/>
+        <Caret Line="13" Column="10" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="171" Column="45" TopLine="144"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="144" Column="61" TopLine="144"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="170" Column="11" TopLine="143"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="110" Column="45" TopLine="106"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="196" Column="20" TopLine="168"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="19" Column="37" TopLine="7"/>
-      </Position>
-      <Position>
-        <Filename Value="game\gtypes.pas"/>
-        <Caret Line="38" Column="42" TopLine="23"/>
+        <Caret Line="8" Column="11" TopLine="142"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="130" Column="48" TopLine="114"/>
+        <Caret Line="274" TopLine="233"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="157" Column="26" TopLine="141"/>
+        <Caret Line="27" Column="11" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="neo.lpr"/>
+        <Caret Line="131" Column="34" TopLine="154"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="37" Column="29" TopLine="19"/>
+        <Caret Line="27" Column="11" TopLine="143"/>
       </Position>
       <Position>
         <Filename Value="game\g_map.pas"/>
-        <Caret Line="158" Column="9" TopLine="147"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="45" Column="38" TopLine="25"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="158" Column="30" TopLine="142"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="42" Column="11" TopLine="26"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="158" Column="29" TopLine="142"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="42" Column="33" TopLine="77"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="38" Column="28" TopLine="16"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_map.pas"/>
-        <Caret Line="40" Column="26" TopLine="21"/>
+        <Caret Line="203" Column="50" TopLine="180"/>
       </Position>
     </JumpHistory>
     <RunParams>

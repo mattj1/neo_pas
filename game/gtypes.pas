@@ -10,6 +10,10 @@ const
 
 
 type
+
+  TDirection = (DirectionNone, DirectionUp, DirectionDown, DirectionLeft,
+    DirectionRight);
+
   sprite_state_t = record
     sprites: array[0..3] of spriteInfo;
     tileSet: integer;
@@ -35,6 +39,7 @@ type
     x, y: byte;
     fg: integer;
     info: byte;
+    {bounds: rect_t;}
   end;
 
   PMapTile = ^TMapTile;
@@ -56,6 +61,10 @@ type
     delta: Vec2D_f32;
     numItems: integer;
     collisionSet: array[0..MAX_COLLISION_ITEMS - 1] of TCollisionItem;
+    allowedSlideDirection: TDirection;
+
+    { Final amount the rectangle moved }
+    result_delta: Vec2D_f32;
   end;
 
 
@@ -85,8 +94,24 @@ type
   end;
 
 
-
+procedure DirectionToVec2D(dir: TDirection; fac: fix32; var _out: Vec2D_f32);
 
 implementation
+
+procedure DirectionToVec2D(dir: TDirection; fac: fix32; var _out: Vec2D_f32);
+begin
+  case (dir) of
+    DirectionUp:
+      Vect2D.SetFromInt(_out, 0, -1);
+    DirectionDown:
+      Vect2D.SetFromInt(_out, 0, 1);
+    DirectionLeft:
+      Vect2D.SetFromInt(_out, -1, 0);
+    DirectionRight:
+      Vect2D.SetFromInt(_out, 1, 0);
+  end;
+
+  Vect2D.MultFix32(_out, fac, _out);
+end;
 
 end.
