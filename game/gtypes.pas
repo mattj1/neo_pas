@@ -11,8 +11,8 @@ const
 
 type
 
-  TDirection = (DirectionNone, DirectionUp, DirectionDown, DirectionLeft,
-    DirectionRight);
+  TDirection = (DirectionUp, DirectionDown, DirectionLeft,
+    DirectionRight, DirectionNone);
 
   sprite_state_t = record
     sprites: array[0..3] of spriteInfo;
@@ -24,6 +24,7 @@ type
     entity_type: integer;
     stateTime: integer;
     state: entityState;
+    dir: TDirection;
   end;
 
   pent_t = ^ent_t;

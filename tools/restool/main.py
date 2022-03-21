@@ -152,7 +152,7 @@ class ResTool:
                             f'Width: {si.src_rect[2]}; ' \
                             f'Height: {si.src_rect[3]})'
 
-                        if ss != self.sprite_states[-1]:
+                        if not (ss == self.sprite_states[-1] and si == ss.sprite_infos[-1]):
                             s += ','
                         w(s)
             w('\t);')
@@ -211,29 +211,58 @@ class ResTool:
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
-        self.sprite_state("PLAYER0")
+        self.sprite_state("PLAYER_IDLE0")
         self.sprite_info(direction=0, src_rect=(0, 0, 16, 16), offset=(8, 16))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
-        self.sprite_state("PLAYER1")
-        self.sprite_info(direction=0, src_rect=(16, 0, 16, 16), offset=(8, 16))
+        self.sprite_state("PLAYER_IDLE1")
+        self.sprite_info(direction=0, src_rect=(0, 16, 16, 16), offset=(8, 16))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
 
-        self.sprite_state("PLAYER2")
-        self.sprite_info(direction=0, src_rect=(32, 0, 16, 16), offset=(8, 16))
+        self.sprite_state("PLAYER_IDLE2")
+        self.sprite_info(direction=0, src_rect=(0, 32, 16, 16), offset=(8, 16))
         self.sprite_info_use(direction=1, use_direction=0)
         self.sprite_info_use(direction=2, use_direction=0)
         self.sprite_info_use(direction=3, use_direction=0)
+
+        self.sprite_state("PLAYER_WALK0")
+        self.sprite_info(direction=0, src_rect=(32, 0, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=1, src_rect=(32, 32, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=2, src_rect=(32, 64, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=3, src_rect=(32, 96, 16, 16), offset=(8, 16))
+
+        self.sprite_state("PLAYER_WALK1")
+        self.sprite_info(direction=0, src_rect=(64, 0, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=1, src_rect=(64, 32, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=2, src_rect=(64, 64, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=3, src_rect=(64, 96, 16, 16), offset=(8, 16))
+
+        self.sprite_state("PLAYER_WALK2")
+        self.sprite_info(direction=0, src_rect=(96, 0, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=1, src_rect=(96, 32, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=2, src_rect=(96, 64, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=3, src_rect=(96, 96, 16, 16), offset=(8, 16))
+
+        self.sprite_state("PLAYER_WALK3")
+        self.sprite_info(direction=0, src_rect=(128, 0, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=1, src_rect=(128, 32, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=2, src_rect=(128, 64, 16, 16), offset=(8, 16))
+        self.sprite_info(direction=3, src_rect=(128, 96, 16, 16), offset=(8, 16))
 
         self.entity_states.append(['NONE', 'NONE', 60, 'nil', 'nil', 'NONE'])
-        self.entity_states.append(['PLAYER0', 'PLAYER1', 20, 'nil', 'nil', 'PLAYER0'])
-        self.entity_states.append(['PLAYER1', 'PLAYER2', 20, 'nil', 'nil', 'PLAYER1'])
-        self.entity_states.append(['PLAYER2', 'PLAYER3', 20, 'nil', 'nil', 'PLAYER2'])
-        self.entity_states.append(['PLAYER3', 'PLAYER0', 20, 'nil', 'nil', 'PLAYER1'])
+        self.entity_states.append(['PLAYER_IDLE0', 'PLAYER_IDLE1', 20, 'nil', 'nil', 'PLAYER_WALK0'])
+        self.entity_states.append(['PLAYER_IDLE1', 'PLAYER_IDLE2', 20, 'nil', 'nil', 'PLAYER_WALK0'])
+        self.entity_states.append(['PLAYER_IDLE2', 'PLAYER_IDLE3', 20, 'nil', 'nil', 'PLAYER_WALK0'])
+        self.entity_states.append(['PLAYER_IDLE3', 'PLAYER_IDLE0', 20, 'nil', 'nil', 'PLAYER_WALK0'])
+
+        self.entity_states.append(['PLAYER_WALK0', 'PLAYER_WALK1', 10, 'nil', 'nil', 'PLAYER_WALK0'])
+        self.entity_states.append(['PLAYER_WALK1', 'PLAYER_WALK2', 10, 'nil', 'nil', 'PLAYER_WALK1'])
+        self.entity_states.append(['PLAYER_WALK2', 'PLAYER_WALK3', 10, 'nil', 'nil', 'PLAYER_WALK2'])
+        self.entity_states.append(['PLAYER_WALK3', 'PLAYER_WALK0', 10, 'nil', 'nil', 'PLAYER_WALK3'])
 
         # write the resource files
         self.write_enums(filename='../../game/res_enum.pas')

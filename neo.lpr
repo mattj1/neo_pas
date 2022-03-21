@@ -94,13 +94,13 @@ var
   end;
 
   procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState;
-    direction: integer);
+    direction: TDirection);
   var
     si: ^sprite_info_t;
     ss: ^sprite_state_t;
   begin
     ss := @sprite_states[Ord(_spriteState)];
-    si := @sprite_infos[Ord(ss^.sprites[direction])];
+    si := @sprite_infos[Ord(ss^.sprites[ord(direction)])];
     R_DrawSubImageTransparent(sprites^, x - si^.offsX, y - si^.offsY,
       si^.srcX, si^.srcY, si^.Width, si^.Height);
 
@@ -137,7 +137,7 @@ var
     { R_DrawSprite(x1, 0, img^); }
 
     {R_DrawSprite(0, 0, img_font^);}
-    font_printstr(32, 32, 'Hello World! 123456');
+    {font_printstr(32, 32, 'Hello World! 123456');}
     if x1 > 256 then x1 := 0;
 
 
@@ -148,7 +148,7 @@ var
       begin
         es := @entity_states[Ord(e^.state)];
 
-        Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, 0);
+        Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, e^.dir);
       end;
     end;
 
@@ -218,7 +218,7 @@ begin
   player^.origin.x := intToFix32(64);
   player^.origin.y := intToFix32(64);
 
-  Entity_SetState(player^, STATE_PLAYER0);
+  Entity_SetState(player^, STATE_PLAYER_IDLE0);
 
   Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);
