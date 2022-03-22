@@ -267,8 +267,7 @@ class ResTool:
         # write the resource files
         self.write_enums(filename='../../game/res_enum.pas')
 
-        self.write_res(filename="../../game/sdl/res.pas", is_fpc=True)
-        self.write_res(filename='../../game/dos/res.pas', is_fpc=False)
+        self.write_res(filename='../../game/res.pas', is_fpc=False)
 
 
 def run_csv_import():
