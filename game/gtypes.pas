@@ -29,6 +29,17 @@ type
 
   pent_t = ^ent_t;
 
+
+type
+  ObjectBase = record
+     {$I object.inc}
+  end;
+
+  EntityBase = record
+    classID: integer;
+  end;
+  PEntity = ^EntityBase;
+
   sprite_info_t = record
     offsX, offsY: integer;
     srcX, srcY: integer;
@@ -83,6 +94,17 @@ type
 
   entityOnStateProc = procedure(var e: ent_t);
   entityOnFrameProc = procedure(var e: ent_t);
+
+
+  EntityUpdateProc = procedure(Data: Pointer);
+
+  EntityType = record
+    classID: integer;
+    entitySize: integer;
+
+
+    updateProc: EntityUpdateProc;
+  end;
 
   entity_state_t = record
     state: entityState;

@@ -1,4 +1,4 @@
-unit g_player;
+unit Player;
 
 interface
 
@@ -6,7 +6,9 @@ uses
   {$ifdef fpc}
      SysUtils,
   {$endif}
-  gtypes, g_common, g_map, fixedint, vect2d, rect, entity, res_enum;
+  common, gtypes, g_common, g_map, fixedint, vect2d, rect, entity, res_enum, objtypes;
+
+procedure Player_Stuff(Data: Pointer);
 
 procedure Player_Move(var e: ent_t);
 procedure Player_Frame(var e: ent_t);
@@ -15,6 +17,19 @@ implementation
 
 var
   player_state: integer;
+
+procedure Player_Stuff(Data: Pointer);
+var
+  self: PEntityPlayer;
+begin
+  self := PEntityPlayer(Data);
+
+  self^.x := 5;
+  self^.x2 := 10;
+  self^.x3 := 15;
+  writeln('Hello from Player_Stuff');
+
+end;
 
 procedure Player_Move(var e: ent_t);
 begin

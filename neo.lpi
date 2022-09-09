@@ -36,25 +36,12 @@
         <UnitName Value="test"/>
       </Unit>
       <Unit>
-        <Filename Value="game\g_player.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\gtypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="game\res_enum.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\sdl\res.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="game\entity.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Entity"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_map.pas"/>
@@ -71,6 +58,7 @@
       <Unit>
         <Filename Value="engine\event.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Event"/>
       </Unit>
       <Unit>
         <Filename Value="engine\GFX.PAS"/>
@@ -153,6 +141,49 @@
         <Filename Value="engine\rect.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="engine\inc\object.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\game.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\core\entity.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\core\entity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Entity"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\player.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Player"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res\objtypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res\res_enum.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\core\object.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res\res_oreg.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\monster.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Monster"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -162,8 +193,8 @@
       <Filename Value="neo_sdl"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2"/>
-      <OtherUnitFiles Value="engine;engine\sdl;game\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;game;external\sdl2"/>
+      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2;game;game\core"/>
+      <OtherUnitFiles Value="engine;engine\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;external\sdl2;game;game\core;game\res;game\sdl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

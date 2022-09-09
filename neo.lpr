@@ -6,7 +6,10 @@ program test;
     {$linkFramework SDL2_image}
   {$endif}
 
-  {$I neo_sdl.inc}
+ uses
+  {$I neo_sdl.inc},
+  {$I game.inc};
+
 {$else}
   {$F+}
 
@@ -40,6 +43,8 @@ var
       Inc(x, 8);
     end;
   end;
+
+
 
 {
   ===================================================================
@@ -89,8 +94,10 @@ var
         es^.onFrameProc(e^);
       end;
 
-      Player_Frame(player^);
+
     end;
+
+    Player_Frame(Global.player^);
   end;
 
   procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState;
@@ -159,11 +166,20 @@ var
   i, j: integer;
   e: pent_t;
 begin
+
   writeln('--- Init ---');
   tileset := Image_Load('proto2.bmp');
   sprites := Image_Load('proto2s.bmp');
   img_font := Image_Load('font.bmp');
   LoadMap('./dev/m_main.bin', map);
+
+  RegisterObjectTypes;
+
+  Global.player2 := AllocEntity(TPlayer);
+
+  entityTypes[Global.player2^.classID].updateProc(Global.player2);
+
+  writeln('PlayerStatic classID:', TPlayer^.classID);
 
   {$ifndef fpc}
   {readln;}
@@ -214,11 +230,11 @@ begin
   {$endif}
 
 
-  player := Entity_Alloc(1);
-  player^.origin.x := intToFix32(64);
-  player^.origin.y := intToFix32(64);
+  Global.player := Entity_Alloc(1);
+  Global.player^.origin.x := intToFix32(64);
+  Global.player^.origin.y := intToFix32(64);
 
-  Entity_SetState(player^, STATE_PLAYER_IDLE0);
+  Entity_SetState(Global.player^, STATE_PLAYER_IDLE0);
 
   Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);

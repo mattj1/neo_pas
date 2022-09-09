@@ -7,8 +7,15 @@ uses gtypes;
 var
   player_input: integer;
 
+type
+  TGlobal = record
+   player: pent_t;
+   player2: PEntity;
+
+  end;
+
 var
-  player: pent_t;
+  Global: TGlobal;
 
 var
   map: TLevelMap;
