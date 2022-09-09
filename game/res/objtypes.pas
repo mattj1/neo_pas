@@ -1,6 +1,7 @@
 unit objtypes;
-{$mode tp}{$H+}
+
 interface
+uses vect2d, res_enum, gtypes;
 type
   ObjectPlayer = record
     {$i object.inc}
@@ -15,8 +16,6 @@ type
 
   PEntityPlayer = ^EntityPlayer;
 
-var
-  TPlayer: ^ObjectPlayer;
 
 type
   ObjectMonster = record
@@ -31,8 +30,16 @@ type
 
   PEntityMonster = ^EntityMonster;
 
-var
-  TMonster: ^ObjectMonster;
 
+  TObjectTypes = record
+    Player: ObjectPlayer;
+    Monster: ObjectMonster;
+  end;
+var
+  ObjectTypes: TObjectTypes;
 implementation
+begin
+  writeln('objtypes.pas');
+  FillChar(ObjectTypes, sizeof(TObjectTypes), 0);
+end.
 end.

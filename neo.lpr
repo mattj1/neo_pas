@@ -13,7 +13,9 @@ program test;
 {$else}
   {$F+}
 
-{$I neo_dos.inc}
+uses
+  {$I neo_dos.inc},
+  {$I game.inc};
 {$endif}
 
 var
@@ -55,11 +57,11 @@ var
   procedure Update(deltaTime: integer);
   var
     i: integer;
-    e: pent_t;
+    e: PEntity;
     es: ^entity_state_t;
 
   begin
-    Inc(x1, 1);
+
 
     player_input := 0;
     if I_IsKeyDown(kUp) then player_input := player_input or 1;
@@ -75,29 +77,32 @@ var
 
     for i := 0 to MAX_ENT - 1 do
     begin
-      e := @entities[i];
 
-      if e^.entity_type = 0 then continue;
+      e := entities2[i];
 
+      if e = nil then continue;
+      {writeln('update ', i, ' ');
+}
       es := @entity_states[Ord(e^.state)];
 
       Inc(e^.stateTime);
 
       if e^.stateTime = es^.numFrames then
       begin
-        Entity_SetState(e^, es^.nextState);
+        Entity_SetState(e, es^.nextState);
       end;
 
-
-      if (@es^.onFrameProc) <> nil then
+{
+      if (es^.onFrameProc) <> nil then
       begin
-        es^.onFrameProc(e^);
-      end;
+        writeln('call onFrameProc ', es^.onFrameProc);
+        es^.onFrameProc(e);
+      end;}
+      
+  {writeln('--update entity', i, ' ', e^.classID);}
 
-
+      entityTypes[e^.classID].updateProc(e);
     end;
-
-    Player_Frame(Global.player^);
   end;
 
   procedure Draw_Sprite_State(x, y: integer; _spriteState: spriteState;
@@ -106,6 +111,7 @@ var
     si: ^sprite_info_t;
     ss: ^sprite_state_t;
   begin
+
     ss := @sprite_states[Ord(_spriteState)];
     si := @sprite_infos[Ord(ss^.sprites[ord(direction)])];
     R_DrawSubImageTransparent(sprites^, x - si^.offsX, y - si^.offsY,
@@ -116,14 +122,16 @@ var
   procedure Draw;
   var
     i: integer;
-    e: pent_t;
+    e: PEntity;
     es: ^entity_state_t;
     ss: ^sprite_state_t;
     tx, ty, sx, sy: integer;
     tile_index: integer;
 
   begin
+      {writeln('draw');}
     R_FillColor(1);
+
 
     {R_DrawSubImageTransparent(tileset^, x, y, 0, 0, 256, 256);}
 
@@ -147,39 +155,53 @@ var
     {font_printstr(32, 32, 'Hello World! 123456');}
     if x1 > 256 then x1 := 0;
 
-
     for i := 0 to MAX_ENT - 1 do
     begin
-      e := @entities[i];
-      if e^.entity_type <> 0 then
+      e := entities2[i];
+      if e <> nil then
       begin
         es := @entity_states[Ord(e^.state)];
 
         Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, e^.dir);
       end;
     end;
-
   end;
 
 
 var
   i, j: integer;
-  e: pent_t;
+  monsterInstance: PEntityMonster;
+var delta: Vec2D_f32;
+  distance: fix32;
+
 begin
 
   writeln('--- Init ---');
+  RegisterObjectTypes;
+
+
+
+  writeln('PlayerStatic classID:', ObjectTypes.Player.classID);
+
+{  entityTypes[Global.player^.classID].updateProc(Global.player); }
+
+
+    delta.x := inttofix32(64) - inttofix32(128);
+    delta.y := inttofix32(64) - inttofix32(128);
+
+    distance := Vect2D.LengthApprox(delta);
+
+  writeln('delta.x ', delta.x);
+  writeln('approx distance ', distance);
+
+  writeln('velocity ', fix32Div(delta.x, distance), ' ', fix32Div(delta.y, distance));
+  {exit;}
+
   tileset := Image_Load('proto2.bmp');
   sprites := Image_Load('proto2s.bmp');
   img_font := Image_Load('font.bmp');
   LoadMap('./dev/m_main.bin', map);
 
-  RegisterObjectTypes;
-
-  Global.player2 := AllocEntity(TPlayer);
-
-  entityTypes[Global.player2^.classID].updateProc(Global.player2);
-
-  writeln('PlayerStatic classID:', TPlayer^.classID);
 
   {$ifndef fpc}
   {readln;}
@@ -229,15 +251,23 @@ begin
  { SND_PlaySound(tempSound);    }
   {$endif}
 
-
-  Global.player := Entity_Alloc(1);
+  Global.player := AllocEntity(@ObjectTypes.Player);
   Global.player^.origin.x := intToFix32(64);
   Global.player^.origin.y := intToFix32(64);
+  Entity_SetState(Global.player, STATE_PLAYER_IDLE0);
 
-  Entity_SetState(Global.player^, STATE_PLAYER_IDLE0);
+  monsterInstance := PEntityMonster(AllocEntity(@ObjectTypes.Monster));
+  monsterInstance^.origin.x := intToFix32(128);
+  monsterInstance^.origin.y := intToFix32(128);
+  Entity_SetState(monsterInstance, STATE_MONSTER_WALK0);
 
+{$ifdef fpc}
+  Loop_SetUpdateProc(@Update);
+  Loop_SetDrawProc(@Draw);
+{$else}
   Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);
+{$endif}
 
   Loop_Run;
 
@@ -245,5 +275,4 @@ begin
   Timer.Close;
 
   R_Close;
-
 end.

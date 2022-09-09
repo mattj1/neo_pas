@@ -1,7 +1,5 @@
 unit Timer;
 
-{$mode ObjFPC}{$H+}
-
 interface
 
 uses

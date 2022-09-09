@@ -8,7 +8,7 @@ interface
 uses gtypes, res_enum;
 
 const
-	sprite_infos: array[0..19] of sprite_info_t = (
+	sprite_infos: array[0..23] of sprite_info_t = (
 		{ SPRITE_NONE_0 }
 		(offsX: 0; offsY: 0; srcX: 0; srcY: 0; Width: 0; Height: 0),
 		{ SPRITE_PLAYER_IDLE0_0 }
@@ -48,10 +48,18 @@ const
 		{ SPRITE_PLAYER_WALK3_2 }
 		(offsX: 8; offsY: 16; srcX: 128; srcY: 64; Width: 16; Height: 16),
 		{ SPRITE_PLAYER_WALK3_3 }
-		(offsX: 8; offsY: 16; srcX: 128; srcY: 96; Width: 16; Height: 16)
+		(offsX: 8; offsY: 16; srcX: 128; srcY: 96; Width: 16; Height: 16),
+		{ SPRITE_MONSTER_WALK0_0 }
+		(offsX: 8; offsY: 8; srcX: 0; srcY: 96; Width: 16; Height: 16),
+		{ SPRITE_MONSTER_WALK0_1 }
+		(offsX: 8; offsY: 8; srcX: 0; srcY: 96; Width: 16; Height: 16),
+		{ SPRITE_MONSTER_WALK0_2 }
+		(offsX: 8; offsY: 8; srcX: 0; srcY: 96; Width: 16; Height: 16),
+		{ SPRITE_MONSTER_WALK0_3 }
+		(offsX: 8; offsY: 8; srcX: 0; srcY: 96; Width: 16; Height: 16)
 	);
 
-	sprite_states: array[0..7] of sprite_state_t = (
+	sprite_states: array[0..8] of sprite_state_t = (
 		{ SPRITE_NONE }
 		( sprites: (SPRITE_NONE_0, SPRITE_NONE_0, SPRITE_NONE_0, SPRITE_NONE_0); tileSet: 0 ),
 		{ SPRITE_PLAYER_IDLE0 }
@@ -67,10 +75,12 @@ const
 		{ SPRITE_PLAYER_WALK2 }
 		( sprites: (SPRITE_PLAYER_WALK2_0, SPRITE_PLAYER_WALK2_1, SPRITE_PLAYER_WALK2_2, SPRITE_PLAYER_WALK2_3); tileSet: 0 ),
 		{ SPRITE_PLAYER_WALK3 }
-		( sprites: (SPRITE_PLAYER_WALK3_0, SPRITE_PLAYER_WALK3_1, SPRITE_PLAYER_WALK3_2, SPRITE_PLAYER_WALK3_3); tileSet: 0 )
+		( sprites: (SPRITE_PLAYER_WALK3_0, SPRITE_PLAYER_WALK3_1, SPRITE_PLAYER_WALK3_2, SPRITE_PLAYER_WALK3_3); tileSet: 0 ),
+		{ SPRITE_MONSTER_WALK0 }
+		( sprites: (SPRITE_MONSTER_WALK0_0, SPRITE_MONSTER_WALK0_1, SPRITE_MONSTER_WALK0_2, SPRITE_MONSTER_WALK0_3); tileSet: 0 )
 	);
 
-	entity_states: array[0..8] of entity_state_t = (
+	entity_states: array[0..9] of entity_state_t = (
 		(
 		state: STATE_NONE;
 		nextState: STATE_NONE;
@@ -142,6 +152,14 @@ const
 		onStateProc: nil; 
 		onFrameProc: nil; 
 		spriteState_: SPRITE_PLAYER_WALK3 
+		),
+		(
+		state: STATE_MONSTER_WALK0;
+		nextState: STATE_MONSTER_WALK0;
+		numFrames: 10; 
+		onStateProc: nil; 
+		onFrameProc: nil; 
+		spriteState_: SPRITE_MONSTER_WALK0 
 		)
 	);
 implementation

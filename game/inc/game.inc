@@ -3,7 +3,8 @@ g_common,
 g_map,
 gtypes,
 player,
+Monster,
 objtypes,
 res,
 res_enum,
-res_oreg, Monster
+res_oreg 

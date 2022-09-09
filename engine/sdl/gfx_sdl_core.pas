@@ -1,6 +1,6 @@
 unit GFX_SDL_Core;
 
-{$mode ObjFPC}{$H+}
+{$H+}
 
 interface
 

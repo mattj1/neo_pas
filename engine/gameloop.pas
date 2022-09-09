@@ -57,7 +57,7 @@ begin
   fpsCount := 0;
 
   accum := 0;
-  lastTime := Timer_GetTicks;
+  lastTime := Timer.Timer_GetTicks;
   fpsTimer := lastTime;
 
   lastFrameTime := lastTime;
@@ -68,7 +68,7 @@ begin
 
 
     numUpdates := 0;
-    frameTime := Timer_GetTicks;
+    frameTime := Timer.Timer_GetTicks;
 
     accum := accum + (frameTime - lastFrameTime);
 
@@ -101,8 +101,8 @@ begin
 
     {$ifdef fpc}
     repeat
-           Timer_Delay(1);
-    until Timer_GetTicks - frameTime >= 16;
+           Timer.Timer_Delay(1);
+    until Timer.Timer_GetTicks - frameTime >= 16;
     {Timer_Delay(8);}
     {$endif}
     com_kb.prevKeys := com_kb.keys;

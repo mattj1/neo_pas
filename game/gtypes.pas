@@ -19,24 +19,13 @@ type
     tileSet: integer;
   end;
 
-  ent_t = record
-    origin: Vec2D_f32;
-    entity_type: integer;
-    stateTime: integer;
-    state: entityState;
-    dir: TDirection;
-  end;
-
-  pent_t = ^ent_t;
-
-
 type
   ObjectBase = record
      {$I object.inc}
   end;
 
   EntityBase = record
-    classID: integer;
+    {$I entity.inc}
   end;
   PEntity = ^EntityBase;
 
@@ -60,7 +49,7 @@ type
 
   TCollisionItem = record
     collisionType: CollisionType;
-    entity: pent_t;
+    entity: PEntity;
     tile: PMapTile;
   end;
 
@@ -92,8 +81,8 @@ type
 
   PLevelMap = ^TLevelMap;
 
-  entityOnStateProc = procedure(var e: ent_t);
-  entityOnFrameProc = procedure(var e: ent_t);
+  entityOnStateProc = procedure(data: Pointer);
+  entityOnFrameProc = procedure(data: Pointer);
 
 
   EntityUpdateProc = procedure(Data: Pointer);

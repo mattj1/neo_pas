@@ -41,7 +41,7 @@ begin
     tile^.x := i mod m.Width;
     tile^.y := i div m.Width;
 
-    BlockRead(f, tile^.fg, sizeof(integer));
+    BlockRead(f, tile^.fg, 2); { was sizeof(integer) }
   end;
 
   for i := 0 to m.Width * m.Height - 1 do

@@ -1,6 +1,8 @@
 import csv
 import struct
 
+from objtypes import ObjectTypeTool
+
 
 class Tileset:
 
@@ -253,6 +255,12 @@ class ResTool:
         self.sprite_info(direction=2, src_rect=(128, 64, 16, 16), offset=(8, 16))
         self.sprite_info(direction=3, src_rect=(128, 96, 16, 16), offset=(8, 16))
 
+        self.sprite_state("MONSTER_WALK0")
+        self.sprite_info(direction=0, src_rect=(0, 96, 16, 16), offset=(8, 8))
+        self.sprite_info(direction=1, src_rect=(0, 96, 16, 16), offset=(8, 8))
+        self.sprite_info(direction=2, src_rect=(0, 96, 16, 16), offset=(8, 8))
+        self.sprite_info(direction=3, src_rect=(0, 96, 16, 16), offset=(8, 8))
+
         self.entity_states.append(['NONE', 'NONE', 60, 'nil', 'nil', 'NONE'])
         self.entity_states.append(['PLAYER_IDLE0', 'PLAYER_IDLE1', 20, 'nil', 'nil', 'PLAYER_WALK0'])
         self.entity_states.append(['PLAYER_IDLE1', 'PLAYER_IDLE2', 20, 'nil', 'nil', 'PLAYER_WALK0'])
@@ -264,22 +272,24 @@ class ResTool:
         self.entity_states.append(['PLAYER_WALK2', 'PLAYER_WALK3', 10, 'nil', 'nil', 'PLAYER_WALK2'])
         self.entity_states.append(['PLAYER_WALK3', 'PLAYER_WALK0', 10, 'nil', 'nil', 'PLAYER_WALK3'])
 
+        self.entity_states.append(['MONSTER_WALK0', 'MONSTER_WALK0', 10, 'nil', 'nil', 'MONSTER_WALK0'])
+
         # write the resource files
-        self.write_enums(filename='../../game/res_enum.pas')
+        self.write_enums(filename='./game/res/res_enum.pas')
 
-        self.write_res(filename='../../game/res.pas', is_fpc=False)
-
+        self.write_res(filename='./game/res/dos/res.pas', is_fpc=False)
+        self.write_res(filename='./game/res/sdl/res.pas', is_fpc=True)
 
 def run_csv_import():
 
-    with open('../../dev/m_main.bin', 'wb') as f:
-        with open('../../dev/proto_FG.csv', newline='') as csvfile:
+    with open('./dev/m_main.bin', 'wb') as f:
+        with open('./dev/proto_FG.csv', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for row in reader:
                 for val in row:
                     f.write(struct.pack("<h", int(val)))
 
-        with open('../../dev/proto_SOLID.csv', newline='') as csvfile:
+        with open('./dev/proto_SOLID.csv', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for row in reader:
                 for val in row:
@@ -291,8 +301,7 @@ def run_csv_import():
                         f.write(struct.pack("B", 0))
 
 
-
-
 if __name__ == '__main__':
     ResTool().run()
+    ObjectTypeTool().run()
     run_csv_import()

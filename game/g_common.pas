@@ -9,8 +9,7 @@ var
 
 type
   TGlobal = record
-   player: pent_t;
-   player2: PEntity;
+   player: PEntity;
 
   end;
 

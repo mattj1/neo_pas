@@ -1,7 +1,5 @@
 unit Keybrd;
 
-
-
 {$mode ObjFPC}{$H+}
 
 interface

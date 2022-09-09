@@ -8,50 +8,37 @@ uses
   {$endif}
   common, gtypes, g_common, g_map, fixedint, vect2d, rect, entity, res_enum, objtypes;
 
-procedure Player_Stuff(Data: Pointer);
-
-procedure Player_Move(var e: ent_t);
-procedure Player_Frame(var e: ent_t);
+procedure Player_Update(Data: Pointer);
 
 implementation
 
 var
   player_state: integer;
 
-procedure Player_Stuff(Data: Pointer);
+procedure Player_Hitbox(Data: Pointer; var rect: rect_t);
 var
   self: PEntityPlayer;
 begin
   self := PEntityPlayer(Data);
 
-  self^.x := 5;
-  self^.x2 := 10;
-  self^.x3 := 15;
-  writeln('Hello from Player_Stuff');
-
-end;
-
-procedure Player_Move(var e: ent_t);
-begin
-
-end;
-
-procedure Player_Hitbox(e: ent_t; var rect: rect_t);
-begin
-  rect.origin.x := e.origin.x - intToFix32(7);
-  rect.origin.y := e.origin.y - intToFix32(8);
+  rect.origin.x := self^.origin.x - intToFix32(7);
+  rect.origin.y := self^.origin.y - intToFix32(8);
 
   rect.size.x := intToFix32(14);
   rect.size.y := intToFix32(8);
 end;
 
-procedure Player_Frame(var e: ent_t);
+
+procedure Player_Update(Data: Pointer);
 var
-  vel, slideVel: Vec2D_f32;
+    self: PEntityPlayer;
+    vel, slideVel: Vec2D_f32;
   r0: rect_t;
   moveInfo: TMoveInfo;
 
+
 begin
+  self := PEntityPlayer(Data);
 
   vel.x := 0;
   vel.y := 0;
@@ -65,7 +52,7 @@ begin
   begin
     if player_state <> 0 then
     begin
-      Entity_SetState(e, STATE_PLAYER_IDLE0);
+      Entity_SetState(self, STATE_PLAYER_IDLE0);
     end;
 
     player_state := 0;
@@ -74,7 +61,7 @@ begin
   begin
     if player_state <> 1 then
     begin
-      Entity_SetState(e, STATE_PLAYER_WALK0);
+      Entity_SetState(self, STATE_PLAYER_WALK0);
     end;
 
     player_state := 1;
@@ -82,19 +69,19 @@ begin
   if player_input and 15 <> 0 then
   begin
 
-    if vel.x < 0 then e.dir := DirectionLeft;
-    if vel.x > 0 then e.dir := DirectionRight;
-    if vel.y < 0 then e.dir := DirectionUp;
-    if vel.y > 0 then e.dir := DirectionDown;
+    if vel.x < 0 then self^.dir := DirectionLeft;
+    if vel.x > 0 then self^.dir := DirectionRight;
+    if vel.y < 0 then self^.dir := DirectionUp;
+    if vel.y > 0 then self^.dir := DirectionDown;
 
-    Player_Hitbox(e, r0);
+    Player_Hitbox(self, r0);
     World_Move(r0, vel, moveInfo);
 
    {writeln(format('will move %d %d length approx: %d / desired %d',
       [moveInfo.result_delta.x, moveInfo.result_delta.y,
       Vect2D.LengthApprox(moveInfo.result_delta), Vect2D.LengthApprox(vel)])); }
 
-    Vect2D.Add(e.origin, moveInfo.result_delta, e.origin);
+    Vect2D.Add(self^.origin, moveInfo.result_delta, self^.origin);
 
     { Sliding should only happen if we didn't move before }
 
@@ -104,9 +91,9 @@ begin
       DirectionToVec2D(moveInfo.allowedSlideDirection, intToFix32(1), slideVel);
       { writeln('slide vel ', slideVel.x, ' ', slideVel.y);   }
 
-      Player_Hitbox(e, r0);
+      Player_Hitbox(self, r0);
       World_Move(r0, slideVel, moveInfo);
-      Vect2D.Add(e.origin, moveInfo.result_delta, e.origin);
+      Vect2D.Add(self^.origin, moveInfo.result_delta, self^.origin);
 
      { writeln(format('Slide result: %d %d length: %d',
         [moveInfo.result_delta.x, moveInfo.result_delta.y,
