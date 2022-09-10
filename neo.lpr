@@ -208,7 +208,7 @@ begin
   {$endif}
 
   {$ifndef fpc}
-  SYS_InitGraphicsDriver(1);
+  SYS_InitGraphicsDriver(0);
   {$else}
          SYS_InitGraphicsDriver(0);
   {$endif}

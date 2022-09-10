@@ -96,7 +96,7 @@ begin
   end;
 end;
 
-procedure GFX_FillRect(x, y, w, h: integer; color: byte);
+procedure FillRect(x, y, w, h: integer; color: byte);
 var
   i, j: integer;
 var
@@ -787,6 +787,9 @@ end;
 
 procedure InitDriver;
 begin
+  R_FillColor := FillColor;
+  R_FillRect := FillRect;
+
   R_DrawSubImageTransparent := DrawSubImageTransparent;
   R_DrawSprite := DrawSprite;
   R_AllocPalette := AllocPalette;
@@ -794,7 +797,7 @@ begin
   R_SetPaletteColor := SetPaletteColor;
   R_SetPalette := SetPalette;
   R_SwapBuffers := SwapBuffers;
-  R_FillColor := FillColor;
+
   R_Init := Init;
   R_Close := Close;
 end;   

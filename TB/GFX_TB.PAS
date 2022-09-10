@@ -1,4 +1,4 @@
-uses crt, gfx, gfxcom, image, common;
+uses crt, gfx, image, r_pal, common, sys, timer, keybrd;
 var angle: Real;
 var i, j, k, col: integer;
 var pal: Palette;
@@ -9,10 +9,31 @@ var bp: byte_ptr;
 var msg: string;
 var lsfr, start_state, bit: longint;
 begin
+     writeln('GFX_TB');
+
+    writeln('SYS_InitGraphicsDriver(0)');
+     SYS_InitGraphicsDriver(0);
+
      msg := 'ÛHello from Pascal!!!';
-     GFX_LoadPalette('playpal.pal', pal);
+     
+     writeln('R_LoadPalette');
+     R_LoadPalette('playpal.pal', pal);
+
+     writeln('LoadBMP');
      LoadBMP('test.bmp', img);
-     GFX_SetPalette(pal);
+
+     
+
+     {exit;}
+
+
+
+     
+     {Timer.Init;
+     Keybrd.Init;}
+     R_Init;
+
+     R_SetPalette(pal);
 
      Image_New(img2, 16, 16);
      bp := img2.data;
@@ -41,15 +62,15 @@ begin
      end;
 
 
-   GFX_Init;
+   
    {GFX.double_buffer := false;}
 
-   GFX_SetPalette(pal);
+   R_SetPalette(pal);
 
    DirectVideo:=false;
 
    alpha := 0;
-    GFX_FillColor(0);
+    R_FillColor(0);
 
  for i := 0 to 720 do begin
  {       FillColor(0);}
@@ -62,7 +83,7 @@ begin
            col := 32;
            if ((j + k) mod 2 = 0) then col := 64;
 
-           GFX_FillRect(k * 16, j * 10, 17, 11, col); 
+           R_FillRect(k * 16, j * 10, 17, 11, col); 
        end;
    end;
 
@@ -83,7 +104,7 @@ begin
 
    for j := 0 to Length(msg)-1 do begin
        k := ord(msg[j+1]);
-           DrawSpriteAlpha2(320 - (i) + j * 15,
+{           R_DrawSpriteAlpha2(320 - (i) + j * 15,
        100 + round(10 * sin(20 * (i * 0.2 + j) * 3.141/180)),
                            8 * (k mod 16),
                            8 * (k div 16),
@@ -92,7 +113,7 @@ begin
                            round(7 + 8 * cos(3 * i * 3.141/180)),
 
                            img);
-
+}
    end;
 (*
       lsfr := 1;
@@ -111,12 +132,15 @@ begin
    end;
 *)
 
-   SwapBuffers;
+   R_SwapBuffers;
    if KeyPressed then break;
 
  end;
 
    writeln('Test');
    readln;
-   GFX_Close;
+  {Keybrd.Close;
+  Timer.Close;}
+
+  R_Close;
 end.
