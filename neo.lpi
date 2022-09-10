@@ -40,10 +40,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="game\sdl\res.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\g_map.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -85,10 +81,6 @@
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\keybrd.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="engine\sdl\neo_sdl.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -146,14 +138,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="game\game.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="game\core\entity.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\core\entity.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Entity"/>
@@ -172,17 +156,29 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="game\core\object.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="game\res\res_oreg.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\monster.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Monster"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res\sdl\res.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\res\sdl\res_oreg.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\inc\entity.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\inc\game.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="game\inc\object.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -193,13 +189,13 @@
       <Filename Value="neo_sdl"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2;game;game\core"/>
-      <OtherUnitFiles Value="engine;engine\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;external\sdl2;game;game\core;game\res;game\sdl"/>
+      <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2;game;game\inc"/>
+      <OtherUnitFiles Value="engine;engine\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;external\sdl2;game;game\core;game\res;game\sdl;game\res\sdl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
-        <SyntaxMode Value="tp"/>
+        <SyntaxMode Value="fpc"/>
       </SyntaxOptions>
     </Parsing>
     <Linking>
