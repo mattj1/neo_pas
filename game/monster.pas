@@ -33,8 +33,7 @@ procedure Monster_Update(Data: Pointer);
 
 begin
     self := PEntityMonster(Data);
-    delta.x := Global.player^.origin.x - self^.origin.x;
-    delta.y := Global.player^.origin.y - self^.origin.y;
+    Vect2D.Subtract(Global.player^.origin, self^.origin, delta);
     distance := Vect2D.LengthApprox(delta);
     
     if distance = 0 then begin
@@ -50,7 +49,7 @@ begin
         
         {writeln('vel ', vel.x, ' ', vel.y, ' ', frac);
 }
-        {
+    {
     vel.x := fix32Mul(vel.x, frac);
     vel.y := fix32Mul(vel.y, frac);
     }

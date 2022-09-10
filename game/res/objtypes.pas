@@ -10,8 +10,7 @@ type
   end;
   EntityPlayer = record
     {$i entity.inc}
-    instanceStuff1: integer;
-    instanceStuff2: integer;
+    player_state: integer;
   end;
 
   PEntityPlayer = ^EntityPlayer;
@@ -39,7 +38,6 @@ var
   ObjectTypes: TObjectTypes;
 implementation
 begin
-  writeln('objtypes.pas');
   FillChar(ObjectTypes, sizeof(TObjectTypes), 0);
 end.
 end.

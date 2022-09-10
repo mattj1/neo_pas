@@ -39,6 +39,12 @@ end;
 
 function fix32Div(val1, val2: fix32): fix32;
 begin
+  if val1 = 0 then
+  begin
+     fix32Div := 0;
+     exit;
+  end;
+
   fix32Div := (val1 shl 5) div (val2 shr 5);
 end;
 {

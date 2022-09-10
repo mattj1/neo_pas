@@ -12,9 +12,6 @@ procedure Player_Update(Data: Pointer);
 
 implementation
 
-var
-  player_state: integer;
-
 procedure Player_Hitbox(Data: Pointer; var rect: rect_t);
 var
   self: PEntityPlayer;
@@ -31,11 +28,10 @@ end;
 
 procedure Player_Update(Data: Pointer);
 var
-    self: PEntityPlayer;
-    vel, slideVel: Vec2D_f32;
+  self: PEntityPlayer;
+  vel, slideVel: Vec2D_f32;
   r0: rect_t;
   moveInfo: TMoveInfo;
-
 
 begin
   self := PEntityPlayer(Data);
@@ -50,21 +46,21 @@ begin
 
   if player_input and 15 = 0 then
   begin
-    if player_state <> 0 then
+    if self^.player_state <> 0 then
     begin
       Entity_SetState(self, STATE_PLAYER_IDLE0);
     end;
 
-    player_state := 0;
+    self^.player_state := 0;
   end
   else
   begin
-    if player_state <> 1 then
+    if self^.player_state <> 1 then
     begin
       Entity_SetState(self, STATE_PLAYER_WALK0);
     end;
 
-    player_state := 1;
+    self^.player_state := 1;
   end;
   if player_input and 15 <> 0 then
   begin

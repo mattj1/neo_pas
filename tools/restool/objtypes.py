@@ -26,8 +26,7 @@ class ObjectTypeTool:
                                           ("playerStatic2", "integer")
                                       ],
                                       entity_properties=[
-                                          ("instanceStuff1", "integer"),
-                                          ("instanceStuff2", "integer")
+                                          ("player_state", "integer"),
                                       ]))
 
         self.define_object(ObjectInfo(name="Monster",
@@ -87,7 +86,7 @@ class ObjectTypeTool:
 
         write("implementation")
         write('begin')
-        write('\twriteln(\'objtypes.pas\');')
+        # write('\twriteln(\'objtypes.pas\');')
         write('\tFillChar(ObjectTypes, sizeof(TObjectTypes), 0);')
         write('end.')
         write("end.")

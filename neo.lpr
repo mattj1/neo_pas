@@ -129,7 +129,6 @@ var
     tile_index: integer;
 
   begin
-      {writeln('draw');}
     R_FillColor(1);
 
 
@@ -139,6 +138,7 @@ var
     begin
       for tx := 0 to map.Width - 1 do
       begin
+
         tile_index := map.tiles^[tx + ty * map.Width].fg;
         if tile_index <> -1 then
         begin
@@ -178,24 +178,6 @@ begin
 
   writeln('--- Init ---');
   RegisterObjectTypes;
-
-
-
-  writeln('PlayerStatic classID:', ObjectTypes.Player.classID);
-
-{  entityTypes[Global.player^.classID].updateProc(Global.player); }
-
-
-    delta.x := inttofix32(64) - inttofix32(128);
-    delta.y := inttofix32(64) - inttofix32(128);
-
-    distance := Vect2D.LengthApprox(delta);
-
-  writeln('delta.x ', delta.x);
-  writeln('approx distance ', distance);
-
-  writeln('velocity ', fix32Div(delta.x, distance), ' ', fix32Div(delta.y, distance));
-  {exit;}
 
   tileset := Image_Load('proto2.bmp');
   sprites := Image_Load('proto2s.bmp');
