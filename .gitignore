@@ -8,4 +8,5 @@ lib
 link*.res
 .idea
 *.ppu
+.DS_Store
 
