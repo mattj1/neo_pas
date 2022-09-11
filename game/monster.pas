@@ -4,7 +4,6 @@ interface
 
 uses objtypes, rect, vect2d, fixedint, g_map, g_common;
 
-
 procedure Monster_Update(Data: Pointer);
 
 implementation
@@ -20,33 +19,36 @@ end;
 
 
 procedure Monster_Update(Data: Pointer);
-  var
+var
   self: PEntityMonster;
-    r0: rect_t;
+  r0: rect_t;
   moveInfo: TMoveInfo;
-      vel: Vec2D_f32;
+  vel: Vec2D_f32;
 
-      delta: Vec2D_f32;
+  delta: Vec2D_f32;
 
-    distance: fix32;  
-    frac: fix32;
+  distance: fix32;
+  frac: fix32;
 
 begin
-    self := PEntityMonster(Data);
-    Vect2D.Subtract(Global.player^.origin, self^.origin, delta);
-    distance := Vect2D.LengthApprox(delta);
-    
-    if distance = 0 then begin
-      exit;
-    end;
+  writeln('-- monster update');
+  self := PEntityMonster(Data);
+  Vect2D.Subtract(Global.player^.origin, self^.origin, delta);
+  writeln('monster delta ', delta.x, ' ', delta.y);
+  distance := Vect2D.Length(delta);
+
+  if distance = 0 then
+  begin
+    exit;
+  end;
 
   {  writeln('delta ', Global.player^.origin.x, ' - ', self^.origin.x, ' = ', delta.x, ' ', delta.y, ' distance ', distance);
 }
-    vel.x := fix32Div(delta.x, distance);
-    vel.y := fix32Div(delta.y, distance);
-    
-    frac := fix32Div(intToFix32(2), intToFix32(3));
-        
+  vel.x := fix32Div(delta.x, distance);
+  vel.y := fix32Div(delta.y, distance);
+
+  frac := fix32Div(intToFix32(2), intToFix32(3));
+
         {writeln('vel ', vel.x, ' ', vel.y, ' ', frac);
 }
     {
@@ -55,21 +57,21 @@ begin
     }
 
 
-    Hitbox(self^, r0);
-    World_Move(r0, vel, moveInfo);
+  Hitbox(self^, r0);
+  World_Move(r0, vel, moveInfo);
 
-    Vect2D.Add(self^.origin, moveInfo.result_delta, self^.origin);
+  Vect2D.Add(self^.origin, moveInfo.result_delta, self^.origin);
 end;
 
 
 
 procedure Monster_Hitbox(Data: Pointer; var rect: rect_t);
-  var
+var
   self: PEntityMonster;
 
-  begin
-    self := PEntityMonster(Data);
-    Hitbox(self^, rect);
-  end;
-end.
+begin
+  self := PEntityMonster(Data);
+  Hitbox(self^, rect);
+end;
 
+end.

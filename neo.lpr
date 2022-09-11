@@ -177,6 +177,9 @@ var delta: Vec2D_f32;
 begin
 
   writeln('--- Init ---');
+  writeln(fix32Mul(-64808, -64808));
+  writeln('lsqrt 25 ', lsqrt(25));
+  writeln('test ', -126 div 2);
   RegisterObjectTypes;
 
   tileset := Image_Load('proto2.bmp');
