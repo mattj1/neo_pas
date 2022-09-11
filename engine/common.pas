@@ -92,6 +92,8 @@ function I_IsKeyDown(sc: scanCode) : boolean;
 function I_WasKeyReleased(sc: scanCode) : boolean;
 function I_WasKeyPressed(sc: scanCode) : boolean;
 
+function itoa(i: integer): string;
+
 { Video ----------------------------------------------------------- }
 
 var
@@ -128,6 +130,13 @@ end;
 function I_WasKeyPressed(sc: scanCode) : boolean;
 begin
      I_WasKeyPressed := (sc in keys) and (not(sc in prevKeys));
+end;
+
+function itoa(i: integer): string;
+var s: string;
+begin
+  str(i, s);
+  itoa := s;
 end;
 
 begin

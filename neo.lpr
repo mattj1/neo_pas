@@ -168,6 +168,9 @@ var
         Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, e^.dir);
       end;
     end;
+
+    font_printstr(10, 10, 'Hello ' + itoa(Global.player^.origin.x shr 10) + ' ' + itoa(Global.player^.origin.y shr 10) );
+
     R_SwapBuffers;
     exit;
   end;
