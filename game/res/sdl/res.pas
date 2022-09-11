@@ -5,7 +5,7 @@ unit res;
 {$F+}
 interface
 
-uses gtypes, res_enum;
+uses g_common, res_enum;
 
 const
 	sprite_infos: array[0..23] of sprite_info_t = (

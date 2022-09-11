@@ -6,7 +6,7 @@ uses
   {$ifdef fpc}
      SysUtils,
   {$endif}
-  common, gtypes, g_common, g_map, fixedint, vect2d, rect, entity, res_enum, objtypes;
+  common, g_common, g_map, fixedint, vect2d, rect, entity, res_enum, objtypes;
 
 procedure Player_Update(Data: Pointer);
 

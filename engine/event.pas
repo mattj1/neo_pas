@@ -5,7 +5,7 @@ unit Event;
 
 interface
 
-uses com_kb;
+uses common;
 
 type
   eventType = (
@@ -64,12 +64,12 @@ begin
       SE_KEYDOWN:
       begin
         { writeln('SE_KEYDOWN ', e.param); }
-        com_kb.keys := com_kb.keys + [scanCode(e.param)];
+        common.keys := common.keys + [scanCode(e.param)];
       end;
       SE_KEYUP:
       begin
         { writeln('SE_KEYUP ', e.param); }
-        com_kb.keys := com_kb.keys - [scanCode(e.param)];
+        common.keys := common.keys - [scanCode(e.param)];
       end;
       else
       { writeln('unhandled event ', Ord(e.eventType), ' ', e.param); }

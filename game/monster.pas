@@ -2,7 +2,7 @@ unit Monster;
 
 interface
 
-uses objtypes, rect, vect2d, fixedint, gtypes, g_map, g_common;
+uses objtypes, rect, vect2d, fixedint, g_map, g_common;
 
 
 procedure Monster_Update(Data: Pointer);

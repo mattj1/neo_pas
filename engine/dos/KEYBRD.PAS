@@ -1,7 +1,7 @@
 unit keybrd;
 
 interface
-uses common, com_kb, crt, dos, event;
+uses common, crt, dos, event;
 
 procedure Init;
 procedure Close;
@@ -47,7 +47,7 @@ procedure Init;
 var i: integer;
 begin
      writeln('--- Keyboard Init ---');
-     com_kb.keys := [];
+     common.keys := [];
 
      getIntVec(9, oldKeyInt);
      setIntVec(9, @keyISR);

@@ -6,10 +6,11 @@ unit GFX_SDL;
 interface
 
 uses
+  common,
   gfx,
   SDL2,
   SDL2_Image,
-  Image, R_Pal, GFX_SDL_Core;
+  Image, GFX_SDL_Core;
 
 procedure InitDriver;
 
@@ -100,6 +101,7 @@ begin
   dstRect := SDL_RectCreate(dstX, dstY, srcRect.w, srcRect.h);
 
   {SDL_SetSurfacePalette(img.surface, currentPalette.sdlPalette);}
+
   SDL_SetPixelFormatPalette(img.surface^.format, currentPalette.sdlPalette);
   SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);
 end;

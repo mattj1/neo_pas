@@ -36,15 +36,7 @@
         <UnitName Value="test"/>
       </Unit>
       <Unit>
-        <Filename Value="game\gtypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\g_map.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="engine\com_kb.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -82,10 +74,7 @@
       <Unit>
         <Filename Value="engine\sdl\keybrd.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="engine\sdl\r_pal.pas"/>
-        <IsPartOfProject Value="True"/>
+        <UnitName Value="Keybrd"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\sys.pas"/>
@@ -95,6 +84,7 @@
       <Unit>
         <Filename Value="engine\sdl\timer.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Timer"/>
       </Unit>
       <Unit>
         <Filename Value="engine\inc\gameloop.inc"/>
@@ -131,10 +121,6 @@
       </Unit>
       <Unit>
         <Filename Value="engine\rect.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="engine\inc\object.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>

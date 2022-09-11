@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses SDL2, com_kb, GFX_SDL, Event, common;
+uses SDL2, GFX_SDL, Event, common;
 
 {$I sys.inc}
 

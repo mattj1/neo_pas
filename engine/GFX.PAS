@@ -2,7 +2,7 @@ unit GFX;
 
 interface
 
-uses Image, Common, R_Pal;
+uses Image, Common;
 
 
 type
@@ -18,23 +18,7 @@ type
     c: array[0..255] of array[0..2] of byte;
   end;
 
-type
-  R_FillColorProc = procedure(c: byte);
-  R_FillRectProc = procedure(x, y, w, h: integer; color: byte);
-  R_DrawSubImageTransparentProc = procedure(var img: image_t;
-    dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
-  R_DrawSubImageOpaqueProc = procedure(var img: image_t;
-    dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
-  R_DrawSpriteProc = procedure(x, y: integer; var img: image_t);
-  R_AllocPaletteProc = procedure(var pal: Palette);
 
-  R_LoadPaletteProc = procedure(filename: string; var pal: Palette);
-  R_SetPaletteColorProc = procedure(index: integer; r, g, b: byte);
-  R_SetPaletteProc = procedure(var pal: Palette);
-
-  R_SwapBuffersProc = procedure;
-  R_InitProc = procedure;
-  R_CloseProc = procedure;
 
 var
   screen_width, screen_height: integer;
@@ -42,19 +26,7 @@ var
 var
   blendlut: ^BlendLUT_t;
 
-var
-  R_FillRect: R_FillRectProc;
-  R_FillColor: R_FillColorProc;
-  R_DrawSubImageTransparent: R_DrawSubImageTransparentProc;
-  R_DrawSubImageOpaque: R_DrawSubImageOpaqueProc;
-  R_DrawSprite: R_DrawSpriteProc;
-  R_AllocPalette: R_AllocPaletteProc;
-  R_LoadPalette: R_LoadPaletteProc;
-  R_SetPaletteColor: R_SetPaletteColorProc;
-  R_SetPalette: R_SetPaletteProc;
-  R_SwapBuffers: R_SwapBuffersProc;
-  R_Init: R_InitProc;
-  R_Close: R_CloseProc;
+
 
 procedure GFX_Common_Init;
 procedure GFX_Common_Close;

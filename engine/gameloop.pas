@@ -6,7 +6,6 @@ interface
 
 uses
   Sys, common,
-  com_kb,
   Timer, GFX, Event;
 
 type
@@ -105,7 +104,7 @@ begin
     until Timer.Timer_GetTicks - frameTime >= 16;
     {Timer_Delay(8);}
     {$endif}
-    com_kb.prevKeys := com_kb.keys;
+    common.prevKeys := common.keys;
   until _done or shouldQuit;
 end;
 

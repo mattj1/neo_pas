@@ -6,7 +6,7 @@
 unit GFX13;
 interface
 
-uses crt, gfx, image, common, R_Pal;
+uses crt, gfx, image, common;
 
 var double_buffer: boolean;
 
@@ -479,7 +479,8 @@ var
   var rowSkip, subRowSkip: integer;
 begin
 
-  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)
+ { if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + img.width < 0) or (dstY + img.height < 0)}
+  if (dstX > 319) or (dstY > (screen_height - 1)) or (dstX + srcWidth < 0) or (dstY + srcHeight < 0)
    then Exit;
 
   if double_buffer then begin destPtr := scrBuf; end

@@ -184,13 +184,8 @@ begin
   img_font := Image_Load('font.bmp');
   LoadMap('./dev/m_main.bin', map);
 
-
   {$ifndef fpc}
-  {readln;}
-  {$endif}
-
-  {$ifndef fpc}
-  SYS_InitGraphicsDriver(0);
+           SYS_InitGraphicsDriver(0);
   {$else}
          SYS_InitGraphicsDriver(0);
   {$endif}

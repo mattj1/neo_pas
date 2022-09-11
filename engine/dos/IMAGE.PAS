@@ -32,13 +32,6 @@ type
     c: array[0..3] of byte;
   end;
 
-type
-  Image_T = record
-    Width: word;
-    Height: word;
-    data: byte_ptr;
-  end;
-
 {$I image.inc}
 
 procedure LoadBMP(filename: string; var image: Image_t);

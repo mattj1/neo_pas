@@ -1,7 +1,6 @@
 entity,
 g_common,
 g_map,
-gtypes,
 player,
 Monster,
 objtypes,

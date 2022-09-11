@@ -10,13 +10,7 @@ uses
   Classes, SysUtils,
   SDL2, SDL2_Image, Common, GFX_SDL_Core, strings;
 
-type
-  image_t = record
-    Width: word;
-    Height: word;
-    surface: PSDL_Surface;
-    texture: PSDL_Texture;
-  end;
+
 
 {$I image.inc}
 
@@ -42,7 +36,6 @@ begin
   end;
 
   GetMem(img, SizeOf(image_t));
-
   img^.surface := loadedSurface;
   SDL_SetColorKey(img^.surface, SDL_RLEACCEL, 0);
 

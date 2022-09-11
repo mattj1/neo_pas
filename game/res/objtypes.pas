@@ -1,7 +1,7 @@
 unit objtypes;
 
 interface
-uses vect2d, res_enum, gtypes;
+uses vect2d, res_enum, g_common;
 type
   ObjectPlayer = record
     {$i object.inc}

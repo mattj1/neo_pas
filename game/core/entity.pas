@@ -3,7 +3,7 @@ unit Entity;
 interface
 
 uses
-  common, gtypes, res_enum, objtypes;
+  common, g_common, res_enum, objtypes;
 
 var
   { Object Registry }

@@ -5,7 +5,7 @@ unit GFXX;
 
 interface
 
-uses crt, gfx, image, common, R_Pal;
+uses crt, gfx, image, common;
 
 procedure InitDriver;
 

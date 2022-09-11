@@ -5,7 +5,7 @@ unit Keybrd;
 interface
 
 uses
-  com_kb, SDL2;
+  SDL2;
 
 {$I keybrd.inc}
 implementation

@@ -2,7 +2,7 @@ unit g_map;
 
 interface
 
-uses gtypes, fixedint, g_common, Vect2D, rect;
+uses fixedint, g_common, Vect2D, rect;
 
 procedure LoadMap(filename: string; var m: TLevelMap);
 procedure World_Move(rect: rect_t; delta: Vec2D_f32; var moveInfo: TMoveInfo);

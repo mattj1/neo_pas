@@ -1,4 +1,4 @@
-uses crt, gfx, image, r_pal, common, sys, timer, keybrd;
+uses crt, gfx, image, common, sys, timer, keybrd;
 var angle: Real;
 var i, j, k, col: integer;
 var pal: Palette;
@@ -9,9 +9,7 @@ var bp: byte_ptr;
 var msg: string;
 var lsfr, start_state, bit: longint;
 begin
-     writeln('GFX_TB');
-
-    writeln('SYS_InitGraphicsDriver(0)');
+     writeln('SYS_InitGraphicsDriver(0)');
      SYS_InitGraphicsDriver(0);
 
      msg := 'ÛHello from Pascal!!!';
@@ -21,13 +19,6 @@ begin
 
      writeln('LoadBMP');
      LoadBMP('test.bmp', img);
-
-     
-
-     {exit;}
-
-
-
      
      {Timer.Init;
      Keybrd.Init;}
@@ -104,6 +95,11 @@ begin
 
    for j := 0 to Length(msg)-1 do begin
        k := ord(msg[j+1]);
+       R_DrawSubImageTransparent(img, 
+        320 - (i) + j * 15, 
+        100 + round(10 * sin(20 * (i * 0.2 + j) * 3.141/180)),  
+        8 * (k mod 16), 
+        8 * (k div 16), 8, 8);
 {           R_DrawSpriteAlpha2(320 - (i) + j * 15,
        100 + round(10 * sin(20 * (i * 0.2 + j) * 3.141/180)),
                            8 * (k mod 16),
