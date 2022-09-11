@@ -9,10 +9,9 @@
         <Filename Value="neo.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="test"/>
-        <TopLine Value="171"/>
-        <CursorPos X="41" Y="177"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="9" Y="11"/>
         <UsageCount Value="481"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_player.pas"/>
@@ -24,7 +23,7 @@
         <Filename Value="game\gtypes.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="24" Y="6"/>
-        <UsageCount Value="201"/>
+        <UsageCount Value="200"/>
       </Unit>
       <Unit>
         <Filename Value="game\res_enum.pas"/>
@@ -37,26 +36,27 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="69"/>
         <CursorPos X="45" Y="73"/>
-        <UsageCount Value="187"/>
+        <UsageCount Value="186"/>
       </Unit>
       <Unit>
         <Filename Value="game\entity.pas"/>
+        <IsPartOfProject Value="True"/>
         <UnitName Value="Entity"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="3" Y="9"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="61"/>
+        <CursorPos X="27" Y="63"/>
         <UsageCount Value="185"/>
         <Bookmarks Count="1">
           <Item0 X="22" Y="67" ID="9"/>
         </Bookmarks>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_map.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="6" Y="5"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="engine\com_kb.pas"/>
@@ -67,20 +67,18 @@
       <Unit>
         <Filename Value="engine\common.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="92"/>
         <CursorPos X="3" Y="72"/>
         <UsageCount Value="217"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="engine\event.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Event"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="72"/>
         <UsageCount Value="217"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="engine\GFX.PAS"/>
@@ -136,14 +134,14 @@
         <Filename Value="engine\sdl\neo_sdl.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="7" Y="10"/>
-        <UsageCount Value="213"/>
+        <UsageCount Value="212"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\r_pal.pas"/>
         <UnitName Value="R_Pal"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="11"/>
-        <UsageCount Value="216"/>
+        <UsageCount Value="215"/>
       </Unit>
       <Unit>
         <Filename Value="engine\sdl\sys.pas"/>
@@ -207,20 +205,18 @@
       <Unit>
         <Filename Value="game\g_common.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="90"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="89"/>
         <CursorPos X="5" Y="56"/>
         <UsageCount Value="204"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="engine\vect2d.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Vect2D"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="21"/>
         <UsageCount Value="280"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="engine\rect.pas"/>
@@ -234,18 +230,18 @@
         <Filename Value="game\g_player_h.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="8"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="96"/>
       </Unit>
       <Unit>
         <Filename Value="game\entity.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="21" Y="4"/>
-        <UsageCount Value="97"/>
+        <UsageCount Value="96"/>
       </Unit>
       <Unit>
         <Filename Value="engine\inc\object.inc"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="221"/>
+        <UsageCount Value="220"/>
       </Unit>
       <Unit>
         <Filename Value="game\g_entity.pas"/>
@@ -257,7 +253,7 @@
         <Filename Value="game\game.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="9"/>
-        <UsageCount Value="55"/>
+        <UsageCount Value="54"/>
       </Unit>
       <Unit>
         <Filename Value="common.pas"/>
@@ -531,35 +527,37 @@
       </Unit>
       <Unit>
         <Filename Value="game\core\entity.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="Entity"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="19" Y="6"/>
-        <UsageCount Value="178"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="184"/>
       </Unit>
       <Unit>
         <Filename Value="game\player.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Player"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="55" Y="9"/>
-        <UsageCount Value="177"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="51"/>
+        <CursorPos X="11" Y="9"/>
+        <UsageCount Value="184"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\res\objtypes.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="6"/>
         <CursorPos X="32" Y="4"/>
-        <UsageCount Value="177"/>
+        <UsageCount Value="184"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\res\res_enum.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="25"/>
-        <UsageCount Value="177"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="184"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\core\object.inc"/>
@@ -570,49 +568,44 @@
         <Filename Value="game\res\res_oreg.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="22" Y="6"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="33"/>
       </Unit>
       <Unit>
         <Filename Value="game\monster.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Monster"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="6" Y="55"/>
-        <UsageCount Value="149"/>
+        <CursorPos X="40" Y="5"/>
+        <UsageCount Value="156"/>
       </Unit>
       <Unit>
         <Filename Value="game\res\sdl\res.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <TopLine Value="129"/>
         <CursorPos X="14" Y="8"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="156"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\res\sdl\res_oreg.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="149"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="156"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="game\inc\entity.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="7"/>
-        <UsageCount Value="51"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="58"/>
       </Unit>
       <Unit>
         <Filename Value="game\inc\game.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="51"/>
+        <CursorPos X="7" Y="3"/>
+        <UsageCount Value="58"/>
       </Unit>
       <Unit>
         <Filename Value="game\inc\object.inc"/>
@@ -621,107 +614,23 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="58"/>
       </Unit>
       <Unit>
         <Filename Value="engine\inc\neo_sdl.inc"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="17" Y="12"/>
+        <CursorPos Y="6"/>
         <UsageCount Value="10"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="22">
-      <Position>
-        <Filename Value="engine\common.pas"/>
-        <Caret Line="112" Column="7" TopLine="20"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="41" Column="6" TopLine="6"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="21" Column="9"/>
-      </Position>
-      <Position>
-        <Filename Value="game\core\entity.pas"/>
-        <Caret Line="6" Column="19"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="5" Column="24"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="13" Column="5"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="12" Column="82"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="14" Column="3"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="31" Column="3" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="21" Column="15" TopLine="13"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="5" Column="16"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="35" Column="3" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="21" Column="5" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="72" Column="3" TopLine="43"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="17"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="6" Column="21"/>
-      </Position>
-      <Position>
-        <Filename Value="game\inc\entity.inc"/>
-        <Caret Line="7" Column="10"/>
-      </Position>
-      <Position>
-        <Filename Value="engine\vect2d.pas"/>
-        <Caret Line="21" Column="10"/>
-      </Position>
-      <Position>
-        <Filename Value="game\inc\entity.inc"/>
-        <Caret Line="7" Column="10"/>
-      </Position>
+    <JumpHistory HistoryIndex="1">
       <Position>
         <Filename Value="game\res\objtypes.pas"/>
         <Caret Line="4" Column="32"/>
       </Position>
       <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="11" Column="5" TopLine="52"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="59" Column="15" TopLine="52"/>
-      </Position>
-      <Position>
-        <Filename Value="game\g_common.pas"/>
-        <Caret Line="62" Column="7" TopLine="52"/>
+        <Filename Value="game\entity.pas"/>
+        <Caret Line="63" Column="27" TopLine="61"/>
       </Position>
     </JumpHistory>
     <RunParams>

@@ -36,6 +36,11 @@
         <UnitName Value="test"/>
       </Unit>
       <Unit>
+        <Filename Value="game\entity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Entity"/>
+      </Unit>
+      <Unit>
         <Filename Value="game\g_map.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -124,11 +129,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="game\core\entity.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Entity"/>
-      </Unit>
-      <Unit>
         <Filename Value="game\player.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Player"/>
@@ -176,7 +176,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);engine\inc;engine\sdl;external\sdl2;game;game\inc"/>
-      <OtherUnitFiles Value="engine;engine\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;external\sdl2;game;game\core;game\res;game\sdl;game\res\sdl"/>
+      <OtherUnitFiles Value="engine;engine\sdl;C:\lazarus\fpc\3.2.2\units\SDL2\;external\sdl2;game;game\res;game\sdl;game\res\sdl"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

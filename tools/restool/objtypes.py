@@ -47,7 +47,7 @@ class ObjectTypeTool:
         write("unit objtypes;")
         write("")  # {$H+}{$mode tp}
         write("interface")
-        write("uses vect2d, res_enum, gtypes;")
+        write("uses vect2d, res_enum, g_common;")
 
         o: ObjectInfo
         for o in self.objs:

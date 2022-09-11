@@ -136,7 +136,7 @@ class ResTool:
             w("unit res;\n")
             w("{$F+}")
             w('interface\n')
-            w('uses gtypes, res_enum;\n')
+            w('uses g_common, res_enum;\n')
 
             w('const')
 
