@@ -31,10 +31,10 @@ var
   frac: fix32;
 
 begin
-  writeln('-- monster update');
+  {writeln('-- monster update');}
   self := PEntityMonster(Data);
   Vect2D.Subtract(Global.player^.origin, self^.origin, delta);
-  writeln('monster delta ', delta.x, ' ', delta.y);
+ { writeln('monster delta ', delta.x, ' ', delta.y);}
   distance := Vect2D.Length(delta);
 
   if distance = 0 then
@@ -47,7 +47,7 @@ begin
   vel.x := fix32Div(delta.x, distance);
   vel.y := fix32Div(delta.y, distance);
 
-  frac := fix32Div(intToFix32(2), intToFix32(3));
+  {frac := fix32Div(intToFix32(2), intToFix32(3));}
 
         {writeln('vel ', vel.x, ' ', vel.y, ' ', frac);
 }

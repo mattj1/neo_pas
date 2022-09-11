@@ -7,7 +7,6 @@ type
   fix32 = longint;
 
 
-
 function floatToFix32(Value: real): fix32;
 function intToFix32(Value: longint): fix32;
 function fix32Mul(val1, val2: fix32): fix32;
@@ -41,15 +40,20 @@ function fix32Mul(val1, val2: fix32): fix32;
 begin
   {fix32Mul := ((val1 shr 5) * (val2 shr 5)); }
 
- { fix32Mul := (val1 div 32) * (val2 div 32);
-}
+  fix32Mul := (val1 div 32) * (val2 div 32);
+
   {fix32Mul := (val1 * val1) shr 10;  }
+{
+  writeln('fix32Mul: ', val1, ' * ',  val2);
+  writeln(' shr 5: ', val1 shr 5, ' ', val2 shr 5);
 
   if (abs(val1) > abs(val2)) then
     fix32Mul := (val1 shr 5 * val2) shr 5
     else
     fix32Mul := (val2 shr 5 * val1) shr 5;
 
+    writeln('result: ', fix32Mul);
+}
 
 end;
 
@@ -93,13 +97,13 @@ begin
   while (d <> 0) do
   begin
     if (x >= c + d) then
-    begin      // if Xₘ₊₁ ≥ Yₘ then aₘ = 2ᵐ
-      x := x - (c + d);        // Xₘ = Xₘ₊₁ - Yₘ
-      c := (c shr 1) + d;  // cₘ₋₁ = cₘ/2 + dₘ (aₘ is 2ᵐ)
+    begin  
+      x := x - (c + d);       
+      c := (c shr 1) + d; 
     end
     else
     begin
-      c := c shr 1;           // cₘ₋₁ = cₘ/2      (aₘ is 0)
+      c := c shr 1;
     end;
     d := d shr 2;
   end;
@@ -112,20 +116,13 @@ begin
   {https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Binary_numeral_system_.28base_2.29}
   if val < 0 then
   begin
-   // halt;
     fix32Sqrt := 0;
-    exit;
+    writeln('fix32Sqrt: Got negative value.');
+    halt;
 
   end;
   fix32Sqrt := lsqrt(val div 1024) * 1024;
 end;
-
-{
-function VectorLength2D_f32(var v: Vec2D_f32): fix32;
-begin
-  VectorLength2D_f32 := Sqr(v.x * v.x + v.y * v.y);
-end;
- }
 
 
 begin

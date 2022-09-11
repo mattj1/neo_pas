@@ -5,4 +5,4 @@ vect2d,
 Image, 
 Timer, 
 GameLoop,
-Keybrd, com_kb, gfx, Sys, SFX
+Keybrd, gfx, Sys, SFX

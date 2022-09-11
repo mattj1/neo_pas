@@ -54,6 +54,8 @@ var
   e: TEvent;
 
 begin
+  {writeln('Event_ProcessEvents ', head, ' ', tail);}
+
   while tail <> head do
   begin
     tail := (tail + 1) and (MAX_EVENTS - 1);
@@ -63,16 +65,17 @@ begin
     case e.eventType of
       SE_KEYDOWN:
       begin
-        { writeln('SE_KEYDOWN ', e.param); }
-        common.keys := common.keys + [scanCode(e.param)];
+        {writeln('SE_KEYDOWN ', e.param);}
+        Include(common.keys, scanCode(e.param));
+        {common.keys := common.keys + [scanCode(e.param)];}
       end;
       SE_KEYUP:
       begin
-        { writeln('SE_KEYUP ', e.param); }
+        {writeln('SE_KEYUP ', e.param);}
         common.keys := common.keys - [scanCode(e.param)];
       end;
       else
-      { writeln('unhandled event ', Ord(e.eventType), ' ', e.param); }
+       writeln('unhandled event ', Ord(e.eventType), ' ', e.param); 
     end;
 
   end;

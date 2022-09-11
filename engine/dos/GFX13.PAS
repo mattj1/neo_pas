@@ -792,6 +792,7 @@ begin
   R_FillRect := FillRect;
 
   R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSubImageOpaque := DrawSubImageOpaque;
   R_DrawSprite := DrawSprite;
   R_AllocPalette := AllocPalette;
   R_LoadPalette := LoadPalette;

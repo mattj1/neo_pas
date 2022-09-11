@@ -61,10 +61,9 @@ end;
 function Length(v: Vec2D_f32): fix32;
 var l: longint;
 begin
-  writeln('vector length ', v.x, ' ', v.y);
+ { writeln('Vect2D.Length( ', v.x, ' ', v.y, ' )');}
   {v.x := v.x div 32;
   v.y := v.y div 32;}
-  writeln('adj ', v.x, ' ', v.y);
   l := fix32Sqrt( fix32Mul(v.x, v.x) + fix32Mul(v.y, v.y) );
 
  { writeln('calculated length ', l, ' ', l * 32);  }

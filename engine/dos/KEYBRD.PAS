@@ -30,8 +30,8 @@ begin
 
      memW[$40 : $1A] := memW[$40 : $1C];
 
-     {writeln('got ', k, ' ', b, ' ', (b and 128) = 0);
-}
+     {writeln('Keyboard: got ', ord(k), ' ', b, ' ', (b and 128) = 0);}
+
      {keyTable[k] := ;}
      if (b and $80) = 0 then begin
           Event_Add(SE_KEYDOWN, ord(k));  

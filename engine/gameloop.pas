@@ -63,8 +63,8 @@ begin
 
   repeat
     SYS_PollEvents;
-    Event_ProcessEvents;
 
+    Event_ProcessEvents;
 
     numUpdates := 0;
     frameTime := Timer.Timer_GetTicks;
@@ -86,7 +86,7 @@ begin
  }
     _drawProc;
 
-    R_SwapBuffers;
+    {R_SwapBuffers;}
 
     lastFrameTime := frameTime;
 

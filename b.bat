@@ -1,2 +1,4 @@
-bpc -b -$G+ -$N+ -$E- neo.lpr
+del engine\*.tpu
+del engine\dos\*.tpu
+bpc neo.lpr
 

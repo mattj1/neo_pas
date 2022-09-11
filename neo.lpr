@@ -62,6 +62,8 @@ var
 
   begin
 
+ {  if time > 3000 then Loop_Cancel; }
+
 
     player_input := 0;
     if I_IsKeyDown(kUp) then player_input := player_input or 1;
@@ -70,7 +72,7 @@ var
     if I_IsKeyDown(kRt) then player_input := player_input or 8;
 
     if I_IsKeyDown(kEnter) then Loop_Cancel;
-
+    
     {$ifndef fpc}
     {if I_WasKeyPressed(kRt) then SND_PlaySound(tempSound);}
     {$endif}
@@ -129,10 +131,11 @@ var
     tile_index: integer;
 
   begin
+
     R_FillColor(1);
 
+   {R_DrawSubImageTransparent(tileset^, x, y, 0, 0, 256, 256);}
 
-    {R_DrawSubImageTransparent(tileset^, x, y, 0, 0, 256, 256);}
 
     for ty := 0 to map.Height - 1 do
     begin
@@ -149,7 +152,7 @@ var
         end;
       end;
     end;
-    { R_DrawSprite(x1, 0, img^); }
+
 
     {R_DrawSprite(0, 0, img_font^);}
     {font_printstr(32, 32, 'Hello World! 123456');}
@@ -165,7 +168,10 @@ var
         Draw_Sprite_State(e^.origin.x shr 10, e^.origin.y shr 10, es^.spriteState_, e^.dir);
       end;
     end;
+    R_SwapBuffers;
+    exit;
   end;
+
 
 
 var
@@ -177,9 +183,7 @@ var delta: Vec2D_f32;
 begin
 
   writeln('--- Init ---');
-  writeln(fix32Mul(-64808, -64808));
-  writeln('lsqrt 25 ', lsqrt(25));
-  writeln('test ', -126 div 2);
+
   RegisterObjectTypes;
 
   tileset := Image_Load('proto2.bmp');
@@ -192,16 +196,6 @@ begin
   {$else}
          SYS_InitGraphicsDriver(0);
   {$endif}
-
-  Timer.Init;
-  Keybrd.Init;
-
-  {
-  GFX_SetPaletteColor(0, 0, 0, 0);
-  GFX_SetPaletteColor(1, 255, 0, 0);
-  GFX_SetPaletteColor(2, 0, 255, 0);
-  GFX_SetPaletteColor(3, 255, 255, 255);
-  }
 
   y := 0;
 
@@ -241,6 +235,9 @@ begin
   monsterInstance^.origin.y := intToFix32(128);
   Entity_SetState(monsterInstance, STATE_MONSTER_WALK0);
 
+  Timer.Init;
+  Keybrd.Init;
+
 {$ifdef fpc}
   Loop_SetUpdateProc(@Update);
   Loop_SetDrawProc(@Draw);
@@ -251,8 +248,9 @@ begin
 
   Loop_Run;
 
+  R_Close;
   Keybrd.Close;
   Timer.Close;
 
-  R_Close;
+  
 end.

@@ -85,30 +85,22 @@ begin
 end;
 
 
-function Image_Load(filename: string): pimage_t;
-
-var
-  img: pimage_t;
-
-var newData, src, dst: byte_ptr;
+procedure ConvertImageToModeX(var img: image_t);
+  var newData, src, dst: byte_ptr;
 
 var p, i, n: integer;
 begin
 
-  GetMem(img, SizeOf(image_t));
-
-  LoadBMP(filename, img^);
-
-  GetMem(newData, img^.width * img^.height);
+  GetMem(newData, img.width * img.height);
 
   { Mode x images should have a width multiple of 4 }
 
   dst := newData;
 
-  n := (img^.width * img^.height) shr 2;
+  n := (img.width * img.height) shr 2;
 
   for p := 0 to 3 do begin
-    src := img^.data;
+    src := img.data;
     inc(src, p);
     for i := 0 to n - 1 do 
     begin
@@ -118,7 +110,23 @@ begin
     end
   end;
 
-  img^.data := newData;
+  img.data := newData;
+end;
+
+function Image_Load(filename: string): pimage_t;
+
+var
+  img: pimage_t;
+
+
+begin
+
+  GetMem(img, SizeOf(image_t));
+
+  LoadBMP(filename, img^);
+
+{  ConvertImageToModeX(img^); }
+
   Image_Load := img;
 end;
 
