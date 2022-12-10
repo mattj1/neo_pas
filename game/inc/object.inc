@@ -1,3 +1,0 @@
-     classID: integer;
-     entitySize: integer;
-

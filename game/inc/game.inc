@@ -1,9 +1,0 @@
-entity,
-g_common,
-g_map,
-player,
-Monster,
-objtypes,
-res,
-res_enum,
-res_oreg 
