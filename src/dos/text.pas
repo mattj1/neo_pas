@@ -10,7 +10,7 @@ procedure Text_Close;
 procedure DrawString(x, y: byte; str: string);
 procedure FillCharAttrib(const ascii_char, attr: byte);
 procedure TextBox(x, y, w, h: integer);
-procedure Text_SwapBuffers;
+procedure SwapBuffers;
 procedure ShowCursor;
 procedure HideCursor;
 
@@ -56,7 +56,7 @@ asm
 end;
 end;
 
-procedure Text_SwapBuffers;
+procedure SwapBuffers;
 var nc: integer;
 begin
     nc := num_chars;

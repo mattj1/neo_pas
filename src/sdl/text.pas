@@ -10,14 +10,14 @@ procedure Text_Close;
 procedure DrawString(x, y: byte; str: string);
 procedure FillCharAttrib(const ascii_char, attr: byte);
 procedure TextBox(x, y, w, h: integer);
-procedure Text_SwapBuffers;
+procedure SwapBuffers;
 procedure ShowCursor;
 procedure HideCursor;
 
 implementation
 
 var
-  scrbuf, fg, bg: pointer;
+  scrbuf: pointer;
   pal: array[0..15] of array[0..2] of byte;
 
 var
@@ -50,21 +50,20 @@ begin
 
 end;
 
-procedure Text_SwapBuffers;
+procedure SwapBuffers;
 var
   srcRect: TSDL_Rect;
   dstRect: TSDL_Rect;
   texture: PSDL_Texture;
   point: TSDL_Point;
 
-  bp, fg_p, bg_p: ^byte;
+  bp: ^byte;
+  fg: byte;
 
   x, y, row, col: integer;
 
 begin
   bp := scrbuf;
-  fg_p := fg;
-  bg_p := bg;
 
   dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
 
@@ -77,7 +76,9 @@ begin
 
       row := bp^ div 32;
       col := bp^ mod 32;
-      SDL_SetTextureColorMod(fontTexture, pal[fg_p^][0], pal[fg_p^][1], pal[fg_p^][2]);
+      Inc(bp);
+      fg := bp^ and $f;
+      SDL_SetTextureColorMod(fontTexture, pal[fg][0], pal[fg][1], pal[fg][2]);
 
       srcRect := SDL_RectCreate(col * 8, row * 16, 8, 16);
       dstRect := SDL_RectCreate(x * 8, y * 16, 8, 16);
@@ -86,8 +87,6 @@ begin
       SDL_RenderCopyEx(sdlRenderer, fontTexture, @srcRect, @dstRect, 0, @point, 0);
 
       Inc(bp);
-      Inc(fg_p);
-      Inc(bg_p);
     end;
   end;
 
@@ -99,51 +98,61 @@ var
   bp, fg_p, bg_p: byte_ptr;
 
 begin
+  {{
   bp := scrbuf;
-  fg_p := fg;
-  bg_p := bg;
   Inc(bp, o);
   Inc(fg_p, o);
   Inc(bg_p, o);
   bp^ := ch;
   fg_p^ := color and $f;
+   }}
+end;
 
+procedure WriteCharEx(x, y: integer; ch, color: byte);
+var
+  bp: byte_ptr;
+begin
+  bp := scrbuf;
+
+  Inc(bp, 2 * (y * text_screen_width + x));
+  bp^ := ch;
+
+  Inc(bp);
+  bp^ := color;
 end;
 
 procedure TextBox(x, y, w, h: integer);
 var
-  o, i, j: integer;
+  i, j: integer;
 begin
-  o := 2 * (y * text_screen_width + x);
-  TextWriteRaw(201, 15, o);
+  WriteCharEx(x, y, 201, 15);
   for i := x + 1 to x + w - 1 do
   begin
-    TextWriteRaw(205, 15, o);
+    WriteCharEx(i, y, 205, 15);
   end;
-  TextWriteRaw(187, 15, o);
+  WriteCharEx(i + 1, y, 187, 15);
+
   for j := y + 1 to y + h - 1 do
   begin
-    o := 2 * (j * text_screen_width + x);
-    TextWriteRaw(186, 15, o);
+    WriteCharEx(x, j, 186, 15);
     for i := x + 1 to x + w - 1 do
     begin
-      TextWriteRaw(0, 15, o);
+      WriteCharEx(i, j, 0, 15);
     end;
-    TextWriteRaw(186, 15, o);
+    WriteCharEx(x + w, j, 186, 15);
   end;
-  o := 2 * ((y + h) * text_screen_width + x);
-  TextWriteRaw(200, 15, o);
+
+  WriteCharEx(x, y + h, 200, 15);
+  WriteCharEx(x + w, y + h, 188, 15);
   for i := x + 1 to x + w - 1 do
   begin
-    TextWriteRaw(205, 15, o);
+    WriteCharEx(i, y + h, 205, 15);
   end;
-  TextWriteRaw(188, 15, o);
-
 end;
 
 procedure DrawString(x, y: byte; str: string);
 var
-  left, right, i, j, o: integer;
+  left, right, i, j: integer;
 begin
   j := 1;
   left := x;
@@ -151,13 +160,11 @@ begin
 
   if right > text_screen_width then right := text_screen_width;
 
-  o := (y * text_screen_width + left);
 
   for i := left to right do
   begin
-    TextWriteRaw(Ord(str[j]), 7, o);
+    WriteCharEx(i, y, Ord(str[j]), 7);
     j := j + 1;
-    Inc(o);
   end;
 end;
 
@@ -183,9 +190,7 @@ begin
 
   writeln('Text_Init: ', Width, 'x', Height);
 
-  GetMem(scrbuf, text_screen_width * text_screen_height);
-  GetMem(fg, text_screen_width * text_screen_height);
-  GetMem(bg, text_screen_width * text_screen_height);
+  GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
 
   if SDL_Init(SDL_INIT_VIDEO) < 0 then
   begin
@@ -276,9 +281,7 @@ begin
 
   fontTexture := SDL_CreateTextureFromSurface(sdlRenderer, fontImage^.surface);
 
-  FillByte(scrbuf^, num_chars, 0);
-  FillByte(fg^, num_chars, 0);
-  FillByte(bg^, num_chars, 0);
+  FillByte(scrbuf^, 2 * num_chars, 0);
 
   i := 0;
   for i := 0 to 15 do
@@ -291,9 +294,7 @@ end;
 
 procedure Text_Close;
 begin
-  FreeMem(scrbuf, text_screen_width * text_screen_height);
-  FreeMem(fg, text_screen_width * text_screen_height);
-  FreeMem(bg, text_screen_width * text_screen_height);
+  FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
 
   SDL_DestroyRenderer(sdlRenderer);
   SDL_DestroyWindow(sdlWindow1);
