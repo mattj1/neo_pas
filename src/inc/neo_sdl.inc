@@ -8,6 +8,7 @@ Sys,
 Event,
 fixedint,
 rect,
-Vect2D
+Vect2D,
+Text
 
 

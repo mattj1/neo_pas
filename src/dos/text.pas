@@ -197,12 +197,12 @@ begin
   text_screen_height := height;
   
   num_chars := width * height;
-  GetMem(scrbuf, text_screen_width * text_screen_height);
+  GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
 end;
 
 procedure Text_Close;
 begin
-  FreeMem(scrbuf, text_screen_width * text_screen_height);
+  FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
   asm
            mov     ax, $3
            int     $10
