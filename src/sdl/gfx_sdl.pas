@@ -12,6 +12,7 @@ uses
   Image, GFX_SDL_Core;
 
 procedure InitDriver;
+function SDL_RectCreate(x, y, w, h: integer): TSDL_Rect; inline;
 
 implementation
 
