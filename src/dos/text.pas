@@ -4,8 +4,8 @@ interface
 
 uses crt, common;
 
-procedure Text_Init(width, height: integer);
-procedure Text_Close;
+procedure Init(width, height: integer);
+procedure Close;
 
 procedure DrawString(x, y: byte; str: string);
 procedure FillCharAttrib(const ascii_char, attr: byte);
@@ -13,7 +13,8 @@ procedure TextBox(x, y, w, h: integer);
 procedure SwapBuffers;
 procedure ShowCursor;
 procedure HideCursor;
-
+procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
+  
 implementation
 
 var
@@ -102,6 +103,20 @@ begin
   Inc(o, 2);
 end;
 
+procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
+var
+  bp: byte_ptr;
+begin
+  bp := scrbuf;
+
+  Inc(bp, 2 * (y * text_screen_width + x));
+  bp^ := ch;
+
+  Inc(bp);
+
+  bp^ := (bp^ and (not mask)) or (color and mask);
+end;  
+
 procedure TextBox(x, y, w, h: integer);
 var
   o, i, j: integer;
@@ -152,7 +167,7 @@ begin
   end;
 end;
 
-procedure Text_Init(width, height: integer);
+procedure Init(width, height: integer);
 var mode, param: integer;
 begin
   mode := 0;
@@ -201,7 +216,7 @@ begin
   FillChar(scrbuf^, 2 * text_screen_width * text_screen_height, 0);
 end;
 
-procedure Text_Close;
+procedure Close;
 begin
   FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
   asm

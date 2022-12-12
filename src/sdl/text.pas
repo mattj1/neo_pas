@@ -2,10 +2,10 @@ unit Text;
 
 interface
 
-uses crt, common, sdl2, sdl2_image, gfx, gfx_sdl, Image;
+uses crt, common, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
 
-procedure Text_Init(Width, Height: integer);
-procedure Text_Close;
+procedure Init(Width, Height: integer);
+procedure Close;
 
 procedure DrawString(x, y: byte; str: string);
 procedure FillCharAttrib(const ascii_char, attr: byte);
@@ -13,6 +13,8 @@ procedure TextBox(x, y, w, h: integer);
 procedure SwapBuffers;
 procedure ShowCursor;
 procedure HideCursor;
+
+procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 
 implementation
 
@@ -58,12 +60,14 @@ var
   point: TSDL_Point;
 
   bp: ^byte;
-  fg: byte;
-
+  fg, bg: byte;
+  flash: boolean;
+  flash_attr: boolean;
   x, y, row, col: integer;
 
 begin
   bp := scrbuf;
+  flash := Timer.Timer_GetTicks mod 800 < 400;
 
   dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
 
@@ -78,10 +82,29 @@ begin
       col := bp^ mod 32;
       Inc(bp);
       fg := bp^ and $f;
+      flash_attr := (bp^ and $80) <> 0;
+
+      bg := (bp^ shr 4) and $f;
+
+      // If flashing text is enabled:
+      bg := bg and $7;
+
+      dstRect := SDL_RectCreate(x * 8, y * 16, 8, 16);
+      SDL_SetRenderDrawColor(sdlRenderer, pal[bg][0], pal[bg][1], pal[bg][2], 255);
+      //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
+      SDL_RenderFillRect(sdlRenderer, @dstRect);
+
+      if (flash_attr and (not flash)) then
+      begin
+        Inc(bp);
+        Continue;
+      end;
+
+      fg := bp^ and $f;
       SDL_SetTextureColorMod(fontTexture, pal[fg][0], pal[fg][1], pal[fg][2]);
 
       srcRect := SDL_RectCreate(col * 8, row * 16, 8, 16);
-      dstRect := SDL_RectCreate(x * 8, y * 16, 8, 16);
+
 
 
       SDL_RenderCopyEx(sdlRenderer, fontTexture, @srcRect, @dstRect, 0, @point, 0);
@@ -108,7 +131,7 @@ begin
    }}
 end;
 
-procedure WriteCharEx(x, y: integer; ch, color: byte);
+procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 var
   bp: byte_ptr;
 begin
@@ -118,35 +141,36 @@ begin
   bp^ := ch;
 
   Inc(bp);
-  bp^ := color;
+
+  bp^ := (bp^ and (not mask)) or (color and mask);
 end;
 
 procedure TextBox(x, y, w, h: integer);
 var
   i, j: integer;
 begin
-  WriteCharEx(x, y, 201, 15);
+  WriteCharEx(x, y, 201, 2 * 32 + 15, $ff);
   for i := x + 1 to x + w - 1 do
   begin
-    WriteCharEx(i, y, 205, 15);
+    WriteCharEx(i, y, 205, 15, $ff);
   end;
-  WriteCharEx(i + 1, y, 187, 15);
+  WriteCharEx(i + 1, y, 187, 15, $ff);
 
   for j := y + 1 to y + h - 1 do
   begin
-    WriteCharEx(x, j, 186, 15);
+    WriteCharEx(x, j, 186, 15, $ff);
     for i := x + 1 to x + w - 1 do
     begin
-      WriteCharEx(i, j, 0, 15);
+      WriteCharEx(i, j, 0, 15, $ff);
     end;
-    WriteCharEx(x + w, j, 186, 15);
+    WriteCharEx(x + w, j, 186, 15, $ff);
   end;
 
-  WriteCharEx(x, y + h, 200, 15);
-  WriteCharEx(x + w, y + h, 188, 15);
+  WriteCharEx(x, y + h, 200, 15, $ff);
+  WriteCharEx(x + w, y + h, 188, 15, $ff);
   for i := x + 1 to x + w - 1 do
   begin
-    WriteCharEx(i, y + h, 205, 15);
+    WriteCharEx(i, y + h, 205, 15, $ff);
   end;
 end;
 
@@ -160,15 +184,14 @@ begin
 
   if right > text_screen_width then right := text_screen_width;
 
-
   for i := left to right do
   begin
-    WriteCharEx(i, y, Ord(str[j]), 7);
+    WriteCharEx(i, y, Ord(str[j]), 7, $ff);
     j := j + 1;
   end;
 end;
 
-procedure Text_Init(Width, Height: integer);
+procedure Init(Width, Height: integer);
 var
   window_width, window_height: integer;
 var
@@ -214,11 +237,15 @@ begin
   pal[i][1] := 52;
   pal[i][2] := 209;
   Inc(i);
-  pal[i][0] := 68;
+  pal[i][0] := 12;
+  pal[i][1] := 126;
+  pal[i][2] := 69;
+  Inc(i);
+  pal[i][0] := 68;      // 3 cyan
   pal[i][1] := 170;
   pal[i][2] := 204;
   Inc(i);
-  pal[i][0] := 138;
+  pal[i][0] := 138;      // 4 red
   pal[i][1] := 54;
   pal[i][2] := 34;
   Inc(i);
@@ -230,20 +257,15 @@ begin
   pal[i][1] := 92;
   pal[i][2] := 61;
   Inc(i);
-  pal[i][0] := 181;
+  pal[i][0] := 181;      // 7 white
   pal[i][1] := 181;
   pal[i][2] := 181;
   Inc(i);
-  pal[i][0] := 127;
-  pal[i][1] := 127;
-  pal[i][2] := 127;
-  Inc(i);
-
   pal[i][0] := 94;
   pal[i][1] := 96;
   pal[i][2] := 110;
   Inc(i);
-  pal[i][0] := 76;
+  pal[i][0] := 76;       // 9 light blue
   pal[i][1] := 129;
   pal[i][2] := 251;
   Inc(i);
@@ -286,13 +308,11 @@ begin
   i := 0;
   for i := 0 to 15 do
   begin
-    TextWriteRaw(65 + i, i, i);
+    WriteCharEx(i, 0, 65+i, i, $ff);
   end;
-
-  DrawString(10, 10, 'Hello');
 end;
 
-procedure Text_Close;
+procedure Close;
 begin
   FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
 
