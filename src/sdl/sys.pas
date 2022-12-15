@@ -18,8 +18,10 @@ begin
     SDLK_DOWN: Result := kDn;
     SDLK_LEFT: Result := kLf;
     SDLK_RIGHT: Result := kRt;
+    SDLK_SPACE: Result := kSpace;
     else
       writeln('did not translate SDL scan code ', code);
+      Result := kNone;
   end;
 end;
 
@@ -56,7 +58,7 @@ begin
 
         sc := sdl_to_scancode(event.key.keysym.sym);
 
-        if event.key._repeat = 0 then
+        if (sc <> kNone) and (event.key._repeat = 0) then
         begin
           Event_Add(SE_KEYDOWN, Ord(sc));
         end;
@@ -67,8 +69,11 @@ begin
       SDL_KEYUP:
       begin
         sc := sdl_to_scancode(event.key.keysym.sym);
-        Event_Add(SE_KEYUP, Ord(sc));
 
+        if sc <> kNone then
+        begin
+          Event_Add(SE_KEYUP, Ord(sc));
+        end;
         //writeln('key up... ', Ord(sc));
       end;
     end;

@@ -147,30 +147,37 @@ end;
 
 procedure TextBox(x, y, w, h: integer);
 var
+  row: integer;
+  right: integer;
   i, j: integer;
 begin
-  WriteCharEx(x, y, 201, 2 * 32 + 15, $ff);
+  row := y;
+  right := x + w - 1;
+
+  WriteCharEx(x, y, 201, 15, $ff);
   for i := x + 1 to x + w - 1 do
   begin
     WriteCharEx(i, y, 205, 15, $ff);
   end;
-  WriteCharEx(i + 1, y, 187, 15, $ff);
 
-  for j := y + 1 to y + h - 1 do
+  WriteCharEx(i, y, 187, 15, $ff);
+
+  for row := y + 1 to y + h - 1 do
   begin
-    WriteCharEx(x, j, 186, 15, $ff);
+    WriteCharEx(x, row, 186, 15, $ff);
     for i := x + 1 to x + w - 1 do
     begin
-      WriteCharEx(i, j, 0, 15, $ff);
+      WriteCharEx(i, row, 0, 15, $ff);
     end;
-    WriteCharEx(x + w, j, 186, 15, $ff);
+    WriteCharEx(x + w - 1, row, 186, 15, $ff);
   end;
 
-  WriteCharEx(x, y + h, 200, 15, $ff);
-  WriteCharEx(x + w, y + h, 188, 15, $ff);
-  for i := x + 1 to x + w - 1 do
+  WriteCharEx(x, row, 200, 15, $ff);
+  WriteCharEx(right, row, 188, 15, $ff);
+
+  for i := x + 1 to right - 1 do
   begin
-    WriteCharEx(i, y + h, 205, 15, $ff);
+    WriteCharEx(i, row, 205, 15, $ff);
   end;
 end;
 
@@ -304,12 +311,6 @@ begin
   fontTexture := SDL_CreateTextureFromSurface(sdlRenderer, fontImage^.surface);
 
   FillByte(scrbuf^, 2 * num_chars, 0);
-
-  i := 0;
-  for i := 0 to 15 do
-  begin
-    WriteCharEx(i, 0, 65+i, i, $ff);
-  end;
 end;
 
 procedure Close;
