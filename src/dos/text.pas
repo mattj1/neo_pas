@@ -119,34 +119,39 @@ end;
 
 procedure TextBox(x, y, w, h: integer);
 var
-  o, i, j: integer;
+  row: integer;
+  right: integer;
+  i, j: integer;
 begin
-  o := 2 * (y * text_screen_width + x);
-  TextWriteRaw(201, 15, o);
+  row := y;
+  right := x + w - 1;
+
+  WriteCharEx(x, y, 201, 15, $ff);
   for i := x + 1 to x + w - 1 do
   begin
-    TextWriteRaw(205, 15, o);
+    WriteCharEx(i, y, 205, 15, $ff);
   end;
-  TextWriteRaw(187, 15, o);
-  for j := y + 1 to y + h - 1 do
+
+  WriteCharEx(i, y, 187, 15, $ff);
+
+  for row := y + 1 to y + h - 1 do
   begin
-    o := 2 * (j * text_screen_width + x);
-    TextWriteRaw(186, 15, o);
+    WriteCharEx(x, row, 186, 15, $ff);
     for i := x + 1 to x + w - 1 do
     begin
-      TextWriteRaw(0, 15, o);
+      WriteCharEx(i, row, 0, 15, $ff);
     end;
-    TextWriteRaw(186, 15, o);
+    WriteCharEx(x + w - 1, row, 186, 15, $ff);
   end;
-  o := 2 * ((y + h) * text_screen_width + x);
-  TextWriteRaw(200, 15, o);
-  for i := x + 1 to x + w - 1 do
-  begin
-    TextWriteRaw(205, 15, o);
-  end;
-  TextWriteRaw(188, 15, o);
 
-end;
+  WriteCharEx(x, row, 200, 15, $ff);
+  WriteCharEx(right, row, 188, 15, $ff);
+
+  for i := x + 1 to right - 1 do
+  begin
+    WriteCharEx(i, row, 205, 15, $ff);
+  end;
+end;  
 
 procedure DrawString(x, y: byte; str: string);
 var
