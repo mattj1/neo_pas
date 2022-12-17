@@ -2,7 +2,7 @@
 
 unit image;
 interface
-uses common;
+uses Engine;
 
 
 type

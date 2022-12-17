@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses crt, common, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
+uses crt, Engine, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
 
 procedure Init(Width, Height: integer);
 procedure Close;
@@ -27,6 +27,7 @@ var
   sdlRenderer: PSDL_Renderer;
   screen: PSDL_Surface;
   indexedBackbuffer: PSDL_Surface;
+  backBuffer: PSDL_Texture;
   currentPalette: Palette;
   fontImage: pimage_t;
   fontTexture: PSDL_Texture;
@@ -71,6 +72,7 @@ begin
 
   dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
 
+  SDL_SetRenderTarget(sdlRenderer, backBuffer);
   SDL_RenderClear(sdlRenderer);
 
   for y := 0 to text_screen_height - 1 do
@@ -78,8 +80,8 @@ begin
     for x := 0 to text_screen_width - 1 do
     begin
 
-      row := bp^ div 32;
-      col := bp^ mod 32;
+      row := bp^ div 16;
+      col := bp^ mod 16;
       Inc(bp);
       fg := bp^ and $f;
       flash_attr := (bp^ and $80) <> 0;
@@ -113,7 +115,14 @@ begin
     end;
   end;
 
+
+  SDL_SetRenderTarget(sdlRenderer, nil);
+
+  srcRect := SDL_RectCreate(0, 0, 640, 400);
+  dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
+  SDL_RenderCopy(sdlRenderer, backBuffer, @srcRect, @dstRect);
   SDL_RenderPresent(sdlRenderer);
+
 end;
 
 procedure TextWriteRaw(ch, color: byte; o: integer);
@@ -121,14 +130,14 @@ var
   bp, fg_p, bg_p: byte_ptr;
 
 begin
-  {{
+  {
   bp := scrbuf;
   Inc(bp, o);
   Inc(fg_p, o);
   Inc(bg_p, o);
   bp^ := ch;
   fg_p^ := color and $f;
-   }}
+  }
 end;
 
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
@@ -208,7 +217,7 @@ var
 begin
   InitDriver;
 
-  scale := 1;
+  scale := 2;
 
   text_screen_width := Width;
   text_screen_height := Height;
@@ -304,11 +313,15 @@ begin
   indexedBackbuffer := SDL_CreateRGBSurface(SDL_SWSURFACE, window_width,
     window_height, 8, 0, 0, 0, 0);
 
+  //backBuffer := SDL_CreateRGBSurface();
+
   screen := SDL_GetWindowSurface(sdlWindow1);
 
-  fontImage := Image_Load('font.bmp');
+  fontImage := Image_Load('dev/test.png');
 
   fontTexture := SDL_CreateTextureFromSurface(sdlRenderer, fontImage^.surface);
+
+  backBuffer:= SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_TARGET, window_width, window_height);
 
   FillByte(scrbuf^, 2 * num_chars, 0);
 end;

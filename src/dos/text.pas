@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses crt, common;
+uses crt, Engine;
 
 procedure Init(width, height: integer);
 procedure Close;

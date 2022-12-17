@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses SDL2, GFX_SDL, Event, common;
+uses SDL2, GFX_SDL, Event, Engine;
 
 {$I sys.inc}
 
@@ -76,6 +76,13 @@ begin
         end;
         //writeln('key up... ', Ord(sc));
       end;
+      SDL_QUITEV:
+      begin
+        shouldQuit := true;
+        SDL_Quit();
+      end;
+      {else
+           writeln('Unhandled SDL event:', event.type_);}
     end;
 
   end;

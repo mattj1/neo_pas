@@ -5,21 +5,29 @@ unit Event;
 
 interface
 
-uses common;
+uses engine;
 
 type
   eventType = (
     SE_NONE, SE_KEYDOWN, SE_KEYUP, SE_KEYCHAR
     );
 
-type
   TEvent = record
     eventType: eventType;
     param: integer;
   end;
 
+  Event_KeyDownProc = procedure(sc: scanCode);
+  Event_KeyUpProc = procedure(sc: scanCode);
+
+var
+  _keyDownProc: Event_KeyDownProc;
+  _keyUpProc: Event_KeyUpProc;
+
 procedure Event_Add(eventType: eventType; param: integer);
 procedure Event_ProcessEvents;
+procedure Event_SetKeyDownProc(proc: Event_KeyDownProc);
+procedure Event_SetKeyUpProc(proc: Event_KeyUpProc);
 
 implementation
 
@@ -32,6 +40,16 @@ var
 var
   head, tail: integer;
 
+
+procedure Event_SetKeyDownProc(proc: Event_KeyDownProc);
+begin
+  _keyDownProc := proc;
+end;
+
+procedure Event_SetKeyUpProc(proc: Event_KeyUpProc);
+begin
+  _keyUpProc := proc;
+end;
 
 procedure Event_Add(eventType: eventType; param: integer);
 var
@@ -66,16 +84,22 @@ begin
       SE_KEYDOWN:
       begin
         {writeln('SE_KEYDOWN ', e.param);}
-        Include(common.keys, scanCode(e.param));
+        lastKeyDown := scanCode(e.param);
+        Include(engine.keys, lastKeyDown);
+
+        if Assigned(_keyDownProc) then _keyDownProc(lastKeyDown);
+
         {common.keys := common.keys + [scanCode(e.param)];}
       end;
       SE_KEYUP:
       begin
         {writeln('SE_KEYUP ', e.param);}
-        common.keys := common.keys - [scanCode(e.param)];
+        engine.keys := engine.keys - [scanCode(e.param)];
+
+        if Assigned(_keyUpProc) then _keyUpProc(scanCode(e.param));
       end;
       else
-       writeln('unhandled event ', Ord(e.eventType), ' ', e.param); 
+        writeln('unhandled event ', Ord(e.eventType), ' ', e.param);
     end;
 
   end;

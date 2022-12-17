@@ -5,7 +5,7 @@ unit gameloop;
 interface
 
 uses
-  Sys, common,
+  Sys, Engine,
   Timer, GFX, Event;
 
 type

@@ -2,7 +2,7 @@ unit timer;
 
 interface
 
-uses dos, crt, common, SFX;
+uses dos, crt, Engine, SFX;
 
 var
   oldTimerInt: pointer;

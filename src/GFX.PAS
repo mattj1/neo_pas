@@ -2,7 +2,7 @@ unit GFX;
 
 interface
 
-uses Image, Common;
+uses Image, Engine;
 
 
 type

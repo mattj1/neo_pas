@@ -6,7 +6,7 @@
 unit GFX13;
 interface
 
-uses crt, gfx, image, common;
+uses crt, gfx, image, Engine;
 
 var double_buffer: boolean;
 

@@ -2,7 +2,7 @@ unit SFX;
 
 interface
 
-uses crt, Common;
+uses crt, Engine;
 
 
 type TSoundEffect = record
