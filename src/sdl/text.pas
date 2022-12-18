@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses crt, Engine, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
+uses Engine, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
 
 procedure Init(Width, Height: integer);
 procedure Close;
