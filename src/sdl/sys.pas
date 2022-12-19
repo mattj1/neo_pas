@@ -19,6 +19,11 @@ begin
     SDLK_LEFT: Result := kLf;
     SDLK_RIGHT: Result := kRt;
     SDLK_SPACE: Result := kSpace;
+
+    SDLK_W: Result := kW;
+    SDLK_A: Result := kA;
+    SDLK_S: Result := kS;
+    SDLK_D: Result := kD;
     else
       writeln('did not translate SDL scan code ', code);
       Result := kNone;

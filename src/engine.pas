@@ -5,6 +5,7 @@ interface
 
 {$ifdef fpc}
 uses SDL2;
+{$H+}
 {$else}
 {$endif}
 type
