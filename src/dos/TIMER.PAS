@@ -105,8 +105,12 @@ begin
 end;
 
 procedure Timer_Delay(ms: longint);
+  var t: longint;
 begin
-    Delay(ms);
+  t := Timer_GetTicks;
+  repeat until Timer_GetTicks - t >= ms;
+
+  {  Delay(ms);}
 end;
 
 begin
