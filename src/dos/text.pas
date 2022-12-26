@@ -14,7 +14,8 @@ procedure SwapBuffers;
 procedure ShowCursor;
 procedure HideCursor;
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
-  
+procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);  
+
 implementation
 
 var
@@ -220,6 +221,20 @@ begin
   GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
   FillChar(scrbuf^, 2 * text_screen_width * text_screen_height, 0);
 end;
+
+procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
+var
+  bp: byte_ptr;
+  i, j: integer;
+begin
+
+  for j := y to y + h do begin
+    for i := x to x + w do begin
+      WriteCharEx(i, j, ch, color, mask);
+
+    end;
+  end;
+end; 
 
 procedure Close;
 begin

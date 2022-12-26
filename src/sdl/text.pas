@@ -16,6 +16,8 @@ procedure HideCursor;
 
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 
+procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
+
 implementation
 
 var
@@ -153,6 +155,21 @@ begin
 
   bp^ := (bp^ and (not mask)) or (color and mask);
 end;
+
+procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
+var
+  bp: byte_ptr;
+  i, j: integer;
+begin
+
+  for j := y to y + h do begin
+    for i := x to x + w do begin
+      WriteCharEx(i, j, ch, color, mask);
+
+    end;
+  end;
+end;
+
 
 procedure TextBox(x, y, w, h: integer);
 var
