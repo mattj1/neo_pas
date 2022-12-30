@@ -17,6 +17,7 @@ procedure HideCursor;
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 
 procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
+procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 
 implementation
 
@@ -207,11 +208,11 @@ begin
   end;
 end;
 
-procedure DrawString(x, y: byte; str: string);
+procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 var
   left, right, i, j: integer;
 begin
-  j := 1;
+   j := 1;
   left := x;
   right := x + Length(str) - 1;
 
@@ -219,9 +220,14 @@ begin
 
   for i := left to right do
   begin
-    WriteCharEx(i, y, Ord(str[j]), 7, $ff);
+    WriteCharEx(i, y, Ord(str[j]), color, mask);
     j := j + 1;
   end;
+end;
+
+procedure DrawString(x, y: byte; str: string);
+begin
+  Text_DrawStringEx(x, y, str, 7, $ff);
 end;
 
 procedure Init(Width, Height: integer);
