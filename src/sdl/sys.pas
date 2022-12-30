@@ -1,6 +1,6 @@
 unit Sys;
 
-{$mode ObjFPC}{$H+}
+{$mode ObjFPC}{$H-}
 
 interface
 
@@ -20,11 +20,11 @@ begin
     SDLK_RIGHT: Result := kRt;
     SDLK_SPACE: Result := kSpace;
 
+    SDLK_ESCAPE: Result := kEsc;
     SDLK_W: Result := kW;
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
-    SDLK_T: Result := kT;
     else
       writeln('did not translate SDL scan code ', code);
       Result := kNone;

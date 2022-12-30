@@ -2,7 +2,7 @@ unit GFX_SDL;
 
 interface
 {$mode fpc}
-{$H+}
+{$H-}
 uses
   Engine,
   gfx,

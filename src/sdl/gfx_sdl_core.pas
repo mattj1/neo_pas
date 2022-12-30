@@ -1,6 +1,6 @@
 unit GFX_SDL_Core;
 
-{$H+}
+{$H-}
 
 interface
 
