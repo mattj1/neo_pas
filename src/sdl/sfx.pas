@@ -130,12 +130,13 @@ var
 
   floatSampleValue: Float;
   floatToneVolume: Float;
+  channel: integer;
 
 begin
 
   floatToneVolume := 0.025;
   toneVolume := 3000;
-  numSamples := (len div 4) div 2;
+  numSamples := (len div bytesPerSample) div obtained.channels;
   {numSamples := len div 4;}
 
 
@@ -154,28 +155,41 @@ begin
 
 
       if ((RunningSampleIndex div HalfSquareWavePeriod) mod 2) = 1 then
-        //SampleValue := ToneVolume
-        floatSampleValue := floatToneVolume
-      else
+      begin
+        SampleValue := ToneVolume;
+        floatSampleValue := floatToneVolume;
+      end else begin
+        SampleValue := -ToneVolume;
         floatSampleValue := -floatToneVolume;
-      //SampleValue := -ToneVolume;
+        
+      end;
     end
     else
     begin
       floatSampleValue := 0;
+      SampleValue := 0;
     end;
 
-    {writeln(i, ' ', Samplevalue);}
-    Move(floatSampleValue, bp^, bytesPerSample);
-    Inc(bp, bytesPerSample);
+    for channel := 1 to obtained.channels do begin
+      {writeln(i, ' ', Samplevalue);}
+      if isFloat <> 0 then begin
+        Move(floatSampleValue, bp^, bytesPerSample);
+        Inc(bp, bytesPerSample);
 
-    Move(floatSampleValue, bp^, bytesPerSample);
-    Inc(bp, bytesPerSample);
+        {Move(floatSampleValue, bp^, bytesPerSample);
+        Inc(bp, bytesPerSample);}
+      end else begin
+        Move(SampleValue, bp^, bytesPerSample);
+        Inc(bp, bytesPerSample);
 
-
+        {Move(SampleValue, bp^, bytesPerSample);
+        Inc(bp, bytesPerSample);}
+      end;
+    end;
 
     Inc(RunningSampleIndex);
     Inc(soundTick);
+
     if (soundTick > 200) then
     begin
       soundTick := 0;
@@ -211,8 +225,10 @@ begin
 
   bytesPerSample := SDL_AUDIO_BITSIZE(obtained.format) div 8;
   isFloat := SDL_AUDIO_ISFLOAT(obtained.format);
-  //writeln('is float: ',);
 
+  writeln('Bytes per sample: ', bytesPerSample);
+  writeln('Float ', isFloat);
+  writeln('Signed: ', SDL_AUDIO_ISSIGNED(obtained.format));
   SDL_PauseAudio(0);
 
 end;
