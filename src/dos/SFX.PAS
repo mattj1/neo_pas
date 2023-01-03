@@ -14,6 +14,7 @@ end;
 type PSoundEffect = ^TSoundEffect;
 
 function SND_AllocSoundEffect(length: integer) : PSoundEffect;
+function SND_LoadSoundEffect(filename: string) : PSoundEffect;
 procedure SND_FreeSoundEffect(soundEffect: PSoundEffect);
 procedure SND_PlaySound(snd: PSoundEffect);
 procedure SND_Update;
@@ -68,6 +69,8 @@ end;
 
 procedure SND_PlaySound(snd: PSoundEffect);
 begin
+	if snd = nil then Exit;
+
   curSound := snd;
   curSoundSample := -1;
 end;
@@ -75,6 +78,26 @@ end;
 function SND_IsPlaying : boolean;
 begin
 	SND_IsPlaying := curSound <> nil;
+end;
+
+function SND_LoadSoundEffect(filename: string) : PSoundEffect;
+var f: file;
+	length: integer;
+	soundEffect: PSoundEffect;
+begin
+	SND_LoadSoundEffect := nil;
+
+	Assign(f, filename);
+	Reset(f, 2);
+
+	BlockRead(f, length, 1);
+
+	soundEffect := SND_AllocSoundEffect(length);
+	BlockRead(f, soundEffect^.data^, length);
+
+	System.Close(f);
+
+	SND_LoadSoundEffect := soundEffect;
 end;
 
 begin

@@ -254,12 +254,6 @@ begin
 
   GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
 
-  if SDL_Init(SDL_INIT_VIDEO) < 0 then
-  begin
-    writeln('SDL_Init failed');
-    Halt;
-  end;
-
   sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, window_width *
     scale, window_height * scale, 0);
   sdlRenderer := SDL_CreateRenderer(sdlWindow1, -1, SDL_RENDERER_ACCELERATED);
