@@ -18,6 +18,7 @@ procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 
 procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
+function Text_BufferPtr(x, y: integer): byte_ptr;
 
 implementation
 
@@ -141,6 +142,16 @@ begin
   bp^ := ch;
   fg_p^ := color and $f;
   }
+end;
+
+function Text_BufferPtr(x, y: integer): byte_ptr;
+var
+  bp: byte_ptr;
+
+begin
+  bp := scrbuf;
+  Inc(bp, 2 * (y * text_screen_width + x));
+  Text_BufferPtr := bp;
 end;
 
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);

@@ -16,7 +16,8 @@ procedure HideCursor;
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);  
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
-  
+function Text_BufferPtr(x, y: integer): byte_ptr;
+
 implementation
 
 var
@@ -83,12 +84,12 @@ asm
 
          pop     si
          pop     ds
-
+{
          @@2:
          in      al, dx
          test    al, 8
          jnz     @@2
-
+}
 end;
 end;
 
@@ -103,6 +104,16 @@ begin
   Inc(bp);
   bp^ := color;
   Inc(o, 2);
+end;
+
+function Text_BufferPtr(x, y: integer): byte_ptr;
+var
+  bp: byte_ptr;
+
+begin
+  bp := scrbuf;
+  Inc(bp, 2 * (y * text_screen_width + x));
+  Text_BufferPtr := bp;
 end;
 
 procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
