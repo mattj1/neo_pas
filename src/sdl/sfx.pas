@@ -86,7 +86,7 @@ end;
 procedure SND_PlaySound(snd: PSoundEffect);
 begin
   if snd = nil then Exit;
-  Exit;
+  //Exit;
   curSound := snd;
   curSoundSample := -1;
 end;
