@@ -25,6 +25,8 @@ begin
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
+    SDLK_1: Result := k1;
+    SDLK_2: Result := k2;
     else
       writeln('did not translate SDL scan code ', code);
       Result := kNone;
