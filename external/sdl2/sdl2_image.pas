@@ -57,6 +57,10 @@ const
       {$linklib libSDL2_image}
     {$ENDIF}
   {$ENDIF}
+  {$IFDEF WEB}
+    {IMG_LibName = 'libSDL2_image.a';}
+    IMG_LibName = 'env';
+  {$ENDIF}
 
   {* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL *}
   SDL_IMAGE_MAJOR_VERSION = 2;

@@ -135,6 +135,10 @@ const
     {$ENDIF}
   {$ENDIF}
 
+   {$IFDEF WEB}
+    SDL_LibName = 'env';
+   {$ENDIF}
+
 {$I sdlstdinc.inc}
 {$I sdlversion.inc}
 {$I sdlerror.inc}
