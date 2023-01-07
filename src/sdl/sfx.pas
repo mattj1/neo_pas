@@ -27,7 +27,7 @@ function SND_IsPlaying: boolean;
 
 implementation
 
-
+uses datafile;
 
 var
   curSound: PSoundEffect;
@@ -103,16 +103,15 @@ var
   soundEffect: PSoundEffect;
 begin
   SND_LoadSoundEffect := nil;
+  Datafile_Open(filename, f, 1);
 
-  Assign(f, filename);
-  Reset(f, 2);
-
-  BlockRead(f, length, 1);
+  BlockRead(f, length, 2);
+  writeln(' sound effect len in samples: ', length);
 
   soundEffect := SND_AllocSoundEffect(length);
-  BlockRead(f, soundEffect^.Data^, length);
+  BlockRead(f, soundEffect^.Data^, length * 2);
 
-  System.Close(f);
+  Datafile_Close(f);
 
   SND_LoadSoundEffect := soundEffect;
 end;

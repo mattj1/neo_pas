@@ -44,17 +44,16 @@ begin
     if StrPas(@_entries^[i].Name) = Name then
     begin
       Assign(f, 'data.dat');
-      Reset(f, recSize);
-      { writeln('found ', Name, ' at offs ', _start + _entries^[i].offset); }
+      Reset(f, 1);
+      {      writeln('found ', Name, ' at offs ', _start + _entries^[i].offset); }
       Seek(f, _start + _entries^[i].offset);
       Datafile_Open := True;
-
       Exit;
     end;
   end;
 
   Assign(f, Name + '.bin');
-  Reset(f, recSize);
+  Reset(f, 1);
   Datafile_Open := True;
 end;
 
@@ -66,26 +65,26 @@ end;
 procedure Datafile_Init;
 var
   i, l: integer;
-  _file: File;
+  _file: file;
 
 begin
   Assign(_file, 'data.dat');
   Reset(_file, 1);
 
   BlockRead(_file, _numEntries, sizeof(integer));
-  writeln(sizeof(entry));
+
   l := sizeof(entry) * _numEntries;
 
   GetMem(_entries, l);
 
-  writeln('num entries ', _numEntries);
+  writeln('Datafile_Init: Number of entries: ', _numEntries);
 
   for i := 1 to _numEntries do
   begin
     BlockRead(_file, _entries^[i].Name, 9);
     BlockRead(_file, _entries^[i].offset, sizeof(integer));
 
-    writeln(PChar(@_entries^[i].Name), ' ', _entries^[i].offset);
+    {writeln(PChar(@_entries^[i].Name), ' ', _entries^[i].offset);}
   end;
 
   _start := FilePos(_file);
