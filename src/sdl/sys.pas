@@ -75,12 +75,7 @@ begin
         end;
 
         if event.key.keysym.sym = SDLK_F4 then begin
-writeln('F4');
-  { SDL_SetWindowSize(sdlWindow1, 640, 480);}
-         SDL_SetWindowFullScreen(textSDLWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
-         writeln(SDL_GetError);
-
-    
+          Text_ToggleFullscreen;
         end;
 
         //writeln('key down... ', Ord(sc));

@@ -20,9 +20,14 @@ procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 function Text_BufferPtr(x, y: integer): byte_ptr;
 
-var textSDLWindow: PSDL_Window;
+procedure Text_ToggleFullscreen;
+
+var
+  textSDLWindow: PSDL_Window;
 
 implementation
+
+uses Math;
 
 var
   scrbuf: pointer;
@@ -40,6 +45,7 @@ var
 
 var
   text_screen_width, text_screen_height, num_chars: integer;
+  isFullScreen: boolean;
 
 procedure HideCursor;
 begin
@@ -71,13 +77,14 @@ var
   flash: boolean;
   flash_attr: boolean;
   x, y, row, col: integer;
-
+  scaleFac: integer;
 begin
   bp := scrbuf;
   flash := Timer.Timer_GetTicks mod 800 < 400;
 
-  dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
-
+  {dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
+  dstRect := SDL_RectCreate(0, 0, 80 * 8, 25 * 16);
+}
   SDL_SetRenderTarget(sdlRenderer, backBuffer);
   SDL_RenderClear(sdlRenderer);
 
@@ -122,10 +129,12 @@ begin
   end;
 
 
+  scaleFac := Math.Min(sdlWindow1^.w div 640, sdlWindow1^.h div 400);
   SDL_SetRenderTarget(sdlRenderer, nil);
 
   srcRect := SDL_RectCreate(0, 0, 640, 400);
-  dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
+  dstRect := SDL_RectCreate(sdlWindow1^.w div 2 - (640 * scaleFac div 2),
+    sdlWindow1^.h div 2 - (400 * scaleFac div 2), 640 * scaleFac, 400 * scaleFac);
   SDL_RenderCopy(sdlRenderer, backBuffer, @srcRect, @dstRect);
   SDL_RenderPresent(sdlRenderer);
 
@@ -176,8 +185,10 @@ var
   i, j: integer;
 begin
 
-  for j := y to y + h do begin
-    for i := x to x + w do begin
+  for j := y to y + h do
+  begin
+    for i := x to x + w do
+    begin
       WriteCharEx(i, j, ch, color, mask);
 
     end;
@@ -225,7 +236,7 @@ procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 var
   left, right, i, j: integer;
 begin
-   j := 1;
+  j := 1;
   left := x;
   right := x + Length(str) - 1;
 
@@ -241,6 +252,30 @@ end;
 procedure DrawString(x, y: byte; str: string);
 begin
   Text_DrawStringEx(x, y, str, 7, $ff);
+end;
+
+procedure Text_SetFullscreen(fs: boolean);
+begin
+  if isFullScreen = fs then Exit;
+
+  isFullScreen := fs;
+
+  if isFullScreen then
+  begin
+    SDL_SetWindowFullScreen(textSDLWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    writeln(SDL_GetError);
+  end
+  else
+  begin
+    {   SDL_RestoreWindow(textSDLWindow);}
+    SDL_SetWindowFullScreen(textSDLWindow, 0);
+    writeln('Restore windowed...');
+  end;
+end;
+
+procedure Text_ToggleFullscreen;
+begin
+  Text_SetFullscreen(not isFullScreen);
 end;
 
 procedure Init(Width, Height: integer);
@@ -271,8 +306,11 @@ begin
     scale, window_height * scale, 0);
 
   textSDLWindow := sdlWindow1;
-  
+
   sdlRenderer := SDL_CreateRenderer(sdlWindow1, -1, SDL_RENDERER_ACCELERATED);
+{
+  SDL_RenderSetLogicalSize(sdlRenderer, Width * 8, Height * 16);
+  SDL_RenderSetScale(sdlRenderer, 2, 2);}
   if (sdlWindow1 = nil) or (sdlRenderer = nil) then Halt;
 
   SDL_SetHint(SDL_HINT_RENDER_VSYNC, '1');
@@ -354,7 +392,8 @@ begin
 
   fontTexture := SDL_CreateTextureFromSurface(sdlRenderer, fontImage^.surface);
 
-  backBuffer:= SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_TARGET, window_width, window_height);
+  backBuffer := SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB24,
+    SDL_TEXTUREACCESS_TARGET, window_width, window_height);
 
   FillByte(scrbuf^, 2 * num_chars, 0);
 end;
