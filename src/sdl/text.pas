@@ -20,6 +20,8 @@ procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 function Text_BufferPtr(x, y: integer): byte_ptr;
 
+var textSDLWindow: PSDL_Window;
+
 implementation
 
 var
@@ -267,6 +269,9 @@ begin
 
   sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, window_width *
     scale, window_height * scale, 0);
+
+  textSDLWindow := sdlWindow1;
+  
   sdlRenderer := SDL_CreateRenderer(sdlWindow1, -1, SDL_RENDERER_ACCELERATED);
   if (sdlWindow1 = nil) or (sdlRenderer = nil) then Halt;
 

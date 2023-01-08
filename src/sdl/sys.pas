@@ -10,6 +10,8 @@ uses SDL2, GFX_SDL, Event, Engine;
 
 implementation
 
+uses Text;
+
 function sdl_to_scancode(code: TSDL_KeyCode): scanCode;
 begin
   case (code) of
@@ -27,6 +29,7 @@ begin
     SDLK_D: Result := kD;
     SDLK_1: Result := k1;
     SDLK_2: Result := k2;
+
     else
       writeln('did not translate SDL scan code ', code);
       Result := kNone;
@@ -69,6 +72,15 @@ begin
         if (sc <> kNone) and (event.key._repeat = 0) then
         begin
           Event_Add(SE_KEYDOWN, Ord(sc));
+        end;
+
+        if event.key.keysym.sym = SDLK_F4 then begin
+writeln('F4');
+  { SDL_SetWindowSize(sdlWindow1, 640, 480);}
+         SDL_SetWindowFullScreen(textSDLWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
+         writeln(SDL_GetError);
+
+    
         end;
 
         //writeln('key down... ', Ord(sc));
