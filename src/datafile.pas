@@ -9,10 +9,11 @@ interface
 procedure Datafile_Init;
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 procedure Datafile_Close(var f: file);
+procedure Datafile_ReadString(var f: file; var s: string);
 
 implementation
 
-uses strings;
+uses strings, engine;
 
 type
   PEntry = ^entry;
@@ -24,7 +25,7 @@ type
 
 
   PEntryArray = ^EntryArray;
-  EntryArray = array[0..2048] of Entry;
+  EntryArray = array[1..2048] of Entry;
 
 var
   _numEntries: integer;
@@ -91,5 +92,16 @@ begin
   System.Close(_file);
 end;
 
+procedure Datafile_ReadString(var f: file; var s: string);
+var
+  bp: byte_ptr;
+  str_len: byte;
+begin
+  bp := @s;
+  BlockRead(f, str_len, sizeof(byte));
+  bp^ := str_len;
+  Inc(bp);
+  BlockRead(f, bp^, str_len);
+end;
 
 end.
