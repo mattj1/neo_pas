@@ -23,6 +23,7 @@ begin
     SDLK_SPACE: Result := kSpace;
 
     SDLK_ESCAPE: Result := kEsc;
+    SDLK_Q: Result := kQ;
     SDLK_W: Result := kW;
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
