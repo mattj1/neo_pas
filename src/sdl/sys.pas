@@ -28,6 +28,7 @@ begin
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
+    SDLK_Z: Result := kZ;
     SDLK_1: Result := k1;
     SDLK_2: Result := k2;
 
