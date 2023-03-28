@@ -2,27 +2,20 @@ unit timer;
 
 interface
 
-uses dos, crt, Engine, SFX;
-
-var
-  oldTimerInt: pointer;
-
-var
-  oldTimerTickCount, oldTimerTicks: integer;
-
-var
-  soundTicks: integer;
-
-var
-  time: longint;
-
-var soundDebug: integer;
-
 {$i timer.inc}
 
 implementation
 
-var accum: integer;
+uses dos, crt, Engine, SFX;
+
+var
+  accum: integer;
+  oldTimerInt: pointer;
+  oldTimerTickCount, oldTimerTicks: integer;
+  soundTicks: integer;
+  time: longint;
+  soundDebug: integer;
+
 
 procedure TimerInt; interrupt;
 begin
@@ -83,7 +76,7 @@ end;
 procedure Init;
   var i, j: integer;
 begin
-  writeln('--- Timer Init ---');
+  { writeln('--- Timer Init ---'); }
   getIntVec($08, oldTimerInt);
   setIntVec($08, @TimerInt);
 

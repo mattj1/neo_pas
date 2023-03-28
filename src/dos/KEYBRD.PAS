@@ -46,7 +46,7 @@ end;
 procedure Init;
 var i: integer;
 begin
-     writeln('--- Keyboard Init ---');
+     { writeln('--- Keyboard Init ---'); }
      engine.keys := [];
 
      getIntVec(9, oldKeyInt);
