@@ -189,7 +189,9 @@ begin
     Inc(RunningSampleIndex);
     Inc(soundTick);
 
-    if (soundTick > 200) then
+    { TODO: This should not be hardcoded to 200 }
+    { 0.006872852233677 sec / sample }
+    if (soundTick > 151) then
     begin
       soundTick := 0;
       SND_Update;

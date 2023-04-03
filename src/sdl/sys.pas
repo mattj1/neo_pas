@@ -25,6 +25,8 @@ begin
     SDLK_ESCAPE: Result := kEsc;
     SDLK_Q: Result := kQ;
     SDLK_W: Result := kW;
+    SDLK_E: Result := kE;
+    SDLK_I: Result := kI;
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
