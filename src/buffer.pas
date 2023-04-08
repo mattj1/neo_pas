@@ -1,6 +1,8 @@
 unit buffer;
 
+{$ifdef fpc}
 {$mode tp}
+         {$endif}
 
 interface
 
@@ -10,22 +12,81 @@ uses
 type
 
 
+  PBufferReader = ^TBufferReader;
+
+  BufferReadIntProc = function(reader: PBufferReader): integer;
+  BufferReadDataProc = procedure(reader: PBufferReader; Data: Pointer; length: integer);
+
+  TBufferReader = record
+    readData: BufferReadDataProc;
+    userData: Pointer;
+    _file: file;
+  end;
+
+
   PBufferWriter = ^TBufferWriter;
 
   BufferWriteIntProc = procedure(writer: PBufferWriter; Value: integer);
+  BufferWriteDataProc = procedure(writer: PBufferWriter; Data: Pointer; length: integer);
 
   TBufferWriter = record
-    writeInt: BufferWriteIntProc;
+    writeData: BufferWriteDataProc;
     userData: Pointer;
+    _file: file;
   end;
 
+function Buf_ReadInt(reader: PBufferReader): integer;
+procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
+function Buf_ReadString(reader: PBufferReader): string;
+
 procedure Buf_WriteInt(writer: PBufferWriter; Value: integer);
+procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
+procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
 implementation
 
+function Buf_ReadInt(reader: PBufferReader): integer;
+var
+  Value: integer;
+begin
+  reader^.readData(reader, @Value, sizeof(integer));
+  Buf_ReadInt := Value;
+end;
+
+procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
+begin
+  reader^.readData(reader, Data, length);
+end;
+
+function Buf_ReadString(reader: PBufferReader): string;
+var
+  Value: string;
+  bp: ^byte;
+  len: byte;
+begin
+  bp := @Value;
+
+  reader^.readData(reader, @len, 1);
+  bp^ := len;
+  Inc(bp);
+  reader^.readData(reader, bp, len);
+
+  Buf_ReadString := Value;
+end;
+
 procedure Buf_WriteInt(writer: PBufferWriter; Value: integer);
 begin
-  writer^.writeInt(writer, Value);
+  writer^.writeData(writer, @Value, sizeof(integer));
+end;
+
+procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
+begin
+  writer^.writeData(writer, Data, length);
+end;
+
+procedure Buf_WriteString(writer: PBufferWriter; Value: string);
+begin
+  writer^.writeData(writer, @Value, Length(Value) + 1);
 end;
 
 end.

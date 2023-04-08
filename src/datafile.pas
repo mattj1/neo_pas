@@ -10,10 +10,11 @@ procedure Datafile_Init;
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 procedure Datafile_Close(var f: file);
 procedure Datafile_ReadString(var f: file; var s: string);
+function DirExists(Name: String): Boolean;
 
 implementation
 
-uses strings, engine;
+uses strings, engine, dos;
 
 type
   PEntry = ^entry;
@@ -32,6 +33,20 @@ var
   _entries: PEntryArray;
   _start: longint;
 
+
+  function DirExists(Name: String): Boolean;
+  var
+   DirInfo: SearchRec;         { For Windows, use TSearchRec }
+  begin
+   DirExists := false;
+   FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
+   while DosError = 0 do
+   begin
+     Writeln('found ', DirInfo.Name);
+     DirExists := true;
+     Exit;
+   end;
+  end;
 
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 var

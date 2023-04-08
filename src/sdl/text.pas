@@ -285,6 +285,7 @@ var
   scale: integer;
 var
   i: integer;
+  rect: TSDL_Rect;
 begin
   InitDriver;
 
@@ -302,8 +303,14 @@ begin
 
   GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
 
-  sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, window_width *
+  for i := 0 to SDL_GetNumVideoDisplays do begin
+    SDL_GetDisplayBounds(i, @rect);
+    writeln('display ', i, rect.x, ' ', rect.y, ' ', rect.w, ' ', rect.h);
+  end;
+
+  sdlWindow1 := SDL_CreateWindow('Hello World', -1920, 100, window_width *
     scale, window_height * scale, 0);
+
 
   textSDLWindow := sdlWindow1;
 
