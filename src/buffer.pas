@@ -50,6 +50,7 @@ var
   Value: integer;
 begin
   reader^.readData(reader, @Value, sizeof(integer));
+  writeln('Buf_ReadInt ', Value);
   Buf_ReadInt := Value;
 end;
 
