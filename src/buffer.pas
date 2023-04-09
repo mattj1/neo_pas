@@ -36,10 +36,12 @@ type
   end;
 
 function Buf_ReadInt(reader: PBufferReader): integer;
+function Buf_ReadLong(reader: PBufferReader): longint;
 procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
 function Buf_ReadString(reader: PBufferReader): string;
 
 procedure Buf_WriteInt(writer: PBufferWriter; Value: integer);
+procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
@@ -50,8 +52,17 @@ var
   Value: integer;
 begin
   reader^.readData(reader, @Value, sizeof(integer));
-  writeln('Buf_ReadInt ', Value);
+  { writeln('Buf_ReadInt ', Value); }
   Buf_ReadInt := Value;
+end;
+
+function Buf_ReadLong(reader: PBufferReader): longint;
+var
+  Value: longint;
+begin
+  reader^.readData(reader, @Value, sizeof(longint));
+  { writeln('Buf_ReadInt ', Value); }
+  Buf_ReadLong := Value;
 end;
 
 procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
@@ -78,6 +89,11 @@ end;
 procedure Buf_WriteInt(writer: PBufferWriter; Value: integer);
 begin
   writer^.writeData(writer, @Value, sizeof(integer));
+end;
+
+procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
+begin
+  writer^.writeData(writer, @Value, sizeof(longint));
 end;
 
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);

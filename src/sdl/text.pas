@@ -305,13 +305,13 @@ begin
 
   for i := 0 to SDL_GetNumVideoDisplays do begin
     SDL_GetDisplayBounds(i, @rect);
-    writeln('display ', i, rect.x, ' ', rect.y, ' ', rect.w, ' ', rect.h);
+    { writeln('display ', i, ': ', rect.x, ' ', rect.y, ' ', rect.w, ' ', rect.h); }
   end;
 {
   sdlWindow1 := SDL_CreateWindow('Hello World', -1920, 100, window_width *
     scale, window_height * scale, 0);
 }
-  sdlWindow1 := SDL_CreateWindow('Hello World', 0, 0, window_width *
+  sdlWindow1 := SDL_CreateWindow('Hello World', 0, 28, window_width *
     scale, window_height * scale, 0);
 
 
