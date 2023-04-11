@@ -34,19 +34,19 @@ var
   _start: longint;
 
 
-  function DirExists(Name: String): Boolean;
-  var
-   DirInfo: SearchRec;         { For Windows, use TSearchRec }
+function DirExists(Name: string): boolean;
+var
+  DirInfo: SearchRec;         { For Windows, use TSearchRec }
+begin
+  DirExists := False;
+  FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
+  while DosError = 0 do
   begin
-   DirExists := false;
-   FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
-   while DosError = 0 do
-   begin
-     Writeln('found ', DirInfo.Name);
-     DirExists := true;
-     Exit;
-   end;
+    Writeln('found ', DirInfo.Name);
+    DirExists := True;
+    Exit;
   end;
+end;
 
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 var
