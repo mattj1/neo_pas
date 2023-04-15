@@ -17,6 +17,7 @@ procedure WriteCharEx(x, y: integer; ch, color, mask: byte);
 procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);  
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 function Text_BufferPtr(x, y: integer): byte_ptr;
+procedure Text_DrawColorStringEx(x, y: byte; str: string; color, mask: byte);
 
 implementation
 
@@ -166,11 +167,17 @@ begin
   end;
 end;  
 
+
 procedure Text_DrawStringEx(x, y: byte; str: string; color, mask: byte);
 var
   left, right, i, j: integer;
+  bp: byte_ptr;
 begin
-   j := 1;
+
+  bp := scrbuf;
+  Inc(bp, 2 * (y * text_screen_width + x));
+
+  j := 1;
   left := x;
   right := x + Length(str) - 1;
 
@@ -178,10 +185,65 @@ begin
 
   for i := left to right do
   begin
-    WriteCharEx(i, y, Ord(str[j]), color, mask);
-    j := j + 1;
+    bp^ := Ord(str[j]);
+    Inc(bp);
+
+    bp^ := (bp^ and (not mask)) or (color and mask);
+    inc(bp);
+
+  {  WriteCharEx(i, y, Ord(str[j]), color, mask);}
+     j := j + 1; 
   end;
 end;
+
+
+procedure Text_DrawColorStringEx(x, y: byte; str: string; color, mask: byte);
+var
+  left, right, i, j, l: integer;
+  src, dst: byte_ptr;
+begin
+  src := @str;
+  inc(src);
+
+  dst := scrbuf;
+  Inc(dst, 2 * (y * text_screen_width + x));
+
+  i := 0;
+  l := Length(str);
+  while (x < text_screen_width) and (i < l) do
+  begin
+    if ord(src^) = 94 then begin
+       inc(src);
+       inc(i);
+       if (ord(src^) >= 48) and (ord(src^) <= 57) then begin
+          color := ord(src^) - 48;
+          inc(src);
+          inc(i);
+          continue;
+       end;
+
+       if (ord(src^) >= 65) and (ord(src^) <= 70) then begin
+          color := ord(src^) - 55;
+          inc(src);
+          inc(i);
+          continue;
+       end;
+    end;
+
+    dst^ := src^;
+    inc(dst);
+    inc(src);
+
+    dst^ := (dst^ and (not mask)) or (color and mask);
+
+    Inc(dst);
+    Inc(i);
+    Inc(x);
+  end;
+end;
+
+
+
 
 procedure DrawString(x, y: byte; str: string);
 begin
