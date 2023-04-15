@@ -20,14 +20,15 @@ type
   Event_KeyDownProc = procedure(sc: scanCode);
   Event_KeyUpProc = procedure(sc: scanCode);
 
-var
-  _keyDownProc: Event_KeyDownProc;
-  _keyUpProc: Event_KeyUpProc;
-
 procedure Event_Add(eventType: eventType; param: integer);
 procedure Event_ProcessEvents;
 procedure Event_SetKeyDownProc(proc: Event_KeyDownProc);
 procedure Event_SetKeyUpProc(proc: Event_KeyUpProc);
+
+var
+  _keyDownProc: Event_KeyDownProc;
+  _keyUpProc: Event_KeyUpProc;
+  _keyCharProc: Event_KeyDownProc;
 
 implementation
 
@@ -36,10 +37,7 @@ const
 
 var
   events: array[0..63] of TEvent;
-
-var
   head, tail: integer;
-
 
 procedure Event_SetKeyDownProc(proc: Event_KeyDownProc);
 begin
@@ -97,6 +95,11 @@ begin
         engine.keys := engine.keys - [scanCode(e.param)];
 
         if Assigned(_keyUpProc) then _keyUpProc(scanCode(e.param));
+      end;
+      SE_KEYCHAR:
+      begin
+        if Assigned(_keyCharProc) then _keyCharProc(scanCode(e.param));
+
       end;
       else
         writeln('unhandled event ', Ord(e.eventType), ' ', e.param);

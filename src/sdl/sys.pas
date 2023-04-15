@@ -34,6 +34,8 @@ begin
     SDLK_1: Result := k1;
     SDLK_2: Result := k2;
 
+    SDLK_BACKSPACE: Result := kBack;
+
     else
       writeln('did not translate SDL scan code ', code);
       Result := kNone;
@@ -73,10 +75,17 @@ begin
 
         sc := sdl_to_scancode(event.key.keysym.sym);
 
-        if (sc <> kNone) and (event.key._repeat = 0) then
+        if (sc <> kNone) then
         begin
-          Event_Add(SE_KEYDOWN, Ord(sc));
+          if event.key._repeat = 0 then
+          begin
+                         Event_Add(SE_KEYDOWN, Ord(sc));
+                         { writeln('Adding SE_KEYDOWN ', Ord(sc)); }
+          end else begin
+
+          end;
         end;
+
 
         if event.key.keysym.sym = SDLK_F4 then begin
           Text_ToggleFullscreen;
@@ -95,6 +104,12 @@ begin
         end;
         //writeln('key up... ', Ord(sc));
       end;
+      SDL_TEXTINPUT:
+      begin
+           writeln('Adding SE_KEYCHAR ', event.text.text[0], ' ', ord(event.text.text[0]));
+           Event_Add(SE_KEYCHAR, ord(event.text.text[0]));
+      end;
+
       SDL_QUITEV:
       begin
         shouldQuit := true;

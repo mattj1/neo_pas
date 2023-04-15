@@ -12,7 +12,7 @@ implementation
 
 procedure Init;
 begin
-
+     SDL_StartTextInput;
 end;
 
 
@@ -20,6 +20,7 @@ end;
 procedure Close;
 begin
 
+     SDL_StopTextInput;
 end;
 
 end.

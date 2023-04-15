@@ -14,7 +14,12 @@ function DirExists(Name: String): Boolean;
 
 implementation
 
-uses strings, engine, dos;
+uses strings, engine, dos
+  {$ifdef fpc}
+          , sysutils
+  {$else}
+
+  {$endif}  ;
 
 type
   PEntry = ^entry;
@@ -34,9 +39,29 @@ var
   _start: longint;
 
 
+{$ifdef fpc}
 function DirExists(Name: string): boolean;
 var
-  DirInfo: SearchRec;         { For Windows, use TSearchRec }
+
+  DirInfo: TSearchRec;         { For Windows, use TSearchRec }
+begin
+  DirExists := False;
+  if FindFirst(Name, Directory, DirInfo) = 0 then begin
+    DirExists := True;
+  end;
+end;
+
+{$endif}
+
+{$ifndef fpc}
+function DirExists(Name: string): boolean;
+var
+  {$ifdef fpc}
+  DirInfo: TSearchRec;         { For Windows, use TSearchRec }
+  {$else}
+  DirInfo: SearchRec;
+  {$endif}
+
 begin
   DirExists := False;
   FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
@@ -47,6 +72,7 @@ begin
     Exit;
   end;
 end;
+{$endif}
 
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 var
@@ -82,8 +108,11 @@ procedure Datafile_Init;
 var
   i, l: integer;
   _file: file;
+  currentDir: string;
 
 begin
+  currentDir := GetCurrentDir;
+  writeln('Datafile_Init, working directory: ', GetCurrentDir);
   Assign(_file, 'data.dat');
   Reset(_file, 1);
 
