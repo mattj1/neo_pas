@@ -30,6 +30,7 @@ begin
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
+    SDLK_L: Result := kL;
     SDLK_Z: Result := kZ;
     SDLK_1: Result := k1;
     SDLK_2: Result := k2;
@@ -79,15 +80,20 @@ begin
         begin
           if event.key._repeat = 0 then
           begin
-                         Event_Add(SE_KEYDOWN, Ord(sc));
-                         { writeln('Adding SE_KEYDOWN ', Ord(sc)); }
-          end else begin
+            Event_Add(SE_KEYDOWN, Ord(sc), 0);
+            { writeln('Adding SE_KEYDOWN ', Ord(sc)); }
+          end;
 
+          { We want key repeat for these keys }
+          if (sc = kBack) or (sc = kEnter) or (sc = kEsc) then
+          begin
+            Event_Add(SE_KEYCHAR, ord(sc), 0);
           end;
         end;
 
 
-        if event.key.keysym.sym = SDLK_F4 then begin
+        if event.key.keysym.sym = SDLK_F4 then
+        begin
           Text_ToggleFullscreen;
         end;
 
@@ -100,14 +106,15 @@ begin
 
         if sc <> kNone then
         begin
-          Event_Add(SE_KEYUP, Ord(sc));
+          Event_Add(SE_KEYUP, Ord(sc), 0);
         end;
         //writeln('key up... ', Ord(sc));
       end;
       SDL_TEXTINPUT:
       begin
-           writeln('Adding SE_KEYCHAR ', event.text.text[0], ' ', ord(event.text.text[0]));
-           Event_Add(SE_KEYCHAR, ord(event.text.text[0]));
+        writeln('Adding SE_KEYCHAR ', event.Text.Text[0], ' ',
+          Ord(event.Text.Text[0]));
+        Event_Add(SE_KEYCHAR, 0, Ord(event.Text.Text[0]));
       end;
 
       SDL_QUITEV:

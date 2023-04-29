@@ -108,11 +108,11 @@ procedure Datafile_Init;
 var
   i, l: integer;
   _file: file;
-  currentDir: string;
-
+{  currentDir: string;
+}
 begin
-  currentDir := GetCurrentDir;
-  writeln('Datafile_Init, working directory: ', GetCurrentDir);
+ { currentDir := GetCurrentDir;
+  writeln('Datafile_Init, working directory: ', GetCurrentDir); }
   Assign(_file, 'data.dat');
   Reset(_file, 1);
 
