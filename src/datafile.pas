@@ -10,7 +10,8 @@ procedure Datafile_Init;
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 procedure Datafile_Close(var f: file);
 procedure Datafile_ReadString(var f: file; var s: string);
-function DirExists(Name: String): Boolean;
+function DirExists(Name: string): boolean;
+procedure FS_CopyFile(srcPath, dstPath: string);
 
 implementation
 
@@ -72,6 +73,7 @@ begin
     Exit;
   end;
 end;
+
 {$endif}
 
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
@@ -146,6 +148,44 @@ begin
   bp^ := str_len;
   Inc(bp);
   BlockRead(f, bp^, str_len);
+end;
+
+procedure FS_CopyFile(srcPath, dstPath: string);
+var
+  srcFile, dstFile: file;
+  bytesRemaining, bytesToCopy: longint;
+  buf: array[0..4095] of byte;
+begin
+  Assign(srcFile, srcPath);
+  Reset(srcFile, 1);
+
+  Assign(dstFile, dstPath);
+  Rewrite(dstFile, 1);
+
+  bytesRemaining := FileSize(srcFile);
+
+  {$ifdef fpc}
+  writeln('FS_CopyFile: ', srcPath, ' -> ', dstPath);
+  writeln(' source size: ', bytesRemaining);
+  {$endif}
+
+  repeat
+    bytesToCopy := bytesRemaining;
+    if bytesToCopy > 4096 then bytesToCopy := 4096;
+
+    BlockRead(srcFile, buf, bytesToCopy);
+    BlockWrite(dstFile, buf, bytesToCopy);
+
+    Dec(bytesRemaining, bytesToCopy);
+
+    {$ifdef fpc}
+    writeln('num bytes left to copy ', bytesRemaining);
+    {$endif}
+
+  until bytesRemaining = 0;
+
+  System.Close(srcFile);
+  System.Close(dstFile);
 end;
 
 end.
