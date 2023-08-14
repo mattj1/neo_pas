@@ -1,6 +1,7 @@
 unit GFX_SDL;
 
 interface
+
 {$mode fpc}
 {$H-}
 uses
@@ -18,6 +19,7 @@ implementation
 var
   colors: array[0..256] of TSDL_Color;
   currentPalette: Palette;
+  backBuffer: PSDL_Texture;
 
 
 function SDL_RectCreate(x, y, w, h: integer): TSDL_Rect; inline;
@@ -60,13 +62,16 @@ procedure SwapBuffers;
 var
   texture: PSDL_Texture;
   srcRect, dstRect: TSDL_Rect;
+  scaleFac: integer;
 begin
   srcRect := SDL_RectCreate(0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
   dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
 
+  scaleFac := 0;
+
   //SDL_SetPaletteColors(indexedBackbuffer^.format^.palette, colors, 0, 256);
 
-
+{
   SDL_SetSurfacePalette(indexedBackbuffer, currentPalette.sdlPalette);
 
   texture := SDL_CreateTextureFromSurface(GFX_SDL_Core.sdlRenderer, indexedBackbuffer);
@@ -75,7 +80,23 @@ begin
   if SDL_RenderCopy(sdlRenderer, texture, @srcRect, @dstRect) <> 0 then halt;
   SDL_RenderPresent(sdlRenderer);
 
-  SDL_DestroyTexture(texture);
+  SDL_DestroyTexture(texture);}
+
+
+  { Render backbuffer }
+
+  SDL_SetRenderTarget(sdlRenderer, nil);
+
+ { srcRect := SDL_RectCreate(0, 0, 640, 400);
+  dstRect := SDL_RectCreate(sdlWindow1^.w div 2 - (640 * scaleFac div 2),
+    sdlWindow1^.h div 2 - (400 * scaleFac div 2), 640 * scaleFac, 400 * scaleFac);}
+  SDL_RenderCopy(sdlRenderer, backBuffer, @srcRect, @dstRect);
+  SDL_RenderPresent(sdlRenderer);
+
+  { Ready for next frame }
+
+  SDL_SetRenderTarget(sdlRenderer, backBuffer);
+  SDL_RenderClear(sdlRenderer);
 end;
 
 procedure DrawSpriteAlpha(dstX, dstY, srcX, srcY, srcWidth, srcHeight, a: integer;
@@ -95,14 +116,28 @@ procedure DrawSubImageTransparent(var img: image_t;
 var
   srcRect: TSDL_Rect;
   dstRect: TSDL_Rect;
+  point: TSDL_Point;
 begin
   srcRect := SDL_RectCreate(srcX, srcY, srcWidth, srcHeight);
   dstRect := SDL_RectCreate(dstX, dstY, srcRect.w, srcRect.h);
-
+  point.x := 0;
+  point.y := 0;
   {SDL_SetSurfacePalette(img.surface, currentPalette.sdlPalette);}
 
+  {
   SDL_SetPixelFormatPalette(img.surface^.format, currentPalette.sdlPalette);
-  SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);
+  SDL_BlitSurface(img.surface, @srcRect, indexedBackbuffer, @dstRect);}
+
+
+  if not Assigned(img.texture) then
+  begin
+    img.texture := SDL_CreateTextureFromSurface(sdlRenderer, img.surface);
+  end;
+
+  //SDL_SetTextureAlphaMod(img.texture, 127);
+  //SDL_SetTextureColorMod(img.texture, 127, 0, 0);
+  SDL_RenderCopyEx(sdlRenderer, img.texture, @srcRect, @dstRect, 0, @point, 0);
+
 end;
 
 procedure DrawSubImageOpaque(var img: image_t;
@@ -127,7 +162,21 @@ begin
   pal.sdlPalette := SDL_AllocPalette(256);
 end;
 
+
+procedure SetPaletteColor(index: integer; r, g, b: byte);
+var
+  color: TSDL_Color;
+begin
+  color.r := r;
+  color.g := g;
+  color.b := b;
+  color.a := 255;
+  SDL_SetPaletteColors(currentPalette.sdlPalette, @color, index, 1);
+end;
+
 procedure Init;
+var
+  i: integer;
 begin
   if SDL_Init(SDL_INIT_VIDEO) < 0 then Halt;
 
@@ -151,6 +200,23 @@ begin
   currentPalette.sdlPalette := SDL_AllocPalette(256);
 
   SDL_SetPaletteColors(currentPalette.sdlPalette, @colors[0], 0, 255);
+
+  SetPaletteColor(0, 0, 0, 255);
+
+  for i := 1 to 254 do
+  begin
+    colors[i].a := 255;
+    colors[i].r := 255;
+  end;
+
+  SetPaletteColor(15, 255, 255, 255);
+
+  backBuffer := SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGB24,
+    SDL_TEXTUREACCESS_TARGET, screen_width, screen_height);
+
+  SDL_SetRenderTarget(sdlRenderer, backBuffer);
+  SDL_RenderClear(sdlRenderer);
+
   screen := SDL_GetWindowSurface(sdlWindow1);
 end;
 
@@ -187,16 +253,6 @@ begin
   currentPalette := pal;
 end;
 
-procedure SetPaletteColor(index: integer; r, g, b: byte);
-var
-  color: TSDL_Color;
-begin
-  color.r := r;
-  color.g := g;
-  color.b := b;
-  color.a := 255;
-  SDL_SetPaletteColors(currentPalette.sdlPalette, @color, index, 1);
-end;
 
 procedure InitDriver;
 begin

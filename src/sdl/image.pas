@@ -37,7 +37,10 @@ begin
 
   GetMem(img, SizeOf(image_t));
   img^.surface := loadedSurface;
-  SDL_SetColorKey(img^.surface, SDL_RLEACCEL, 0);
+  img^.Width := loadedSurface^.w;
+  img^.Height := loadedSurface^.h;
+  img^.texture:=Nil;
+  //SDL_SetColorKey(img^.surface, SDL_RLEACCEL, $ffffff);
 
   Image_Load := img;
 
