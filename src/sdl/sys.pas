@@ -6,11 +6,43 @@ interface
 
 uses SDL2, GFX_SDL, Event, Engine;
 
+
+type TFile = record
+  _file: file;
+end;
+
 {$I sys.inc}
 
 implementation
 
 uses Text;
+
+
+procedure File_Open(fileName: string; var _file: TFile);
+begin
+     Assign(_file._file, fileName);
+     Reset(_file._file, 1);
+end;
+
+procedure File_Close(var _file: TFile);
+begin
+  System.Close(_file._file);
+end;
+
+procedure File_BlockRead(_file: TFile; var buf; size: integer);
+begin
+     BlockRead(_file._file, buf, size);
+end;
+
+procedure File_Seek(_file: TFile;Pos:Int64);
+begin
+     Seek(_file._file, Pos);
+end;
+
+function File_Pos(_file: TFile): Int64;
+begin
+     File_Pos := FilePos(_file._file);
+end;
 
 function sdl_to_scancode(code: TSDL_KeyCode): scanCode;
 begin
