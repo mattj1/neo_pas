@@ -2,13 +2,12 @@ unit GFX_SDL;
 
 interface
 
-{{$mode fpc}}
-{$H-}
+{$H+}
 uses
   Engine,
   gfx,
   SDL2,
-  SDL2_Image,
+  SDL2_Image, sdl2_ttf,
   Image, GFX_SDL_Core;
 
 procedure InitDriver;
@@ -20,6 +19,7 @@ var
   colors: array[0..256] of TSDL_Color;
   currentPalette: Palette;
   backBuffer: PSDL_Texture;
+  fnt: PTTF_Font;
 
 
 function SDL_RectCreate(x, y, w, h: integer): TSDL_Rect; inline;
@@ -80,8 +80,8 @@ begin
   if SDL_RenderCopy(sdlRenderer, texture, @srcRect, @dstRect) <> 0 then halt;
   SDL_RenderPresent(sdlRenderer);
 
-  SDL_DestroyTexture(texture);}
 
+  SDL_DestroyTexture(texture);}
 
   { Render backbuffer }
 
@@ -91,6 +91,7 @@ begin
   dstRect := SDL_RectCreate(sdlWindow1^.w div 2 - (640 * scaleFac div 2),
     sdlWindow1^.h div 2 - (400 * scaleFac div 2), 640 * scaleFac, 400 * scaleFac);}
   SDL_RenderCopy(sdlRenderer, backBuffer, @srcRect, @dstRect);
+
   SDL_RenderPresent(sdlRenderer);
 
   { Ready for next frame }
@@ -137,8 +138,6 @@ begin
   //SDL_SetTextureAlphaMod(img.texture, 127);
   //SDL_SetTextureColorMod(img.texture, 127, 0, 0);
   SDL_RenderCopyEx(sdlRenderer, img.texture, @srcRect, @dstRect, 0, @point, 0);
-
-
 
 end;
 
@@ -220,6 +219,10 @@ begin
   SDL_RenderClear(sdlRenderer);
 
   screen := SDL_GetWindowSurface(sdlWindow1);
+
+
+  //fnt := TTF_OpenFont('MesloLGS-Regular-Powerline.ttf', 12);
+  fnt := TTF_OpenFont('slkscr.ttf', 9);
 end;
 
 
@@ -255,20 +258,48 @@ begin
   currentPalette := pal;
 end;
 
+procedure DrawText(x, y: integer; str: string);
+var
+  textColor: TSDL_Color;
+  fontSurface: PSDL_Surface;
+  fontTexture: PSDL_Texture;
+  fontRect: TSDL_Rect;
+
+begin
+
+  textColor.r := 255;
+  textColor.g := 255;
+  textColor.b := 255;
+  textColor.a := 255;
+  fontSurface := TTF_RenderText_Solid(fnt, PChar(str), textColor);
+  fontTexture := SDL_CreateTextureFromSurface(sdlRenderer, fontSurface);
+  fontRect := SDL_RectCreate(x, y, fontSurface^.w, fontSurface^.h);
+  SDL_RenderCopy(sdlRenderer, fontTexture, nil, @fontRect);
+
+  SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
+  //SDL_RenderDrawPoint(sdlRenderer, x, y + 24);
+  SDL_RenderDrawLine(sdlRenderer, x, y, x, y - 10);
+
+  SDL_DestroyTexture(fontTexture);
+  SDL_FreeSurface(fontSurface);
+
+
+end;
 
 procedure InitDriver;
 begin
-  R_DrawSubImageTransparent := @DrawSubImageTransparent;
-  R_DrawSubImageOpaque := @DrawSubImageOpaque;
-  R_DrawSprite := @DrawSprite;
-  R_AllocPalette := @AllocPalette;
-  R_LoadPalette := @LoadPalette;
-  R_SetPaletteColor := @SetPaletteColor;
-  R_SetPalette := @SetPalette;
-  R_SwapBuffers := @SwapBuffers;
-  R_FillColor := @FillColor;
-  R_Init := @Init;
-  R_Close := @Close;
+  R_DrawSubImageTransparent := DrawSubImageTransparent;
+  R_DrawSubImageOpaque := DrawSubImageOpaque;
+  R_DrawSprite := DrawSprite;
+  R_AllocPalette := AllocPalette;
+  R_LoadPalette := LoadPalette;
+  R_SetPaletteColor := SetPaletteColor;
+  R_SetPalette := SetPalette;
+  R_SwapBuffers := SwapBuffers;
+  R_FillColor := FillColor;
+  R_DrawText := DrawText;
+  R_Init := Init;
+  R_Close := Close;
 end;
 
 begin

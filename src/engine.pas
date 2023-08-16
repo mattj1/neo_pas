@@ -5,7 +5,7 @@ interface
 
 {$ifdef SDL2}
 uses SDL2;
-{$H-}
+{$H+}
 {$else}
 {$endif}
 
@@ -49,6 +49,8 @@ type
   R_LoadPaletteProc = procedure(filename: string; var pal: Palette);
   R_SetPaletteColorProc = procedure(index: integer; r, g, b: byte);
   R_SetPaletteProc = procedure(var pal: Palette);
+
+  R_DrawTextProc = procedure(x, y: integer; str: string);
 
   R_SwapBuffersProc = procedure;
   R_InitProc = procedure;
@@ -109,6 +111,7 @@ var
   R_SetPaletteColor: R_SetPaletteColorProc;
   R_SetPalette: R_SetPaletteProc;
   R_SwapBuffers: R_SwapBuffersProc;
+  R_DrawText: R_DrawTextProc;
   R_Init: R_InitProc;
   R_Close: R_CloseProc;
 

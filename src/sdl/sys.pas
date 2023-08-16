@@ -6,22 +6,28 @@ interface
 
 uses SDL2, GFX_SDL, Event, Engine;
 
-
 type TFile = record
   _file: file;
 end;
 
 {$I sys.inc}
 
+procedure ConsoleLog(s: string);
+
 implementation
 
 uses Text;
 
+procedure ConsoleLog(s: string);
+begin
+  writeln(s);
+end;
 
-procedure File_Open(fileName: string; var _file: TFile);
+function File_Open(fileName: string; var _file: TFile): boolean;
 begin
      Assign(_file._file, fileName);
      Reset(_file._file, 1);
+     File_Open := true;
 end;
 
 procedure File_Close(var _file: TFile);
@@ -42,6 +48,10 @@ end;
 function File_Pos(_file: TFile): Int64;
 begin
      File_Pos := FilePos(_file._file);
+end;
+function File_EOF(_file: TFile): boolean;
+begin
+     File_EOF := EOF(_file._file);
 end;
 
 function sdl_to_scancode(code: TSDL_KeyCode): scanCode;
