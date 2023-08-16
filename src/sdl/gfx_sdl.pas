@@ -2,7 +2,7 @@ unit GFX_SDL;
 
 interface
 
-{$mode fpc}
+{{$mode fpc}}
 {$H-}
 uses
   Engine,
@@ -137,6 +137,8 @@ begin
   //SDL_SetTextureAlphaMod(img.texture, 127);
   //SDL_SetTextureColorMod(img.texture, 127, 0, 0);
   SDL_RenderCopyEx(sdlRenderer, img.texture, @srcRect, @dstRect, 0, @point, 0);
+
+
 
 end;
 

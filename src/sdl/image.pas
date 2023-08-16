@@ -8,7 +8,7 @@ interface
 
 uses
   Classes, SysUtils,
-  SDL2, SDL2_Image, Engine, GFX_SDL_Core, strings;
+  SDL2, SDL2_Image, Engine, GFX_SDL_Core;
 
 
 

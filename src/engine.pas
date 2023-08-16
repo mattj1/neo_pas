@@ -3,11 +3,12 @@ unit engine;
 
 interface
 
-{$ifdef fpc}
+{$ifdef SDL2}
 uses SDL2;
 {$H-}
 {$else}
 {$endif}
+
 type
   byte_ptr = ^byte;
   integer_ptr = ^integer;
@@ -18,7 +19,7 @@ type
   image_t = record
     Width: word;
     Height: word;
-{$ifdef fpc}
+{$ifdef SDL2}
     surface: PSDL_Surface;
     texture: PSDL_Texture;
 {$else}
@@ -28,7 +29,7 @@ type
   end;
 
   Palette = record
-{$ifdef fpc}
+{$ifdef SDL2}
     sdlPalette: PSDL_Palette;
 {$else}
     c: array[0..255] of array[0..2] of byte;
