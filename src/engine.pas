@@ -51,7 +51,7 @@ type
   R_SetPaletteProc = procedure(var pal: Palette);
 
   R_DrawTextProc = procedure(x, y: integer; str: string);
-
+  R_DrawLineProc = procedure(x0, y0, x1, y1, r, g, b, a: integer);
   R_SwapBuffersProc = procedure;
   R_InitProc = procedure;
   R_CloseProc = procedure;
@@ -112,6 +112,7 @@ var
   R_SetPalette: R_SetPaletteProc;
   R_SwapBuffers: R_SwapBuffersProc;
   R_DrawText: R_DrawTextProc;
+  R_DrawLine: R_DrawLineProc;
   R_Init: R_InitProc;
   R_Close: R_CloseProc;
 

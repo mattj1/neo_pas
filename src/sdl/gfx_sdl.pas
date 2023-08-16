@@ -276,14 +276,21 @@ begin
   fontRect := SDL_RectCreate(x, y, fontSurface^.w, fontSurface^.h);
   SDL_RenderCopy(sdlRenderer, fontTexture, nil, @fontRect);
 
-  SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
+  //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
   //SDL_RenderDrawPoint(sdlRenderer, x, y + 24);
-  SDL_RenderDrawLine(sdlRenderer, x, y, x, y - 10);
+  //SDL_RenderDrawLine(sdlRenderer, x, y, x, y - 10);
 
   SDL_DestroyTexture(fontTexture);
   SDL_FreeSurface(fontSurface);
 
 
+end;
+
+procedure DrawLine(x0, y0, x1, y1, r, g, b, a: integer);
+begin
+  SDL_SetRenderDrawColor(sdlRenderer, r, g, b, a);
+  SDL_RenderDrawLine(sdlRenderer, x0, y0, x1, y1);
+  SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0 ,0);
 end;
 
 procedure InitDriver;
@@ -298,6 +305,7 @@ begin
   R_SwapBuffers := SwapBuffers;
   R_FillColor := FillColor;
   R_DrawText := DrawText;
+  R_DrawLine := DrawLine;
   R_Init := Init;
   R_Close := Close;
 end;
