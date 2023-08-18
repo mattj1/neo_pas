@@ -69,6 +69,7 @@ begin
     SDLK_W: Result := kW;
     SDLK_E: Result := kE;
     SDLK_I: Result := kI;
+    SDLK_P: Result := kP;
     SDLK_A: Result := kA;
     SDLK_S: Result := kS;
     SDLK_D: Result := kD;
@@ -154,8 +155,8 @@ begin
       end;
       SDL_TEXTINPUT:
       begin
-        writeln('Adding SE_KEYCHAR ', event.Text.Text[0], ' ',
-          Ord(event.Text.Text[0]));
+        {writeln('Adding SE_KEYCHAR ', event.Text.Text[0], ' ',
+          Ord(event.Text.Text[0]));}
         Event_Add(SE_KEYCHAR, 0, Ord(event.Text.Text[0]));
       end;
 
@@ -170,6 +171,7 @@ begin
 
   end;
 
+  prevKeys := keys;
 end;
 
 procedure SYS_InitGraphicsDriver(driverType: integer);
