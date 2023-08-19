@@ -50,7 +50,7 @@ type
   R_SetPaletteColorProc = procedure(index: integer; r, g, b: byte);
   R_SetPaletteProc = procedure(var pal: Palette);
 
-  R_DrawTextProc = procedure(x, y: integer; str: string);
+  R_DrawTextProc = procedure(x, y: integer; str: AnsiString);
   R_DrawLineProc = procedure(x0, y0, x1, y1, r, g, b, a: integer);
   R_SwapBuffersProc = procedure;
   R_InitProc = procedure;
