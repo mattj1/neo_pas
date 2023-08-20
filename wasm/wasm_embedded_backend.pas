@@ -18,15 +18,31 @@ function SysAllocMem(Size: ptruint): pointer; external;
 function SysReAllocMem(var p:pointer;Size:ptruint):Pointer; external;
 function SysMemSize(p:pointer):ptruint; external;
 
-procedure Do_Close_Impl(handle: longint); external;
 function Do_Open_Impl(fileName: PChar; userData: Pointer; mode: longint): integer; external;
-function Do_Read_Impl(h: longint; addr: Pointer; len: longint): integer; external;
 function Do_Write_Impl(h: longint; addr: Pointer; len: longint): integer; external;
 procedure Do_Seek_Impl(handle, pos: longint); external;
-function Do_FilePos_Impl(handle: longint) : longint; external;
 function Do_FileSize_Impl(handle: longint): longint; external;
 
+function ftell(f: Pointer): longint; external;
+function fread(buf: Pointer; recSize: integer; numRec: integer; f: pointer): ptruint; external;
+function fclose(f: Pointer): longint; external;
+
 implementation
+
+function Do_Read_Impl(h: longint; addr: Pointer; len: longint): integer;
+begin
+	Do_Read_Impl := fread(addr, 1, len, Pointer(h));
+end;
+
+procedure Do_Close_Impl(handle: longint);
+begin
+	fclose(Pointer(handle));
+end;
+
+function Do_FilePos_Impl(handle: longint) : longint;
+begin
+	Do_FilePos_Impl := ftell(Pointer(handle));
+end;
 
 const MyMemoryManager: TMemoryManager = (
         NeedLock: false;  // Obsolete

@@ -75,10 +75,6 @@ void *SysReAllocMem(void *ptr, unsigned int sz) {
     return newBlock;
 }
 
-void Do_Close_Impl(int handle) {
-    fclose((FILE *) handle);
-}
-
 int Do_FileSize_Impl(int handle) {
     FILE *f = (FILE *) handle;
     int pos = ftell(f);
@@ -112,11 +108,6 @@ int Do_Open_Impl(const char *fileName, void *userData, int mode) {
     return f != NULL ? 1 : 0;
 }
 
-int Do_Read_Impl(int handle, void *addr, int len) {
-    // printf("Do_Read_Impl %d %d %d\n", handle, addr, len);
-    return fread(addr, 1, len, (FILE *)handle);
-}
-
 int Do_Write_Impl(int handle, void *addr, int len) {
     // printf("Do_Write_Impl %d %d %d\n", handle, addr, len);
     return fwrite((FILE *)handle, len, 1, addr);;
@@ -126,6 +117,3 @@ void Do_Seek_Impl(int handle, int offset) {
     fseek((FILE *) handle, offset, SEEK_SET);
 }
 
-int Do_FilePos_Impl(int handle) {
-    return ftell((FILE *) handle);
-}
