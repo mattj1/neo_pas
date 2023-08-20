@@ -37,13 +37,14 @@ begin
     // SDLK_E: Result := kE;
     // SDLK_I: Result := kI;
     // SDLK_P: Result := kP;
-    // SDLK_A: Result := kA;
+    65: to_scancode := kA;
     // SDLK_S: Result := kS;
-    // SDLK_D: Result := kD;
+    68: to_scancode := kD;
     // SDLK_L: Result := kL;
     // SDLK_Z: Result := kZ;
     // SDLK_1: Result := k1;
     // SDLK_2: Result := k2;
+    80: to_scancode := kP;
 
     // SDLK_BACKSPACE: Result := kBack;
 
@@ -61,6 +62,10 @@ begin
           kLf: from_scancode := 263;
           kRt: from_scancode := 262;
           kSpace: from_scancode := 32;
+          kA: from_scancode := 65;
+          kD: from_scancode := 68;
+          kP: from_scancode := 80;
+
      else
           from_scancode := 0;
      end;
@@ -76,7 +81,8 @@ begin
      // Check for released keys - TODO, use set features?
      for sc := kNone to kF12 do begin
           if (sc in keys) then begin
-               if not IsKeyDown(from_scancode(sc)) then begin
+               k := from_scancode(sc);
+               if (k <> 0) and not IsKeyDown(from_scancode(sc)) then begin
                     // writeln('key released ', Ord(sc));
                     Event_Add(SE_KEYUP, Ord(sc), 0);
                end;
@@ -99,7 +105,7 @@ begin
   until False;
 
 
-     prevKeys := keys;
+     // prevKeys := keys;
 end;
 
 procedure SYS_InitGraphicsDriver(driverType: integer);
