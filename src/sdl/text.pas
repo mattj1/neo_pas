@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses Engine, sdl2, sdl2_image, gfx, gfx_sdl, Image, Timer;
+Uses engine;
 
 procedure Init(Width, Height: integer);
 procedure Close;
@@ -24,16 +24,15 @@ procedure Text_ToggleFullscreen;
 
 procedure Text_DrawColorStringEx(x, y: byte; str: string; color, mask: byte);
 
-var
-  textSDLWindow: PSDL_Window;
-
 implementation
 
-uses Math;
+uses Math,  
+  SDL2, image, gfx_sdl, sys;
 
 var
   scrbuf: pointer;
   pal: array[0..15] of array[0..2] of byte;
+  textSDLWindow: PSDL_Window;
 
 var
   sdlWindow1: PSDL_Window;
@@ -82,7 +81,7 @@ var
   scaleFac: integer;
 begin
   bp := scrbuf;
-  flash := Timer.Timer_GetTicks mod 800 < 400;
+  flash := Timer_GetTicks mod 800 < 400;
 
   {dstRect := SDL_RectCreate(0, 0, sdlWindow1^.w, sdlWindow1^.h);
   dstRect := SDL_RectCreate(0, 0, 80 * 8, 25 * 16);

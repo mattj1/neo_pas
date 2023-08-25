@@ -2,7 +2,7 @@ unit GFX_SDL;
 
 interface
 
-{$H+}
+{$mode fpc}
 uses
   Engine,
   gfx,
@@ -184,12 +184,14 @@ begin
   screen_width := 320;
   screen_height := 240;
 
-  sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, screen_width * 2,
-    screen_height * 2, 0);
+  sdlWindow1 := SDL_CreateWindow('Hello World', 100, 100, screen_width * 3,
+    screen_height * 3, 0);
+
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, '1');
 
   sdlRenderer := SDL_CreateRenderer(sdlWindow1, -1, SDL_RENDERER_ACCELERATED);
   //SDL_CreateWindowAndRenderer(640, 400, SDL_WINDOW_SHOWN, @sdlWindow1, @sdlRenderer);
-  SDL_SetHint(SDL_HINT_RENDER_VSYNC, '1');
+
 
   if (sdlWindow1 = nil) or (sdlRenderer = nil) then Halt;
 
@@ -258,7 +260,7 @@ begin
   currentPalette := pal;
 end;
 
-procedure DrawText(x, y: integer; str: string);
+procedure DrawText(x, y: integer; str: AnsiString);
 var
   textColor: TSDL_Color;
   fontSurface: PSDL_Surface;
@@ -295,19 +297,19 @@ end;
 
 procedure InitDriver;
 begin
-  R_DrawSubImageTransparent := DrawSubImageTransparent;
-  R_DrawSubImageOpaque := DrawSubImageOpaque;
-  R_DrawSprite := DrawSprite;
-  R_AllocPalette := AllocPalette;
-  R_LoadPalette := LoadPalette;
-  R_SetPaletteColor := SetPaletteColor;
-  R_SetPalette := SetPalette;
-  R_SwapBuffers := SwapBuffers;
-  R_FillColor := FillColor;
-  R_DrawText := DrawText;
-  R_DrawLine := DrawLine;
-  R_Init := Init;
-  R_Close := Close;
+  R_DrawSubImageTransparent := R_DrawSubImageTransparentProc(@DrawSubImageTransparent);
+  R_DrawSubImageOpaque := R_DrawSubImageOpaqueProc(@DrawSubImageOpaque);
+  R_DrawSprite := R_DrawSpriteProc(@DrawSprite);
+  R_AllocPalette := @AllocPalette;
+  R_LoadPalette := R_LoadPaletteProc(@LoadPalette);
+  R_SetPaletteColor := R_SetPaletteColorProc(@SetPaletteColor);
+  R_SetPalette := @SetPalette;
+  R_SwapBuffers := @SwapBuffers;
+  R_FillColor := @FillColor;
+  R_DrawText := R_DrawTextProc(@DrawText);
+  R_DrawLine := R_DrawLineProc(@DrawLine);
+  R_Init := @Init;
+  R_Close := @Close;
 end;
 
 begin

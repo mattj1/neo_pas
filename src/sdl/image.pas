@@ -2,31 +2,27 @@
 
 unit Image;
 
-{$mode ObjFPC}{$H+}
-
 interface
 
-uses
-  Classes, SysUtils,
-  SDL2, SDL2_Image, Engine, GFX_SDL_Core;
-
-
+uses Engine;
 
 {$I image.inc}
 
-
-
 implementation
+
+uses
+  sys, SDL2, SDL2_Image, GFX_SDL_Core;
 
 function Image_Load(filename: string): pimage_t;
 
 var
   img: pimage_t;
+  fn: PChar;
 var
   loadedSurface: PSDL_Surface;
 begin
 
-  loadedSurface := IMG_Load(PChar(filename));
+  loadedSurface := IMG_Load(StrToPChar(filename));
 
   if loadedSurface = nil then
   begin

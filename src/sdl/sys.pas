@@ -1,57 +1,21 @@
 unit Sys;
 
-{$mode ObjFPC}{$H-}
+{$mode ObjFPC}
 
 interface
-
-uses SDL2, GFX_SDL, Event, Engine;
-
-type TFile = record
-  _file: file;
-end;
 
 {$I sys.inc}
 
 procedure ConsoleLog(s: string);
+function StrToPChar(const s: string): PChar;
 
 implementation
 
-uses Text;
+uses Engine, Event, GFX_SDL, Text, SDL2, strings;
 
 procedure ConsoleLog(s: string);
 begin
   writeln(s);
-end;
-
-function File_Open(fileName: string; var _file: TFile): boolean;
-begin
-     Assign(_file._file, fileName);
-     Reset(_file._file, 1);
-     File_Open := true;
-end;
-
-procedure File_Close(var _file: TFile);
-begin
-  System.Close(_file._file);
-end;
-
-procedure File_BlockRead(_file: TFile; var buf; size: integer);
-begin
-     BlockRead(_file._file, buf, size);
-end;
-
-procedure File_Seek(_file: TFile;Pos:Int64);
-begin
-     Seek(_file._file, Pos);
-end;
-
-function File_Pos(_file: TFile): Int64;
-begin
-     File_Pos := FilePos(_file._file);
-end;
-function File_EOF(_file: TFile): boolean;
-begin
-     File_EOF := EOF(_file._file);
 end;
 
 function sdl_to_scancode(code: TSDL_KeyCode): scanCode;
@@ -177,6 +141,38 @@ end;
 procedure SYS_InitGraphicsDriver(driverType: integer);
 begin
   GFX_SDL.InitDriver;
+end;
+
+
+
+var StrToPCharBuf: array[0..1023] of byte;
+
+function StrToPChar(const s: string): PChar;
+var p: PChar;
+begin
+  StrPCopy(@StrToPCharBuf, s);
+
+  StrToPChar := @StrToPCharBuf;
+end;
+
+procedure Timer_Init;
+begin
+
+end;
+
+procedure Timer_Close;
+begin
+
+end;
+
+function Timer_GetTicks: longint;
+begin
+  Timer_GetTicks := SDL_GetTicks;
+end;
+
+procedure Timer_Delay(ms: longint);
+begin
+  SDL_Delay(ms);
 end;
 
 end.

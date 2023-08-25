@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses Engine, gfx, Image, Timer;
+uses Engine, gfx, Image;
 
 procedure Init(Width, Height: integer);
 procedure Close;

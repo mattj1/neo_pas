@@ -4,8 +4,7 @@ unit engine;
 interface
 
 {$ifdef SDL2}
-uses SDL2;
-{$H+}
+uses SDL2, SDL2_Image;
 {$else}
 {$endif}
 
