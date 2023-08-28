@@ -11,7 +11,7 @@ function StrToPChar(const s: string): PChar;
 
 implementation
 
-uses Engine, Event, GFX_SDL, Text, SDL2, strings;
+uses Engine, Event, GFX_SDL, Text, SDL2;
 
 procedure ConsoleLog(s: string);
 begin
@@ -144,16 +144,6 @@ begin
 end;
 
 
-
-var StrToPCharBuf: array[0..1023] of byte;
-
-function StrToPChar(const s: string): PChar;
-var p: PChar;
-begin
-  StrPCopy(@StrToPCharBuf, s);
-
-  StrToPChar := @StrToPCharBuf;
-end;
 
 procedure Timer_Init;
 begin

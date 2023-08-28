@@ -4,7 +4,7 @@ unit Sys;
 
 interface
 
-uses Event, Engine;
+uses Event, Engine, raylib;
 
 {$I sys.inc}
 
@@ -17,9 +17,6 @@ uses Text;
 // procedure FillChar(var x;count : {$ifdef FILLCHAR_HAS_SIZEUINT_COUNT}SizeUInt{$else}SizeInt{$endif};value : byte );
 // begin
 // end;
-
-function GetKeyPressed: integer; external;
-function IsKeyDown(key: longint): boolean; external;
 
 function to_scancode(code: integer): scanCode;
 begin

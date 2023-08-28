@@ -96,6 +96,7 @@ function I_WasKeyReleased(sc: scanCode) : boolean;
 function I_WasKeyPressed(sc: scanCode) : boolean;
 
 function itoa(i: longint): string;
+function StrToPChar(const s: string): PChar;
 
 { Video ----------------------------------------------------------- }
 
@@ -123,6 +124,8 @@ var
 
 implementation
 
+uses strings;
+
 function I_IsKeyDown(sc: scanCode) : boolean;
 begin
      I_IsKeyDown := sc in keys;
@@ -144,6 +147,18 @@ begin
   str(i, s);
   itoa := s;
 end;
+
+
+var StrToPCharBuf: array[0..1023] of byte;
+
+function StrToPChar(const s: string): PChar;
+var p: PChar;
+begin
+  StrPCopy(@StrToPCharBuf, s);
+
+  StrToPChar := @StrToPCharBuf;
+end;
+
 
 begin
 end.
