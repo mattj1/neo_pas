@@ -7,6 +7,20 @@ interface
 
 uses SysUtils, ConsoleIO;
 
+(*)
+{$ifdef USE_STATIC_LIBC}
+  {$linklib c}
+Function malloc (Size : ptruint) : Pointer;cdecl; external;
+Procedure free (P : pointer); cdecl; external;
+function realloc (P : Pointer; Size : ptruint) : pointer;cdecl; external;
+Function calloc (unitSize,UnitCount : ptruint) : pointer;cdecl; external;
+{$else not USE_STATIC_LIBC}
+Function Malloc (Size : ptruint) : Pointer; cdecl; external LibName name 'malloc';
+Procedure Free (P : pointer); cdecl; external LibName name 'free';
+function ReAlloc (P : Pointer; Size : ptruint) : pointer; cdecl; external LibName name 'realloc';
+Function CAlloc (unitSize,UnitCount : ptruint) : pointer; cdecl; external LibName name 'calloc';
+{$endif not USE_STATIC_LIBC}
+*)
 procedure InitWasmEmbeddedBackend;
 
 procedure stdout_putc(ch: char); external;
