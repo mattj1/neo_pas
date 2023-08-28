@@ -2,7 +2,7 @@
 
 unit Image;
 
-{$mode ObjFPC}{$H+}
+{$H+}
 
 interface
 

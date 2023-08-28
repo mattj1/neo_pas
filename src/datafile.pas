@@ -16,10 +16,8 @@ procedure FS_CopyFile(srcPath, dstPath: string);
 implementation
 
 uses strings, engine, dos
-  {$ifdef fpc}
+{$ifndef WASM}
           , sysutils
-  {$else}
-
   {$endif}  ;
 
 type
@@ -42,14 +40,17 @@ var
 
 {$ifdef fpc}
 function DirExists(Name: string): boolean;
+{$ifndef WASM}
 var
-
   DirInfo: TSearchRec;         { For Windows, use TSearchRec }
+{$endif}
 begin
   DirExists := False;
+{$ifndef WASM}  
   if FindFirst(Name, Directory, DirInfo) = 0 then begin
     DirExists := True;
   end;
+{$endif}
 end;
 
 {$endif}
@@ -110,11 +111,12 @@ procedure Datafile_Init;
 var
   i, l: integer;
   _file: file;
-{  currentDir: string;
-}
+  currentDir: string;
+
 begin
- { currentDir := GetCurrentDir;
-  writeln('Datafile_Init, working directory: ', GetCurrentDir); }
+  { currentDir := GetCurrentDir;
+  writeln('Datafile_Init, working directory: ', GetCurrentDir);
+}
   Assign(_file, 'data.dat');
   Reset(_file, 1);
 

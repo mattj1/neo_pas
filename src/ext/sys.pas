@@ -22,13 +22,16 @@ function to_scancode(code: integer): scanCode;
 begin
   case (code) of
     // SDLK_RETURN: Result := kEnter;
+     256: to_scancode := kEsc;
     265: to_scancode := kUp;
     264: to_scancode := kDn;
     263: to_scancode := kLf;
     262: to_scancode := kRt;
     32: to_scancode := kSpace;
+    49: to_scancode := k1;
+    50: to_scancode := k2;
 
-    // SDLK_ESCAPE: Result := kEsc;
+
     // SDLK_Q: Result := kQ;
     // SDLK_W: Result := kW;
     // SDLK_E: Result := kE;
@@ -42,6 +45,9 @@ begin
     // SDLK_1: Result := k1;
     // SDLK_2: Result := k2;
     80: to_scancode := kP;
+    83: to_scancode := kS;
+    87: to_scancode := kW;
+
 
     // SDLK_BACKSPACE: Result := kBack;
 
@@ -54,6 +60,8 @@ end;
 function from_scancode(code: scanCode): integer;
 begin
      case (code) of
+          k1: from_scancode := 49;
+          k2: from_scancode := 50;
           kUp: from_scancode := 265;
           kDn: from_scancode := 264;
           kLf: from_scancode := 263;
@@ -62,6 +70,10 @@ begin
           kA: from_scancode := 65;
           kD: from_scancode := 68;
           kP: from_scancode := 80;
+          kS: from_scancode := 83;
+          kW: from_scancode := 97;
+
+          kEsc: from_scancode := 256;
 
      else
           from_scancode := 0;
@@ -74,7 +86,6 @@ var
   sc: scanCode;
   k: integer;
 begin
-
      // Check for released keys - TODO, use set features?
      for sc := kNone to kF12 do begin
           if (sc in keys) then begin
@@ -126,9 +137,13 @@ begin
   // Timer_GetTicks := SDL_GetTicks();
 end;
 
+procedure emscripten_sleep(t: longint); external;
+
 procedure Timer_Delay(ms: longint);
 begin
   // SDL_Delay(ms);
+  // writeln('Timer_Delay ', ms);
+  // emscripten_sleep(ms);
 end;
 
 

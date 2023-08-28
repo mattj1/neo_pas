@@ -4,7 +4,7 @@ interface
 uses raylib;
 procedure InitDriver;
 
-  var 
+var 
   mainImage: TImage;
   mainTexture: TTexture;
 implementation

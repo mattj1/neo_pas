@@ -10,6 +10,7 @@
 
 extern unsigned short GetErrorCode();
 
+extern void *FPC_RESOURCESTRINGTABLES;
 void *INITFINAL;
 void *_stack_top;
 
@@ -43,6 +44,9 @@ void *SysAllocMem(unsigned int sz) {
 }
 
 int SysFreeMem(void *ptr) {
+    if (ptr == NULL)
+        return 0;
+
     int sz = SysMemSize(ptr);
     int *p = (int *)ptr - 1;
     // printf("SysFreeMem... %d %d\n", ptr, sz);
@@ -52,6 +56,9 @@ int SysFreeMem(void *ptr) {
 
 
 int SysFreeMemSize(void *ptr, unsigned int _size) {
+    if(ptr == NULL)
+        return 0;
+
     int sz = SysMemSize(ptr);
     int *p = (int *)ptr - 1;
     // printf("SysFreeMemSize... %d %d\n", ptr, sz);
@@ -88,7 +95,7 @@ int Do_FileSize_Impl(int handle) {
 }
 
 int Do_Open_Impl(const char *fileName, void *userData, int mode) {
-    printf("Do_Open_Impl: %s mode %d\n", fileName, mode);
+    // printf("Do_Open_Impl: %s mode %d\n", fileName, mode);
 
     const char *fileMode = "";
     switch(mode) {
@@ -102,14 +109,14 @@ int Do_Open_Impl(const char *fileName, void *userData, int mode) {
     }
 
     FILE *f = fopen(fileName, fileMode);
-    printf("after fopen: %d\n", f);
+    printf("after fopen: %s, %d\n", fileName, f);
     memcpy(userData, &f, sizeof(FILE *));
 
     return f != NULL ? 1 : 0;
 }
 
 int Do_Write_Impl(int handle, void *addr, int len) {
-    // printf("Do_Write_Impl %d %d %d\n", handle, addr, len);
+    printf("Do_Write_Impl %d %d %d\n", handle, addr, len);
     return fwrite((FILE *)handle, len, 1, addr);;
 }
 
