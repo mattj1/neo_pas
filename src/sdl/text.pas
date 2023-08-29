@@ -121,8 +121,6 @@ begin
 
       srcRect := SDL_RectCreate(col * 8, row * 16, 8, 16);
 
-
-
       SDL_RenderCopyEx(sdlRenderer, fontTexture, @srcRect, @dstRect, 0, @point, 0);
 
       Inc(bp);

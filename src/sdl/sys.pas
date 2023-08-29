@@ -7,7 +7,6 @@ interface
 {$I sys.inc}
 
 procedure ConsoleLog(s: string);
-function StrToPChar(const s: string): PChar;
 
 implementation
 
