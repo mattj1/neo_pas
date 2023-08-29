@@ -31,8 +31,6 @@ begin
     49: to_scancode := k1;
     50: to_scancode := k2;
 
-
-    // SDLK_Q: Result := kQ;
     // SDLK_W: Result := kW;
     // SDLK_E: Result := kE;
     // SDLK_I: Result := kI;
@@ -45,6 +43,7 @@ begin
     // SDLK_1: Result := k1;
     // SDLK_2: Result := k2;
     80: to_scancode := kP;
+    81: to_scancode := kQ;
     83: to_scancode := kS;
     87: to_scancode := kW;
 
@@ -70,6 +69,7 @@ begin
           kA: from_scancode := 65;
           kD: from_scancode := 68;
           kP: from_scancode := 80;
+          kQ: from_scancode := 81;
           kS: from_scancode := 83;
           kW: from_scancode := 97;
 
