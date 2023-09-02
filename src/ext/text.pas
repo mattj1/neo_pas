@@ -341,6 +341,12 @@ begin
   GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
   FillChar(scrbuf^, 2 * text_screen_width * text_screen_height, 0);
 
+  {$ifdef PLATFORM_DESKTOP}
+  InitWindow(80 * 8 * 2, 25 * 16 * 2, 'raylib [core] example - basic window');
+
+  //SetTraceLogLevel(LOG_WARNING);
+  SetTargetFPS(30);
+  {$endif}
   mainImage := GenImageColor(window_width, window_height, BLANK);
   mainTexture := LoadTextureFromImage(mainImage);
   SetTextureFilter(mainTexture, TEXTURE_FILTER_POINT);

@@ -133,8 +133,9 @@ begin
 end;
 
 function Timer_GetTicks: longint;
+var i: integer;
 begin
-  // Timer_GetTicks := SDL_GetTicks();
+  Timer_GetTicks := round(GetTime * 1000);
 end;
 
 procedure emscripten_sleep(t: longint); external;
