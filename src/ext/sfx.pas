@@ -1,25 +1,27 @@
-unit sfx;
-interface
 
-uses engine;
+Unit sfx;
 
-type TSoundEffect = record
+Interface
+
+Uses engine;
+
+Type TSoundEffect = Record
   data: pIntArray;
   size: integer;
   length: integer;
-end;
+End;
 
-type PSoundEffect = ^TSoundEffect;
+Type PSoundEffect = ^TSoundEffect;
 
-procedure SND_PlaySound(snd: PSoundEffect);
-function SND_LoadSoundEffect(filename: string): PSoundEffect;
-procedure SND_Init;
+Procedure SND_PlaySound(snd: PSoundEffect);
+Function SND_LoadSoundEffect(filename: String): PSoundEffect;
+Procedure SND_Init;
 
-implementation
+Implementation
 
-uses raylib, math, datafile;
+Uses raylib, math, datafile;
 
-var 
+Var 
   didInit: boolean;
   stream: TAudioStream;
   sineIdx: real;
@@ -31,31 +33,32 @@ var
 
 
 
-const frequency: real = 440.0;
-  
-procedure SND_Update;
+Const frequency: real = 440.0;
 
-begin
-  if curSound <> nil then
-  begin
-    Inc(curSoundSample, 1);
+Procedure SND_Update;
 
-    if curSoundSample = curSound^.length - 1 then
-    begin
-      curSound := nil;
-      curFreq := 0;
-    end
-    else
-    begin
-      curFreq := curSound^.Data^[curSoundSample];
-    end;
-  end;
-end;
+Begin
+  If curSound <> Nil Then
+    Begin
+      Inc(curSoundSample, 1);
 
-function SND_AllocSoundEffect(length: integer): PSoundEffect;
-var
+      If curSoundSample = curSound^.length - 1 Then
+        Begin
+          curSound := Nil;
+          curFreq := 0;
+        End
+      Else
+        Begin
+          curFreq := curSound^.Data^[curSoundSample];
+        End;
+    End;
+End;
+
+Function SND_AllocSoundEffect(length: integer): PSoundEffect;
+
+Var 
   soundEffect: PSoundEffect;
-begin
+Begin
   GetMem(soundEffect, sizeof(TSoundEffect));
   GetMem(soundEffect^.Data, length * sizeof(integer));
 
@@ -66,21 +69,22 @@ begin
   soundEffect^.length := length;
 
   SND_AllocSoundEffect := soundEffect;
-end;
+End;
 
-procedure SND_FreeSoundEffect(soundEffect: PSoundEffect);
-begin
+Procedure SND_FreeSoundEffect(soundEffect: PSoundEffect);
+Begin
   FreeMem(soundEffect^.Data, soundEffect^.size);
   FreeMem(soundEffect, sizeof(TSoundEffect));
-end;
+End;
 
-function SND_LoadSoundEffect(filename: string): PSoundEffect;
-var
+Function SND_LoadSoundEffect(filename: String): PSoundEffect;
+
+Var 
   f: file;
   length: integer;
   soundEffect: PSoundEffect;
-begin
-  SND_LoadSoundEffect := nil;
+Begin
+  SND_LoadSoundEffect := Nil;
   Datafile_Open(filename, f, 1);
 
   BlockRead(f, length, 2);
@@ -92,117 +96,124 @@ begin
   Datafile_Close(f);
 
   SND_LoadSoundEffect := soundEffect;
-end;
+End;
 
 
-procedure AudioInputCallback(bufferData: Pointer; frames: LongWord);
-  var audioFrequency, incr: real;
+Procedure AudioInputCallback(bufferData: Pointer; frames: LongWord);
+
+Var audioFrequency, incr: real;
   d: ^integer;
   i: LongWord;
-    toneHz, toneVolume: uint16;
-      squareWavePeriod: uint32;
+  toneHz, toneVolume: uint16;
+  squareWavePeriod: uint32;
   halfSquareWavePeriod: uint32;
   SampleValue: integer;
-begin
+Begin
   toneHz := curFreq;
 
   // WriteLn('AudioInputCallback ', frames);
   audioFrequency := 440.0;
-    toneVolume := 3000;
+  toneVolume := 3000;
 
   d := bufferData;
 
-  for i := 1 to frames do begin
+  For i := 1 To frames Do
+    Begin
 
-    if toneHz <> 0 then
-    begin
-      squareWavePeriod := 22050 div toneHz;
-      halfSquareWavePeriod := squareWavePeriod div 2;
-
-
-      if ((RunningSampleIndex div HalfSquareWavePeriod) mod 2) = 1 then
-      begin
-        SampleValue := ToneVolume;
-        // floatSampleValue := floatToneVolume;
-      end else begin
-        SampleValue := -ToneVolume;
-        // floatSampleValue := -floatToneVolume;
-        
-      end;
-    end
-    else
-    begin
-      // floatSampleValue := 0;
-      SampleValue := 0;
-    end;
+      If toneHz <> 0 Then
+        Begin
+          squareWavePeriod := 22050 Div toneHz;
+          halfSquareWavePeriod := squareWavePeriod Div 2;
 
 
+          If ((RunningSampleIndex Div HalfSquareWavePeriod) Mod 2) = 1 Then
+            Begin
+              SampleValue := ToneVolume;
+              // floatSampleValue := floatToneVolume;
+            End
+          Else
+            Begin
+              SampleValue := -ToneVolume;
+              // floatSampleValue := -floatToneVolume;
 
-    d^ := SampleValue;
-
-    // if toneHz <> 0 then begin
-    //   d^ := round(4000.0 * sin(2 * PI * sineIdx));
-    //     incr := toneHz / 22050.0;
-    //   sineIdx := sineIdx + incr;
-    //   if (sineIdx > 1.0) then sineIdx := sineIdx - 1.0;
-
-    // end else begin
-
-    //   d^ := 0;
-    // end;
+            End;
+        End
+      Else
+        Begin
+          // floatSampleValue := 0;
+          SampleValue := 0;
+        End;
 
 
-    inc(d, 1);
 
-    Inc(RunningSampleIndex);
-    Inc(soundTick);
+      d^ := SampleValue;
+
+      // if toneHz <> 0 then begin
+      //   d^ := round(4000.0 * sin(2 * PI * sineIdx));
+      //     incr := toneHz / 22050.0;
+      //   sineIdx := sineIdx + incr;
+      //   if (sineIdx > 1.0) then sineIdx := sineIdx - 1.0;
+
+      // end else begin
+
+      //   d^ := 0;
+      // end;
+
+
+      inc(d, 1);
+
+      Inc(RunningSampleIndex);
+      Inc(soundTick);
 
     { TODO: This should not be hardcoded to 200 }
     { 0.006872852233677 sec / sample }
-    if (soundTick > 151) then
-    begin
-      soundTick := 0;
-      SND_Update;
-    end;
-  end;
-end;
+      If (soundTick > 151) Then
+        Begin
+          soundTick := 0;
+          SND_Update;
+        End;
+    End;
+End;
 
-procedure SND_PlaySound(snd: PSoundEffect);
-begin
-  if snd = nil then Exit;
+Procedure SND_PlaySound(snd: PSoundEffect);
+Begin
+  If snd = Nil Then Exit;
   //Exit;
   curSound := snd;
   curSoundSample := -1;
-end;
+End;
 
-function SND_IsPlaying: boolean;
-begin
-  SND_IsPlaying := curSound <> nil;
-end;
+Function SND_IsPlaying: boolean;
+Begin
+  SND_IsPlaying := curSound <> Nil;
+End;
 
-procedure SND_Init;
-begin
+Procedure SND_Init;
+Begin
   sineIdx := 0;
-  curSound := nil;
+  curSound := Nil;
   soundTick := 0;
   InitAudioDevice;
 
   didInit := IsAudioDeviceReady;
 
-  if didInit then begin
-    writeln('SND_Init: Audio device ready.');
-    stream := LoadAudioStream(22050, 16, 1);
-    writeln(stream.sampleRate);
-    writeln(stream.sampleSize);
-    writeln(stream.channels);
+  If didInit Then
+    Begin
+      writeln('SND_Init: Audio device ready.');
+      stream := LoadAudioStream(22050, 16, 1);
+      writeln(stream.sampleRate);
+      writeln(stream.sampleSize);
+      writeln(stream.channels);
 
-    SetAudioStreamCallback(stream, TAudioCallback(AudioInputCallback));
-    PlayAudioStream(stream);
-  end else begin
-    writeln('Didn''t init audio.');
-  end;
+      SetAudioStreamCallback(stream, TAudioCallback(AudioInputCallback));
+      PlayAudioStream(stream);
+    End
+  Else
+    Begin
+      writeln('Didn''t init audio.');
+    End;
 
-end;
+End;
 
-begin
-end.
+Begin
+End.

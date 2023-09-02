@@ -1,40 +1,48 @@
-unit gfx_ext;
-{$H+}
-interface
-uses raylib;
-procedure InitDriver;
 
-var 
+Unit gfx_ext;
+{$H+}
+
+Interface
+
+Uses raylib;
+Procedure InitDriver;
+
+Var 
   mainImage: TImage;
   mainTexture: TTexture;
-implementation
 
-uses engine;
+Implementation
+
+Uses engine;
 
 
 
-procedure DrawSubImageTransparent(var img: image_t;
-  dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
- var srcRect, dstRect: TRectangle;
-begin
+Procedure DrawSubImageTransparent(Var img: image_t;
+                                  dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
 
-    if dstX < 0 then begin
-        inc(srcX, -dstX);
-        inc(srcWidth, dstX);
-        // srcWidth += dstX;
-        dstX := 0;
-    end;
+Var srcRect, dstRect: TRectangle;
+Begin
 
-    if dstY < 0 then begin
+  If dstX < 0 Then
+    Begin
+      inc(srcX, -dstX);
+      inc(srcWidth, dstX);
+      // srcWidth += dstX;
+      dstX := 0;
+    End;
+
+  If dstY < 0 Then
+    Begin
       inc(srcY, -dstY);
       inc(srcHeight, dstY);
-        // srcY -= dstY;
-        // srcHeight += dstY;
-        dstY := 0;
-    end;
+      // srcY -= dstY;
+      // srcHeight += dstY;
+      dstY := 0;
+    End;
 
 
-  srcRect.x := srcX; // = {srcX, srcY, srcWidth, srcHeight};
+  srcRect.x := srcX;
+  // = {srcX, srcY, srcWidth, srcHeight};
   srcRect.y := srcY;
   srcRect.width := srcWidth;
   srcRect.height := srcHeight;
@@ -44,66 +52,71 @@ begin
   dstRect.width := srcWidth;
   dstRect.height := srcHeight;
   //dstRect = {dstX, dstY, srcWidth, srcHeight};
-  
-    ImageDraw(@mainImage, PImage(img.data)^,
-        srcRect,
-        dstRect,
-        WHITE);
-end;
 
-procedure DrawLineImpl(x0, y0, x1, y1, r, g, b, a: integer); external;
-procedure DrawTextImpl(x, y: integer; str: PChar); external;
+  ImageDraw(@mainImage, PImage(img.data)^,
+  srcRect,
+  dstRect,
+  WHITE);
+End;
 
-procedure DrawSubImageOpaque(var img: image_t;
-  dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
-begin
+Procedure DrawLineImpl(x0, y0, x1, y1, r, g, b, a: integer);
+external;
+Procedure DrawTextImpl(x, y: integer; str: PChar);
+external;
+
+Procedure DrawSubImageOpaque(Var img: image_t;
+                             dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
+Begin
   DrawSubImageTransparent(img, dstX, dstY, srcX, srcY, srcWidth, srcHeight);
-end;
+End;
 
-procedure DrawSprite(x, y: integer; var img: image_t);
-begin
+Procedure DrawSprite(x, y: integer; Var img: image_t);
+Begin
   // writeln('DrawSprite...');
   DrawSubImageTransparent(img, x, y, 0, 0, img.Width, img.Height);
-end;
+End;
 
-procedure DrawText(x, y: integer; str: string);
-begin
+Procedure DrawText(x, y: integer; str: String);
+Begin
   ImageDrawText(@mainImage, StrToPChar(str), x, y, 12, WHITE);
-end;
+End;
 
-procedure SwapBuffers;
-  var p: TVector2;
-begin
+Procedure SwapBuffers;
+
+Var p: TVector2;
+Begin
 
   p.x := 0;
   p.y := 0;
   UpdateTexture(mainTexture, mainImage.data);
 
   DrawTextureEx(mainTexture, p, 0, 3, WHITE);
-end;
+End;
 
-procedure DrawLine(x0, y0, x1, y1, r, g, b, a: integer);
-  var c: TColor;
-begin
+Procedure DrawLine(x0, y0, x1, y1, r, g, b, a: integer);
+
+Var c: TColor;
+Begin
   c.r := r;
   c.g := g;
   c.b := b;
   c.a := a;
   // DrawLineImpl(x0, y0, x1, y1, r, g, b, a);
 
-      // Color c = {r, g, b, a};
-    ImageDrawLine(@mainImage, x0, y0, x1, y1, c);
-end;
+  // Color c = {r, g, b, a};
+  ImageDrawLine(@mainImage, x0, y0, x1, y1, c);
+End;
 
-procedure Init;
-begin
+Procedure Init;
+Begin
   writeln('R_Init');
-    mainImage := GenImageColor(320, 240, BLANK);
-    mainTexture := LoadTextureFromImage(mainImage);
-end;
+  mainImage := GenImageColor(320, 240, BLANK);
+  mainTexture := LoadTextureFromImage(mainImage);
+End;
 
-procedure InitDriver; alias: 'InitDriver';
-begin
+Procedure InitDriver;
+alias: 'InitDriver';
+Begin
   writeln('InitDriver');
   R_DrawSubImageTransparent := DrawSubImageTransparent;
   // R_DrawSubImageOpaque := DrawSubImageOpaque;
@@ -118,5 +131,5 @@ begin
   // R_FillColor := FillColor;
   R_Init := Init;
   // R_Close := Close;
-end;   
-end.
+End;
+End.
