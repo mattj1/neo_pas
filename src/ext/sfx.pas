@@ -103,7 +103,7 @@ begin
 end;
 
 
-procedure AudioInputCallback(bufferData: Pointer; frames: longword);
+procedure AudioInputCallback(bufferData: Pointer; frames: longword); cdecl;
 
 var
   audioFrequency, incr: real;
@@ -115,9 +115,7 @@ var
   SampleValue: integer;
 begin
   
-  // WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
-  //writeln(IsAudioStreamProcessed(stream));
-
+   //WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
   audioFrequency := 440.0;
   toneVolume := 3000;
 
