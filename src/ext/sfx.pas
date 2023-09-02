@@ -52,6 +52,7 @@ begin
     end
     else
     begin
+      // writeln('SND_Update idx ', curSoundSample, ' freq ', curFreq);
       curFreq := curSound^.Data^[curSoundSample];
     end;
   end;
@@ -91,7 +92,7 @@ begin
   Datafile_Open(filename, f, 1);
 
   BlockRead(f, length, 2);
-  writeln(' sound effect len in samples: ', length);
+  // writeln(' sound effect len in samples: ', length);
 
   soundEffect := SND_AllocSoundEffect(length);
   BlockRead(f, soundEffect^.Data^, length * 2);
@@ -113,9 +114,8 @@ var
   halfSquareWavePeriod: uint32;
   SampleValue: integer;
 begin
-  toneHz := curFreq;
-
-  WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
+  
+  // WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
   //writeln(IsAudioStreamProcessed(stream));
 
   audioFrequency := 440.0;
@@ -123,13 +123,12 @@ begin
 
   d := bufferData;
 
-  frames := 16;
-
   for i := 1 to frames do
   begin
-
+    toneHz := curFreq;
     if toneHz <> 0 then
     begin
+      // writeln( ' playing sound freq ', toneHz);
       squareWavePeriod := 22050 div toneHz;
       halfSquareWavePeriod := squareWavePeriod div 2;
 
@@ -143,7 +142,6 @@ begin
       begin
         SampleValue := -ToneVolume;
         // floatSampleValue := -floatToneVolume;
-
       end;
     end
     else
@@ -203,7 +201,7 @@ begin
   soundTick := 0;
 
   InitAudioDevice;
-  SetAudioStreamBufferSizeDefault(256);
+  SetAudioStreamBufferSizeDefault(4096);
 
   didInit := IsAudioDeviceReady;
 
@@ -211,14 +209,14 @@ begin
   begin
     writeln('SND_Init: Audio device ready.');
 
-    stream := LoadAudioStream(22050, 16, 2);
+    stream := LoadAudioStream(22050, 16, 1);
 
     writeln(stream.sampleRate);
     writeln(stream.sampleSize);
     writeln(stream.channels);
 
-    testSound := LoadSound('Untitled.wav');
-    PlaySound(testSound);
+    // testSound := LoadSound('Untitled.wav');
+    // PlaySound(testSound);
     SetAudioStreamVolume(stream, 1.0);
 
     if not IsAudioStreamReady(stream) then
