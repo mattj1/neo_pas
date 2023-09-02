@@ -97,7 +97,12 @@ begin
       // SDL_SetRenderDrawColor(sdlRenderer, pal[bg][0], pal[bg][1], pal[bg][2], 255);
       // SDL_RenderFillRect(sdlRenderer, @dstRect);
 
-      // ImageDrawRectangle(@img)
+      tint.r := pal[bg][0];
+      tint.g := pal[bg][1];
+      tint.b := pal[bg][2];
+      tint.a := 255;
+
+      ImageDrawRectangleRec(@mainImage, dstRect, tint);
 
       // if (flash_attr and (not flash)) then
       // begin
@@ -338,9 +343,10 @@ begin
 
   mainImage := GenImageColor(window_width, window_height, BLANK);
   mainTexture := LoadTextureFromImage(mainImage);
+  SetTextureFilter(mainTexture, TEXTURE_FILTER_POINT);
 
   fontImage := Image_Load('dev/test.png');
-
+  ImageColorReplace(PImage(fontImage^.data), BLACK, BLANK);
 
   i := 0;
   pal[i][0] := 0;

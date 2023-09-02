@@ -71,7 +71,7 @@ begin
           kP: from_scancode := 80;
           kQ: from_scancode := 81;
           kS: from_scancode := 83;
-          kW: from_scancode := 97;
+          kW: from_scancode := 87;
 
           kEsc: from_scancode := 256;
 
