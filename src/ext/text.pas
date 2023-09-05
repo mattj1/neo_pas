@@ -345,7 +345,7 @@ begin
   InitWindow(80 * 8 * 2, 25 * 16 * 2, 'raylib [core] example - basic window');
 
   //SetTraceLogLevel(LOG_WARNING);
-  SetTargetFPS(30);
+  SetTargetFPS(60);
   {$endif}
   mainImage := GenImageColor(window_width, window_height, BLANK);
   mainTexture := LoadTextureFromImage(mainImage);
