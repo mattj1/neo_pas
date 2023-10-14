@@ -2,27 +2,31 @@
 
 unit Image;
 
+{$mode ObjFPC}{$H+}
+
 interface
 
-uses Engine;
+uses
+  Classes, SysUtils,
+  SDL2, SDL2_Image, Engine, GFX_SDL_Core;
+
+
 
 {$I image.inc}
 
-implementation
 
-uses
-  sys, SDL2, SDL2_Image, GFX_SDL_Core;
+
+implementation
 
 function Image_Load(filename: string): pimage_t;
 
 var
   img: pimage_t;
-  fn: PChar;
 var
   loadedSurface: PSDL_Surface;
 begin
 
-  loadedSurface := IMG_Load(StrToPChar(filename));
+  loadedSurface := IMG_Load(PChar(filename));
 
   if loadedSurface = nil then
   begin
@@ -36,7 +40,7 @@ begin
   img^.Width := loadedSurface^.w;
   img^.Height := loadedSurface^.h;
   img^.texture:=Nil;
-  SDL_SetColorKey(img^.surface, SDL_RLEACCEL, $000000);
+  SDL_SetColorKey(img^.surface, SDL_RLEACCEL, $ff00ff);
 
   Image_Load := img;
 
