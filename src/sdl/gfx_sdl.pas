@@ -34,12 +34,18 @@ begin
   SDL_RectCreate := rect;
 end;
 
-procedure FillColor(c: byte);
+procedure FillColor(c: longint);
 var
   rect: TSDL_Rect;
+  color: TSDL_Color absolute c;
 begin
   rect := SDL_RectCreate(0, 0, indexedBackbuffer^.w, indexedBackbuffer^.h);
-  SDL_FillRect(indexedBackbuffer, @rect, c);
+  //SDL_FillRect(indexedBackbuffer, @rect, c);
+//  writeln('fill color ', indexedBackbuffer^.w, ' ', indexedBackbuffer^.h);
+  //SDL_FillRect(indexedBackbuffer, @rect, $ffffffff);
+  SDL_SetRenderDrawColor(sdlRenderer, color.r, color.g, color.b, color.a);
+  SDL_RenderFillRect(sdlRenderer, @rect);
+
 end;
 
 procedure GFX_FillRect(x, y, w, h: integer; color: byte);
@@ -297,6 +303,8 @@ end;
 
 procedure InitDriver;
 begin
+  writeln('Init graphics backend: SDL2');
+
   R_DrawSubImageTransparent := R_DrawSubImageTransparentProc(@DrawSubImageTransparent);
   R_DrawSubImageOpaque := R_DrawSubImageOpaqueProc(@DrawSubImageOpaque);
   R_DrawSprite := R_DrawSpriteProc(@DrawSprite);

@@ -36,7 +36,7 @@ type
   end;
 
 type
-  R_FillColorProc = procedure(c: byte);
+  R_FillColorProc = procedure(c: longint);
   R_FillRectProc = procedure(x, y, w, h: integer; color: byte);
   R_DrawSubImageTransparentProc = procedure(var img: image_t;
     dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);

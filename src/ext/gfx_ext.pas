@@ -15,7 +15,9 @@ Implementation
 
 Uses engine;
 
-
+procedure FillColor(c: longint);
+begin
+end;
 
 Procedure DrawSubImageTransparent(Var img: image_t;
                                   dstX, dstY, srcX, srcY, srcWidth, srcHeight: integer);
@@ -128,7 +130,7 @@ Begin
   R_SwapBuffers := SwapBuffers;
   R_DrawText := DrawText;
   R_DrawLine := DrawLine;
-  // R_FillColor := FillColor;
+  R_FillColor := FillColor;
   R_Init := Init;
   // R_Close := Close;
 End;
