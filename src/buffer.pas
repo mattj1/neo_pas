@@ -35,6 +35,7 @@ type
     _file: file;
   end;
 
+function Buf_ReadByte(reader: PBufferReader): byte;
 function Buf_ReadInt(reader: PBufferReader): integer;
 function Buf_ReadLong(reader: PBufferReader): longint;
 procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
@@ -45,14 +46,39 @@ procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
+function Buf_CreateReaderForFile(var _file: file): TBufferReader;
+
 implementation
+
+procedure _FileReadData(reader: PBufferReader; Data: Pointer; length: integer);
+begin
+  BlockRead(reader^._file, Data^, length);
+end;
+
+function Buf_CreateReaderForFile(var _file: file): TBufferReader;
+var
+  reader: TBufferReader;
+begin
+
+  //Move(_file, reader._file, sizeof(file));
+  reader.readData := _FileReadData;
+  reader._file := _file;
+  Buf_CreateReaderForFile := reader;
+end;
+
+function Buf_ReadByte(reader: PBufferReader): byte;
+var
+  Value: byte;
+begin
+  reader^.readData(reader, @Value, sizeof(byte));
+  Buf_ReadByte := Value;
+end;
 
 function Buf_ReadInt(reader: PBufferReader): integer;
 var
   Value: integer;
 begin
   reader^.readData(reader, @Value, sizeof(integer));
-  { writeln('Buf_ReadInt ', Value); }
   Buf_ReadInt := Value;
 end;
 
