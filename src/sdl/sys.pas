@@ -31,6 +31,7 @@ begin
     SDLK_Q: Result := kQ;
     SDLK_W: Result := kW;
     SDLK_E: Result := kE;
+    SDLK_R: Result := kR;
     SDLK_I: Result := kI;
     SDLK_P: Result := kP;
     SDLK_A: Result := kA;
