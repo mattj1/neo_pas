@@ -46,24 +46,13 @@ procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
-function Buf_CreateReaderForFile(var _file: file): TBufferReader;
+procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
 
 implementation
 
 procedure _FileReadData(reader: PBufferReader; Data: Pointer; length: integer);
 begin
   BlockRead(reader^._file, Data^, length);
-end;
-
-function Buf_CreateReaderForFile(var _file: file): TBufferReader;
-var
-  reader: TBufferReader;
-begin
-
-  //Move(_file, reader._file, sizeof(file));
-  reader.readData := _FileReadData;
-  reader._file := _file;
-  Buf_CreateReaderForFile := reader;
 end;
 
 function Buf_ReadByte(reader: PBufferReader): byte;
@@ -130,6 +119,15 @@ end;
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 begin
   writer^.writeData(writer, @Value, Length(Value) + 1);
+end;
+
+procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
+begin
+
+  { Move(_file, reader._file, sizeof(file)); }
+  reader.readData := _FileReadData;
+{ reader._file := _file; }
+ { Buf_CreateReaderForFile := reader; }
 end;
 
 end.

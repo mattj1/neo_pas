@@ -18,6 +18,7 @@ type
 procedure SND_PlaySound(snd: PSoundEffect);
 function SND_LoadSoundEffect(filename: string): PSoundEffect;
 procedure SND_Init;
+procedure SND_Close;
 
 implementation
 
@@ -230,7 +231,12 @@ begin
   begin
     writeln('SND_Init: Didn''t init audio.');
   end;
+end;
 
+procedure SND_Close;
+begin
+  StopAudioStream(stream);
+  CloseAudioDevice;
 end;
 
 begin

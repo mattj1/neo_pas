@@ -1,6 +1,6 @@
 
 Unit gfx_ext;
-{$H+}
+{$H-}
 
 Interface
 

@@ -1,8 +1,5 @@
 unit datafile;
 
-{$ifdef fpc}
-{$mode tp}
-{$endif}
 
 interface
 
@@ -15,10 +12,12 @@ procedure FS_CopyFile(srcPath, dstPath: string);
 
 implementation
 
-uses strings, engine, dos
+uses strings, engine, dos, console
+{$ifdef fpc}
 {$ifndef WASM}
           , sysutils
-  {$endif}  ;
+  {$endif}
+{$endif}  ;
 
 type
   PEntry = ^entry;
@@ -27,7 +26,6 @@ type
     Name: array[0..8] of byte;
     offset: integer;
   end;
-
 
   PEntryArray = ^EntryArray;
   EntryArray = array[1..2048] of Entry;
@@ -81,22 +79,26 @@ function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 var
   i: integer;
 begin
-  { writeln('DataFile_Open ', Name); }
+  
+  { Console_Print('DataFile_Open ' + Name); }
+
   Datafile_Open := False;
 
   for i := 1 to _numEntries do
   begin
-    if StrPas(@_entries^[i].Name) = Name then
+    {Console_Print('check ' + itoa(i) + ': ' + StrPas(@_entries^[i].Name) + ' ' + itoa(_entries^[i].offset) + ' == ' + Name); 
+    }if StrPas(@_entries^[i].Name) = Name then
     begin
       Assign(f, 'data.dat');
       Reset(f, 1);
-      {      writeln('found ', Name, ' at offs ', _start + _entries^[i].offset); }
+      {Console_Print('found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));}
       Seek(f, _start + _entries^[i].offset);
       Datafile_Open := True;
       Exit;
     end;
   end;
 
+  Console_Print('DataFile_Open: did not find ' + Name);
   Assign(f, Name + '.bin');
   Reset(f, 1);
   Datafile_Open := True;
@@ -117,6 +119,7 @@ begin
   { currentDir := GetCurrentDir;
   writeln('Datafile_Init, working directory: ', GetCurrentDir);
 }
+
   Assign(_file, 'data.dat');
   Reset(_file, 1);
 
@@ -126,14 +129,14 @@ begin
 
   GetMem(_entries, l);
 
-  writeln('Datafile_Init: Number of entries: ', _numEntries);
+  Console_Print('Datafile_Init: Number of entries: ' + itoa(_numEntries));
 
   for i := 1 to _numEntries do
   begin
     BlockRead(_file, _entries^[i].Name, 9);
     BlockRead(_file, _entries^[i].offset, sizeof(integer));
 
-    {writeln(PChar(@_entries^[i].Name), ' ', _entries^[i].offset);}
+    { Console_Print('Entry: ' + StrPas(@_entries^[i].Name) + ' ' + itoa(_entries^[i].offset)); }
   end;
 
   _start := FilePos(_file);

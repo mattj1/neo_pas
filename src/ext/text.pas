@@ -424,7 +424,7 @@ end;
 
 procedure Close;
 begin
-
+  CloseWindow;
 end;
 
 begin

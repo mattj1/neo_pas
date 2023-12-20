@@ -20,6 +20,8 @@ procedure SND_PlaySound(snd: PSoundEffect);
 procedure SND_Update;
 function SND_IsPlaying : boolean;
 
+procedure SND_Init;
+
 implementation
 
 uses datafile;
@@ -97,6 +99,10 @@ begin
 	System.Close(f);
 
 	SND_LoadSoundEffect := soundEffect;
+end;
+
+procedure SND_Init;
+begin
 end;
 
 begin

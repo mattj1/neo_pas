@@ -147,8 +147,6 @@ begin
 end;
 
 function Timer_GetTicks: longint;
-var
-  i: integer;
 begin
   Timer_GetTicks := round(GetTime * 1000);
 end;
