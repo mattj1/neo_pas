@@ -191,9 +191,9 @@ var
   i, j: integer;
 begin
 
-  for j := y to y + h do
+  for j := y to y + h - 1 do
   begin
-    for i := x to x + w do
+    for i := x to x + w - 1 do
     begin
       WriteCharEx(i, j, ch, color, mask);
 
