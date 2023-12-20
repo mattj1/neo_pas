@@ -23,6 +23,7 @@ implementation
 
 var
   scrbuf: pointer;
+  _init: boolean;
 
 var text_screen_width, text_screen_height, num_chars: integer;
 
@@ -297,6 +298,8 @@ begin
   num_chars := width * height;
   GetMem(scrbuf, 2 * text_screen_width * text_screen_height);
   FillChar(scrbuf^, 2 * text_screen_width * text_screen_height, 0);
+
+  _init := true;
 end;
 
 procedure Text_FillRectEx(x, y, w, h: integer; ch, color, mask: byte);
@@ -313,9 +316,19 @@ begin
   end;
 end; 
 
+
 procedure Close;
 begin
-  FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
+
+  if not _init then begin
+    Exit;
+  end;
+
+  if Assigned(scrbuf) then begin
+    FreeMem(scrbuf, 2 * text_screen_width * text_screen_height);
+    scrbuf := nil;
+  end;
+
   asm
            mov     ax, $3
            int     $10
@@ -325,7 +338,10 @@ begin
 
   TextColor(7);
   clrscr;
+
+  _init := false;
 end;
 
 begin
+  _init := false;
 end.

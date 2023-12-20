@@ -21,7 +21,8 @@ procedure SND_Update;
 function SND_IsPlaying : boolean;
 
 procedure SND_Init;
-
+procedure SND_Close;
+	
 implementation
 
 uses datafile;
@@ -102,6 +103,11 @@ begin
 end;
 
 procedure SND_Init;
+begin
+end;
+
+
+procedure SND_Close;
 begin
 end;
 
