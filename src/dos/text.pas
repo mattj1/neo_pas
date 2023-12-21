@@ -186,6 +186,8 @@ begin
 
   for i := left to right do
   begin
+    if ord(str[j]) = 0 then Exit;
+    
     bp^ := Ord(str[j]);
     Inc(bp);
 

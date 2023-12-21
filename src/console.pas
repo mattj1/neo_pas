@@ -4,15 +4,17 @@ interface
 procedure Console_Print(s: string); 
 procedure Console_Dump;
 implementation
-uses Sys, engine;
+uses Sys, engine, strings;
 
-var msg: array[0..31] of string;
+var msg: array[0..31] of array[0..100] of Char;
 
 var p: integer;
 procedure Console_Print(s: string);
 begin
+	{ TODO: Ensure that the string isn't longer than 100 characters }
 	writeln(s);
-	msg[p and 31] := s;
+	StrPCopy(msg[p and 31], s);
+	{msg[p and 31] := s;}
 
 	{Timer_Delay(1000);}
 

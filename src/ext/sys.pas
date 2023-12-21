@@ -43,10 +43,12 @@ begin
     65: to_scancode := kA;
     // SDLK_S: Result := kS;
     68: to_scancode := kD;
+    69: to_scancode := kE;
     // SDLK_L: Result := kL;
     // SDLK_Z: Result := kZ;
     // SDLK_1: Result := k1;
     // SDLK_2: Result := k2;
+    73: to_scancode := kI;
     80: to_scancode := kP;
     81: to_scancode := kQ;
     83: to_scancode := kS;
@@ -75,6 +77,8 @@ begin
     kSpace: from_scancode := 32;
     kA: from_scancode := 65;
     kD: from_scancode := 68;
+    kE: from_scancode := 69;
+    kI: from_scancode := 73;
     kP: from_scancode := 80;
     kQ: from_scancode := 81;
     kS: from_scancode := 83;
@@ -124,7 +128,7 @@ begin
     if k = 0 then break;
 
     Event_Add(SE_KEYCHAR, 0, k);
-    writeln('SE_KEYCHAR ', Chr(k));
+{    writeln('SE_KEYCHAR ', Chr(k)); }
   until False;
 
   // prevKeys := keys;
