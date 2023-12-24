@@ -53,6 +53,7 @@ begin
     81: to_scancode := kQ;
     83: to_scancode := kS;
     87: to_scancode := kW;
+    96: to_scancode := kTilde;
 
 
       // SDLK_BACKSPACE: Result := kBack;
@@ -83,6 +84,7 @@ begin
     kQ: from_scancode := 81;
     kS: from_scancode := 83;
     kW: from_scancode := 87;
+    kTilde: from_scancode := 96;
 
     kEsc: from_scancode := 256;
 

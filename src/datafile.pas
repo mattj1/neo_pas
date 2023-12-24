@@ -1,10 +1,14 @@
 unit datafile;
 
 
+
 interface
+
+uses buffer;
 
 procedure Datafile_Init;
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
+function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
 procedure Datafile_Close(var f: file);
 procedure Datafile_ReadString(var f: file; var s: string);
 function DirExists(Name: string): boolean;
@@ -79,7 +83,7 @@ function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 var
   i: integer;
 begin
-  
+
   { Console_Print('DataFile_Open ' + Name); }
 
   Datafile_Open := False;
@@ -102,6 +106,20 @@ begin
   Assign(f, Name + '.bin');
   Reset(f, 1);
   Datafile_Open := True;
+end;
+
+procedure ReadData(reader: PBufferReader; Data: Pointer; length: integer);
+begin
+  BlockRead(reader^._file, Data^, length);
+end;
+
+
+function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
+var
+  Result: boolean;
+begin
+  reader.readData := ReadData;
+  DataFile_OpenWithReader := Datafile_Open(Name, reader._file, 1);
 end;
 
 procedure Datafile_Close(var f: file);
@@ -170,8 +188,7 @@ begin
   bytesRemaining := FileSize(srcFile);
 
   {$ifdef fpc}
-  writeln('FS_CopyFile: ', srcPath, ' -> ', dstPath);
-  writeln(' source size: ', bytesRemaining);
+  writeln('FS_CopyFile: ', srcPath, ' -> ', dstPath + '  Size: ', bytesRemaining);
   {$endif}
 
   repeat
@@ -184,7 +201,7 @@ begin
     Dec(bytesRemaining, bytesToCopy);
 
     {$ifdef fpc}
-    writeln('num bytes left to copy ', bytesRemaining);
+    { writeln('num bytes left to copy ', bytesRemaining); }
     {$endif}
 
   until bytesRemaining = 0;

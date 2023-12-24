@@ -140,7 +140,7 @@ begin
   //dstRect = {dstX, dstY, srcWidth, srcHeight};
         BeginDrawing;
              ClearBackground(RAYWHITE);
-             DrawText('Congrats! You created your first window!', 190, 200, 20, LIGHTGRAY);
+             //DrawText('Congrats! You created your first window!', 190, 200, 20, LIGHTGRAY);
             UpdateTexture(mainTexture, mainImage.data);
           DrawTextureEx(mainTexture, p, 0, 2, WHITE);
         EndDrawing;
