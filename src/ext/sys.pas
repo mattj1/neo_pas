@@ -35,6 +35,12 @@ begin
     32: to_scancode := kSpace;
     49: to_scancode := k1;
     50: to_scancode := k2;
+    51: to_scancode := k3;
+    52: to_scancode := k4;
+    53: to_scancode := k5;
+    54: to_scancode := k6;
+    55: to_scancode := k7;
+    56: to_scancode := k8;
 
     // SDLK_W: Result := kW;
     // SDLK_E: Result := kE;
@@ -70,6 +76,13 @@ begin
   case (code) of
     k1: from_scancode := 49;
     k2: from_scancode := 50;
+    k3: from_scancode := 51;
+    k4: from_scancode := 52;
+    k5: from_scancode := 53;
+    k6: from_scancode := 54;
+    k7: from_scancode := 55;
+    k8: from_scancode := 56;
+
     kEnter: from_scancode := 257;
     kBack: from_scancode := 259;
     kUp: from_scancode := 265;
