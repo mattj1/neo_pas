@@ -49,6 +49,7 @@ begin
     // SDLK_1: Result := k1;
     // SDLK_2: Result := k2;
     73: to_scancode := kI;
+    79: to_scancode := kO;
     80: to_scancode := kP;
     81: to_scancode := kQ;
     83: to_scancode := kS;
@@ -80,6 +81,7 @@ begin
     kD: from_scancode := 68;
     kE: from_scancode := 69;
     kI: from_scancode := 73;
+    kO: from_scancode := 79;
     kP: from_scancode := 80;
     kQ: from_scancode := 81;
     kS: from_scancode := 83;
