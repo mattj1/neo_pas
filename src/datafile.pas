@@ -6,7 +6,7 @@ interface
 
 uses buffer;
 
-procedure Datafile_Init;
+procedure Datafile_InitWithFile(path: string);
 procedure Datafile_InitWithMemory(Data: PChar);
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
@@ -41,6 +41,7 @@ var
   _start: longint;
   _isMemoryBlob: boolean;
   _memoryBlob: Pointer;
+  _path: string;
 
 
 {$ifdef fpc}
@@ -166,7 +167,7 @@ begin
   System.Close(f);
 end;
 
-procedure Datafile_Init2(var reader: TBufferReader);
+procedure Datafile_Init(var reader: TBufferReader);
 var
   i, l: integer;
 begin
@@ -195,7 +196,7 @@ begin
   _start := Buf_GetReadPos(@reader); {FilePos(_file);}
 end;
 
-procedure Datafile_Init;
+procedure Datafile_InitWithFile(path: string);
 var
 
   _file: file;
@@ -207,11 +208,13 @@ begin
 }
 
   _isMemoryBlob := False;
-  Assign(_file, 'data.dat');
+  _path := path;
+
+  Assign(_file, _path);
   Reset(_file, 1);
 
   Buf_CreateReaderForFile(_file, reader);
-  Datafile_Init2(reader);
+  Datafile_Init(reader);
 
 
   System.Close(_file);
@@ -225,7 +228,7 @@ begin
   _memoryBlob := Data;
 
   Buf_CreateReaderForMemory(_memoryBlob, reader);
-  Datafile_Init2(reader);
+  Datafile_Init(reader);
 end;
 
 procedure Datafile_ReadString(var f: file; var s: string);
