@@ -2,7 +2,7 @@ unit buffer;
 
 {$ifdef fpc}
 {$mode tp}
-         {$endif}
+{$endif}
 
 interface
 
@@ -17,10 +17,26 @@ type
   BufferReadIntProc = function(reader: PBufferReader): integer;
   BufferReadDataProc = procedure(reader: PBufferReader; Data: Pointer; length: integer);
 
-  TBufferReader = record
-    readData: BufferReadDataProc;
+
+
+
+  PBufferBase = ^TBufferBase;
+
+  TBufferBase = record
     userData: Pointer;
     _file: file;
+  end;
+
+  BufferReaderGetPosProc = function(reader: PBufferReader): longint;
+  BufferCloseProc = procedure(reader: PBufferBase);
+
+  TBufferReader = record
+    userData: Pointer;
+    _file: file;
+    pos: longint;
+    readData: BufferReadDataProc;
+    getPos: BufferReaderGetPosProc;
+    closeProc: BufferCloseProc;
   end;
 
 
@@ -41,18 +57,49 @@ function Buf_ReadLong(reader: PBufferReader): longint;
 procedure Buf_ReadData(reader: PBufferReader; Data: Pointer; length: integer);
 function Buf_ReadString(reader: PBufferReader): string;
 
+function Buf_GetReadPos(reader: PBufferReader): longint;
+
+procedure Buf_CloseReader(reader: PBufferReader);
+
 procedure Buf_WriteInt(writer: PBufferWriter; Value: integer);
 procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
 procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
+procedure Buf_CreateReaderForMemory(var Data: PChar; var reader: TBufferReader);
 
 implementation
 
 procedure _FileReadData(reader: PBufferReader; Data: Pointer; length: integer);
 begin
   BlockRead(reader^._file, Data^, length);
+end;
+
+function _FileGetPos(reader: PBufferReader): longint;
+begin
+  _FileGetPos := FilePos(reader^._file);
+end;
+
+procedure _FileClose(stream: PBufferBase);
+begin
+  System.Close(stream^._file);
+end;
+
+procedure _MemoryReadData(reader: PBufferReader; Data: Pointer; length: integer);
+var
+  bp: byte_ptr;
+begin
+
+  bp := reader^.userData;
+  Inc(bp, reader^.pos);
+  Move(bp^, Data^, length);
+  Inc(reader^.pos, length);
+end;
+
+function _MemoryGetPos(reader: PBufferReader): longint;
+begin
+  _MemoryGetPos := reader^.pos;
 end;
 
 function Buf_ReadByte(reader: PBufferReader): byte;
@@ -121,13 +168,33 @@ begin
   writer^.writeData(writer, @Value, Length(Value) + 1);
 end;
 
+function Buf_GetReadPos(reader: PBufferReader): longint;
+begin
+  Buf_GetReadPos := reader^.getPos(reader);
+end;
+
 procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
 begin
 
   { Move(_file, reader._file, sizeof(file)); }
   reader.readData := _FileReadData;
-{ reader._file := _file; }
- { Buf_CreateReaderForFile := reader; }
+  reader.getPos := _FileGetPos;
+  reader._file := _file;
+  reader.closeProc := _FileClose;
+end;
+
+procedure Buf_CreateReaderForMemory(var Data: PChar; var reader: TBufferReader);
+begin
+  reader.pos := 0;
+  reader.userData := Data;
+  reader.readData := _MemoryReadData;
+  reader.getPos := _MemoryGetPos;
+  reader.closeProc := nil;
+end;
+
+procedure Buf_CloseReader(reader: PBufferReader);
+begin
+  if Assigned(reader^.closeProc) then reader^.closeProc(PBufferBase(reader));
 end;
 
 end.

@@ -24,9 +24,12 @@ procedure Text_ToggleFullscreen;
 
 procedure Text_DrawColorStringEx(x, y: byte; str: string; color, mask: byte);
 
+procedure Text_Ext_LoadFontImage(path: String);
+procedure Text_Ext_LoadFontImageFromMemory(data: Pointer; length: longint);
+
 implementation
 
-uses Math;
+uses Math, FontDataBlob;
 
 var
   scrbuf: pointer;
@@ -315,6 +318,19 @@ begin
   Text_SetFullscreen(not isFullScreen);
 end;
 
+procedure Text_Ext_LoadFontImage(path: String);
+begin
+     fontImage := Image_Load(path);
+     ImageColorReplace(PImage(fontImage^.data), BLACK, BLANK);
+end;
+
+
+procedure Text_Ext_LoadFontImageFromMemory(data: Pointer; length: longint);
+begin
+     fontImage := Image_LoadFromMemory('.png',  data, length);
+     ImageColorReplace(PImage(fontImage^.data), BLACK, BLANK);
+end;
+
 procedure Init(Width, Height: integer);
 var
   window_width, window_height: integer;
@@ -322,6 +338,7 @@ var
   scale: integer;
 var
   i: integer;
+
   // rect: TSDL_Rect;
 begin
   // InitDriver;
@@ -350,9 +367,6 @@ begin
   mainImage := GenImageColor(window_width, window_height, BLANK);
   mainTexture := LoadTextureFromImage(mainImage);
   SetTextureFilter(mainTexture, TEXTURE_FILTER_POINT);
-
-  fontImage := Image_Load('dev/test.png');
-  ImageColorReplace(PImage(fontImage^.data), BLACK, BLANK);
 
   i := 0;
   pal[i][0] := 0;

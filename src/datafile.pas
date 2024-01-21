@@ -7,6 +7,7 @@ interface
 uses buffer;
 
 procedure Datafile_Init;
+procedure Datafile_InitWithMemory(Data: PChar);
 function Datafile_Open(Name: string; var f: file; recSize: integer): boolean;
 function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
 procedure Datafile_Close(var f: file);
@@ -17,11 +18,11 @@ procedure FS_CopyFile(srcPath, dstPath: string);
 implementation
 
 uses strings, engine, dos, console
-{$ifdef fpc}
+  {$ifdef fpc}
 {$ifndef WASM}
           , sysutils
   {$endif}
-{$endif}  ;
+  {$endif}  ;
 
 type
   PEntry = ^entry;
@@ -38,6 +39,8 @@ var
   _numEntries: integer;
   _entries: PEntryArray;
   _start: longint;
+  _isMemoryBlob: boolean;
+  _memoryBlob: Pointer;
 
 
 {$ifdef fpc}
@@ -55,7 +58,7 @@ begin
 {$endif}
 end;
 
-{$endif}
+  {$endif}
 
 {$ifndef fpc}
 function DirExists(Name: string): boolean;
@@ -65,7 +68,6 @@ var
   {$else}
   DirInfo: SearchRec;
   {$endif}
-
 begin
   DirExists := False;
   FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
@@ -117,9 +119,46 @@ end;
 function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
 var
   Result: boolean;
+  i: integer;
 begin
-  reader.readData := ReadData;
-  DataFile_OpenWithReader := Datafile_Open(Name, reader._file, 1);
+  //reader.readData := ReadData;
+
+  DataFile_OpenWithReader := False;
+
+  for i := 1 to _numEntries do
+  begin
+    {Console_Print('check ' + itoa(i) + ': ' + StrPas(@_entries^[i].Name) + ' ' + itoa(_entries^[i].offset) + ' == ' + Name);
+    }if StrPas(@_entries^[i].Name) = Name then
+    begin
+      if _isMemoryBlob then
+      begin
+        Buf_CreateReaderForMemory(_memoryBlob, reader);
+        reader.pos := _start + _entries^[i].offset;
+
+      end
+      else
+      begin
+        Assign(reader._file, 'data.dat');
+        Reset(reader._file, 1);
+        {Console_Print('found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));}
+        Seek(reader._file, _start + _entries^[i].offset);
+        Buf_CreateReaderForFile(reader._file, reader);
+
+      end;
+
+      DataFile_OpenWithReader := True;
+      Exit;
+
+    end;
+  end;
+
+  Console_Print('DataFile_OpenWithReader: did not find ' + Name);
+  //Assign(f, Name + '.bin');
+  //Reset(f, 1);
+  //Datafile_Open := False;
+
+
+  //DataFile_OpenWithReader := Datafile_Open(Name, reader._file, 1);
 end;
 
 procedure Datafile_Close(var f: file);
@@ -127,21 +166,13 @@ begin
   System.Close(f);
 end;
 
-procedure Datafile_Init;
+procedure Datafile_Init2(var reader: TBufferReader);
 var
   i, l: integer;
-  _file: file;
-  currentDir: string;
-
 begin
-  { currentDir := GetCurrentDir;
-  writeln('Datafile_Init, working directory: ', GetCurrentDir);
-}
 
-  Assign(_file, 'data.dat');
-  Reset(_file, 1);
-
-  BlockRead(_file, _numEntries, sizeof(integer));
+  _numEntries := Buf_ReadInt(@reader);
+  { BlockRead(_file, _numEntries, sizeof(integer));  }
 
   l := sizeof(entry) * _numEntries;
 
@@ -151,14 +182,50 @@ begin
 
   for i := 1 to _numEntries do
   begin
-    BlockRead(_file, _entries^[i].Name, 9);
-    BlockRead(_file, _entries^[i].offset, sizeof(integer));
+    Buf_ReadData(@reader, @_entries^[i].Name, 9);
+
+    { BlockRead(_file, _entries^[i].Name, 9); }
+
+    _entries^[i].offset := Buf_ReadInt(@reader);
+    { BlockRead(_file, _entries^[i].offset, sizeof(integer)); }
 
     { Console_Print('Entry: ' + StrPas(@_entries^[i].Name) + ' ' + itoa(_entries^[i].offset)); }
   end;
 
-  _start := FilePos(_file);
+  _start := Buf_GetReadPos(@reader); {FilePos(_file);}
+end;
+
+procedure Datafile_Init;
+var
+
+  _file: file;
+  currentDir: string;
+  reader: TBufferReader;
+begin
+  { currentDir := GetCurrentDir;
+  writeln('Datafile_Init, working directory: ', GetCurrentDir);
+}
+
+  _isMemoryBlob := False;
+  Assign(_file, 'data.dat');
+  Reset(_file, 1);
+
+  Buf_CreateReaderForFile(_file, reader);
+  Datafile_Init2(reader);
+
+
   System.Close(_file);
+end;
+
+procedure Datafile_InitWithMemory(Data: PChar);
+var
+  reader: TBufferReader;
+begin
+  _isMemoryBlob := True;
+  _memoryBlob := Data;
+
+  Buf_CreateReaderForMemory(_memoryBlob, reader);
+  Datafile_Init2(reader);
 end;
 
 procedure Datafile_ReadString(var f: file; var s: string);

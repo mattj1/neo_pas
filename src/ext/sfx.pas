@@ -22,7 +22,7 @@ procedure SND_Close;
 
 implementation
 
-uses raylib, Math, datafile;
+uses raylib, Math, datafile, buffer;
 
 var
   didInit: boolean;
@@ -40,7 +40,6 @@ const
   frequency: real = 440.0;
 
 procedure SND_Update;
-
 begin
   if curSound <> nil then
   begin
@@ -60,7 +59,6 @@ begin
 end;
 
 function SND_AllocSoundEffect(length: integer): PSoundEffect;
-
 var
   soundEffect: PSoundEffect;
 begin
@@ -83,29 +81,40 @@ begin
 end;
 
 function SND_LoadSoundEffect(filename: string): PSoundEffect;
-
 var
   f: file;
   length: integer;
   soundEffect: PSoundEffect;
+
+  reader: TBufferReader;
 begin
   SND_LoadSoundEffect := nil;
-  Datafile_Open(filename, f, 1);
+  if DataFile_OpenWithReader(filename, reader) then
+  begin
+    length := Buf_ReadInt(@reader);
 
-  BlockRead(f, length, 2);
-  // writeln(' sound effect len in samples: ', length);
+    soundEffect := SND_AllocSoundEffect(length);
 
-  soundEffect := SND_AllocSoundEffect(length);
-  BlockRead(f, soundEffect^.Data^, length * 2);
+    Buf_ReadData(@reader, soundEffect^.Data, length * 2);
+    Buf_CloseReader(@reader);
 
-  Datafile_Close(f);
+    SND_LoadSoundEffect := soundEffect;
+  end;
 
-  SND_LoadSoundEffect := soundEffect;
+  //Datafile_Open(filename, f, 1);
+
+  //BlockRead(f, length, 2);
+  //// writeln(' sound effect len in samples: ', length);
+
+  //soundEffect := SND_AllocSoundEffect(length);
+  //BlockRead(f, soundEffect^.Data^, length * 2);
+
+  //Datafile_Close(f);
+
 end;
 
 
 procedure AudioInputCallback(bufferData: Pointer; frames: longword); cdecl;
-
 var
   audioFrequency, incr: real;
   d: ^integer;
@@ -115,8 +124,8 @@ var
   halfSquareWavePeriod: uint32;
   SampleValue: integer;
 begin
-  
-   //WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
+
+  //WriteLn('AudioInputCallback ', ptruint(bufferData), ' ', frames);
   audioFrequency := 440.0;
   toneVolume := 3000;
 
