@@ -17,9 +17,6 @@ type
   BufferReadIntProc = function(reader: PBufferReader): integer;
   BufferReadDataProc = procedure(reader: PBufferReader; Data: Pointer; length: integer);
 
-
-
-
   PBufferBase = ^TBufferBase;
 
   TBufferBase = record
@@ -66,7 +63,7 @@ procedure Buf_WriteLong(writer: PBufferWriter; Value: longint);
 procedure Buf_WriteData(writer: PBufferWriter; Data: Pointer; length: integer);
 procedure Buf_WriteString(writer: PBufferWriter; Value: string);
 
-procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
+procedure Buf_CreateReaderForFile(var reader: TBufferReader);
 procedure Buf_CreateReaderForMemory(var Data: PChar; var reader: TBufferReader);
 
 implementation
@@ -173,13 +170,14 @@ begin
   Buf_GetReadPos := reader^.getPos(reader);
 end;
 
-procedure Buf_CreateReaderForFile(var _file: file; var reader: TBufferReader);
+{ It is up to the user to set reader._file, since Turbo Pascal doesn't let you assign "file" values }
+
+procedure Buf_CreateReaderForFile(var reader: TBufferReader);
 begin
 
   { Move(_file, reader._file, sizeof(file)); }
   reader.readData := _FileReadData;
   reader.getPos := _FileGetPos;
-  reader._file := _file;
   reader.closeProc := _FileClose;
 end;
 

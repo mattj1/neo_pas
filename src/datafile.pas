@@ -119,12 +119,23 @@ end;
 
 function DataFile_OpenWithReader(Name: string; var reader: TBufferReader): boolean;
 var
-  Result: boolean;
   i: integer;
+  localPath: string;
 begin
-  //reader.readData := ReadData;
-
   DataFile_OpenWithReader := False;
+
+  {$I-}
+  localPath := 'mods/game/data/' + Name + '.bin';
+  Assign(reader._file, localPath);
+  Reset(reader._file, 1);
+  {$I+}
+  if IOResult = 0 then
+  begin
+    writeln('DataFile_OpenWithReader: Opening local file ', localPath);
+    Buf_CreateReaderForFile(reader);
+    DataFile_OpenWithReader := True;
+    Exit;
+  end;
 
   for i := 1 to _numEntries do
   begin
@@ -133,9 +144,10 @@ begin
     begin
       if _isMemoryBlob then
       begin
+        {$ifdef USE_DATA_BLOB}
         Buf_CreateReaderForMemory(_memoryBlob, reader);
         reader.pos := _start + _entries^[i].offset;
-
+        {$endif}
       end
       else
       begin
@@ -143,7 +155,7 @@ begin
         Reset(reader._file, 1);
         {Console_Print('found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));}
         Seek(reader._file, _start + _entries^[i].offset);
-        Buf_CreateReaderForFile(reader._file, reader);
+        Buf_CreateReaderForFile(reader);
 
       end;
 
@@ -154,12 +166,6 @@ begin
   end;
 
   Console_Print('DataFile_OpenWithReader: did not find ' + Name);
-  //Assign(f, Name + '.bin');
-  //Reset(f, 1);
-  //Datafile_Open := False;
-
-
-  //DataFile_OpenWithReader := Datafile_Open(Name, reader._file, 1);
 end;
 
 procedure Datafile_Close(var f: file);
@@ -198,8 +204,6 @@ end;
 
 procedure Datafile_InitWithFile(path: string);
 var
-
-  _file: file;
   currentDir: string;
   reader: TBufferReader;
 begin
@@ -210,25 +214,27 @@ begin
   _isMemoryBlob := False;
   _path := path;
 
-  Assign(_file, _path);
-  Reset(_file, 1);
+  Assign(reader._file, _path);
+  Reset(reader._file, 1);
 
-  Buf_CreateReaderForFile(_file, reader);
+  Buf_CreateReaderForFile(reader);
   Datafile_Init(reader);
 
 
-  System.Close(_file);
+  System.Close(reader._file);
 end;
 
 procedure Datafile_InitWithMemory(Data: PChar);
 var
   reader: TBufferReader;
 begin
+  {$ifdef USE_DATA_BLOB}
   _isMemoryBlob := True;
   _memoryBlob := Data;
 
   Buf_CreateReaderForMemory(_memoryBlob, reader);
   Datafile_Init(reader);
+  {$endif}
 end;
 
 procedure Datafile_ReadString(var f: file; var s: string);
