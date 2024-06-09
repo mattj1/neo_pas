@@ -96,7 +96,7 @@ begin
     {Console_Print('check ' + itoa(i) + ': ' + StrPas(@_entries^[i].Name) + ' ' + itoa(_entries^[i].offset) + ' == ' + Name); 
     }if StrPas(@_entries^[i].Name) = Name then
     begin
-      Assign(f, 'data.dat');
+      Assign(f, _path);
       Reset(f, 1);
       {Console_Print('found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));}
       Seek(f, _start + _entries^[i].offset);
@@ -131,7 +131,7 @@ begin
   {$I+}
   if IOResult = 0 then
   begin
-    writeln('DataFile_OpenWithReader: Opening local file ', localPath);
+    writeln('DataFile_OpenWithReader: local: ', localPath);
     Buf_CreateReaderForFile(reader);
     DataFile_OpenWithReader := True;
     Exit;
@@ -151,9 +151,9 @@ begin
       end
       else
       begin
-        Assign(reader._file, 'data.dat');
+        Assign(reader._file, _path);
         Reset(reader._file, 1);
-        {Console_Print('found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));}
+        Console_Print('DataFile_OpenWithReader: found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));
         Seek(reader._file, _start + _entries^[i].offset);
         Buf_CreateReaderForFile(reader);
 
@@ -207,6 +207,8 @@ var
   currentDir: string;
   reader: TBufferReader;
 begin
+  Console_Print('Datafile_InitWithFile: Using ' + path);
+
   { currentDir := GetCurrentDir;
   writeln('Datafile_Init, working directory: ', GetCurrentDir);
 }
