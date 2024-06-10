@@ -15,8 +15,6 @@ uses Sys, engine, strings, text;
 
 var
   msg: array[0..31] of array[0..100] of char;
-
-var
   p: integer;
   visible: boolean;
   writeStdOut: boolean;
@@ -31,17 +29,13 @@ begin
   { TODO: Ensure that the string isn't longer than 100 characters }
   if writeStdOut then writeln(s);
   StrPCopy(msg[p and 31], s);
-  {msg[p and 31] := s;}
-
-  {Timer_Delay(1000);}
-
   Inc(p);
 end;
 
 
 procedure Console_Dump;
 var
-  i, j: integer;
+  j: integer;
 begin
 
   for j := (p - 31) to (p - 1) do
