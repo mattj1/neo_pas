@@ -104,6 +104,8 @@ var
   Value: byte;
 begin
   reader^.readData(reader, @Value, sizeof(byte));
+
+  { writeln('IOResult ', IOResult);}
   Buf_ReadByte := Value;
 end;
 

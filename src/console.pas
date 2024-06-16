@@ -11,7 +11,7 @@ procedure Console_SetWriteStdOut(b: boolean);
 
 implementation
 
-uses Sys, engine, strings, text;
+uses strings, text;
 
 var
   msg: array[0..31] of array[0..100] of char;
