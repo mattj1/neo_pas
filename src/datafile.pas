@@ -74,7 +74,7 @@ begin
   FindFirst(Name, Directory, DirInfo); { Same as DIR *.PAS }
   while DosError = 0 do
   begin
-    Writeln('found ', DirInfo.Name);
+    { Writeln('found ', DirInfo.Name); }
     DirExists := True;
     Exit;
   end;
@@ -153,7 +153,7 @@ begin
       begin
         Assign(reader._file, _path);
         Reset(reader._file, 1);
-        Console_Print('DataFile_OpenWithReader: found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset));
+        { Console_Print('DataFile_OpenWithReader: found ' + Name + ' at offs ' + itoa(_start + _entries^[i].offset)); }
         Seek(reader._file, _start + _entries^[i].offset);
         Buf_CreateReaderForFile(reader);
 

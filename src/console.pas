@@ -27,7 +27,13 @@ end;
 procedure Console_Print(s: string);
 begin
   { TODO: Ensure that the string isn't longer than 100 characters }
-  if writeStdOut then writeln(s);
+  if writeStdOut then begin
+    writeln(s);
+{$ifdef fpc}
+    write(#27'[0m');
+    SysFlushStdIO;
+{$endif}
+  end;
   StrPCopy(msg[p and 31], s);
   Inc(p);
 end;
@@ -43,6 +49,9 @@ begin
     if j >= 0 then
     begin
       writeln(msg[j and 31]);
+      {$ifdef fpc}
+      write(#27'[0m');
+      {$endif}
     end;
   end;
 end;
