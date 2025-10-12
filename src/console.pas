@@ -11,7 +11,7 @@ procedure Console_SetWriteStdOut(b: boolean);
 
 implementation
 
-uses strings, text;
+uses strings, text, engine;
 
 var
   msg: array[0..31] of array[0..100] of char;
@@ -26,13 +26,17 @@ end;
 
 procedure Console_Print(s: string);
 begin
+              {$ifdef fpc}  writeln('Console_Print');  {$endif}
   { TODO: Ensure that the string isn't longer than 100 characters }
   if writeStdOut then begin
     writeln(s);
 {$ifdef fpc}
+{$ifndef WASM}
     write(#27'[0m');
-    SysFlushStdIO;
+    SYS_FlushStdIO;
 {$endif}
+{$endif}
+
   end;
   StrPCopy(msg[p and 31], s);
   Inc(p);

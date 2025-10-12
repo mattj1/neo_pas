@@ -102,6 +102,9 @@ function I_WasKeyPressed(sc: scanCode) : boolean;
 function itoa(i: longint): string;
 function StrToPChar(const s: string): PChar;
 
+{ Misc -------------------------------------------------------------}
+procedure SYS_FlushStdIO;
+
 { Video ----------------------------------------------------------- }
 
 var
@@ -163,6 +166,14 @@ begin
   StrToPChar := @StrToPCharBuf;
 end;
 
+procedure SYS_FlushStdIO;
+begin
+  {$ifdef FPC_HAS_FEATURE_CONSOLEIO}
+  {$ifndef EMBEDDED}
+  SysFlushStdIO;
+  {$endif EMBEDDED}
+  {$endif FPC_HAS_FEATURE_CONSOLEIO}
+end;
 
 begin
 end.
