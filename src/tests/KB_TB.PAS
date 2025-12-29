@@ -35,9 +35,8 @@ begin
     Timer.Timer_Delay(100);
  until time > 3000;
  }
-    Loop_SetUpdateProc(Update);
+  Loop_SetUpdateProc(Update);
   Loop_SetDrawProc(Draw);
-
   Loop_Run;
 
  Keybrd.Close;
