@@ -32,8 +32,6 @@ type
     c: array[0..3] of byte;
   end;
 
-{$I image.inc}
-
 procedure LoadBMP(filename: string; var image: Image_t);
 procedure Image_New(var image: image_t; width, height: integer);
 procedure Image_Free(var image: Image_t);
@@ -113,22 +111,7 @@ begin
   img.data := newData;
 end;
 
-function Image_Load(filename: string): pimage_t;
 
-var
-  img: pimage_t;
-
-
-begin
-
-  GetMem(img, SizeOf(image_t));
-
-  LoadBMP(filename, img^);
-
-{  ConvertImageToModeX(img^); }
-
-  Image_Load := img;
-end;
 
 
 procedure Image_LoadRaw(var f: file; var image: Image_T);

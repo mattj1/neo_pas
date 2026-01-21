@@ -33,6 +33,9 @@ type
     size: integer;
     length: integer;
   end;
+  
+  
+
 
   { Game loop }
 type
@@ -69,6 +72,7 @@ type
 
 
 type
+  pimage_t = ^image_t;
   image_t = record
     Width: word;
     Height: word;
@@ -237,6 +241,8 @@ procedure Event_SetKeyUpProc(proc: Event_KeyUpProc);
 function Event_GetKeyPress(var keyPress: TKeyPress): boolean;
 procedure Event_ClearKeypressQueue;
 
+function Neo_Image_Load(filename: string) : pimage_t;
+
 function I_IsKeyDown(sc: scanCode) : boolean;
 function I_WasKeyReleased(sc: scanCode) : boolean;
 function I_WasKeyPressed(sc: scanCode) : boolean;
@@ -250,6 +256,7 @@ procedure Loop_Cancel;
 
 function Neo_Mouse_IsAvailable: boolean;
 procedure Neo_Mouse_Init;
+procedure Neo_Mouse_GetStatus(var x, y: word; var buttons: word);
 
 function SND_AllocSoundEffect(length: integer) : PSoundEffect;
 function SND_LoadSoundEffect(filename: string) : PSoundEffect;
@@ -263,7 +270,7 @@ procedure SND_Close;
 procedure SYS_FlushStdIO;
 procedure SYS_PollEvents;
 
-procedure Timer_Init;
+procedure Neo_Timer_Init;
 procedure Timer_Delay(ms: longint);
 function Timer_GetTicks: longint;
 
@@ -277,6 +284,10 @@ uses
   {$ifdef PLATFORM_DOS}
   crt,
   dos,
+  {$endif}
+  {$ifdef PLATFORM_DESKTOP}
+  sysutils,
+  raylib,
   {$endif}
   text,
   strings;
@@ -495,7 +506,6 @@ end;
 
 procedure Console_Print(s: string);
 begin
-              {$ifdef fpc}  writeln('Console_Print');  {$endif}
   { TODO: Ensure that the string isn't longer than 100 characters }
   if writeStdOut then begin
     writeln(s);
@@ -771,7 +781,7 @@ var
 begin
   DirExists := False;
 {$ifndef WASM}  
-  if FindFirst(Name, Directory, DirInfo) = 0 then begin
+  if FindFirst(Name, faDirectory, DirInfo) = 0 then begin
     DirExists := True;
   end;
 {$endif}
@@ -989,6 +999,7 @@ var curSoundSample: integer;
 procedure SND_Update;
     var freq: integer;
 begin
+{$ifdef PLATFORM_DOS}
   if curSound <> nil then begin
     inc(curSoundSample, 1);
 
@@ -1004,6 +1015,8 @@ begin
       end;
     end;
   end;
+{$else}
+{$endif}
 end;
 
 function SND_AllocSoundEffect(length: integer) : PSoundEffect;
@@ -1095,7 +1108,6 @@ var
   soundTicks: word;
   soundDebug: word;
 
-
 procedure _DOS_Timer_Int; interrupt;
 begin
   asm 
@@ -1137,7 +1149,7 @@ begin
    sti
   end;
 end;
-{$endif}
+
 
 procedure Timer_SetClockRate(bits: integer);
 var
@@ -1155,13 +1167,15 @@ begin
   port[$40] := lo(ticks);
   port[$40] := hi(ticks);
 end;
+{$endif}
 
 
-
-procedure Timer_Init;
+procedure Neo_Timer_Init;
   var i, j: integer;
 begin
-  if not _timer_did_init then begin
+    if not _timer_did_init then begin
+  {$ifdef PLATFORM_DOS}
+
     { writeln('--- Timer Init ---'); }
     getIntVec($08, oldTimerInt);
     setIntVec($08, @_DOS_Timer_Int);
@@ -1170,7 +1184,10 @@ begin
 
     Timer_SetClockRate(5);
     _timer_did_init := true;
+  {$else}
+  {$endif}
   end;
+  
 
 end;
 
@@ -1178,15 +1195,22 @@ procedure _Timer_Shutdown;
 begin
   if _timer_did_init then begin
     _timer_did_init := False;
+    {$ifdef PLATFORM_DOS}
     Timer_SetClockRate(0);
     setIntVec($08, oldTimerInt);
     NoSound;
+    {$else}
+    {$endif}
   end;
 end;
 
 function Timer_GetTicks: longint;
 begin
+  {$ifdef PLATFORM_DOS}
     Timer_GetTicks := tickCount;
+  {$else}
+    Timer_GetTicks := round(GetTime * 1000);
+  {$endif}
 end;
 
 procedure Timer_Delay(ms: longint);
@@ -1247,6 +1271,7 @@ const
   dt_int: integer = 16;
 
 begin
+  {$ifdef PLATFORM_DOS}
   _done := False;
   fpsCount := 0;
 
@@ -1301,12 +1326,28 @@ begin
     {$endif}
     prevKeys := keys;
   until _done or shouldQuit;
+  {$else}
+
+  while not WindowShouldClose do begin
+    SYS_PollEvents;
+    Event_ProcessEvents;
+    
+    _updateProc(16);
+
+    BeginDrawing;
+    ClearBackground(BLACK);
+    _drawProc;
+    EndDrawing;
+  end;
+  
+  {$endif}
 end;
 
 procedure SYS_PollEvents;
 begin
 end;
 
+{$ifdef PLATFORM_DOS}
 procedure _DOS_Mouse_Int; far; assembler;
   asm 
     push ds
@@ -1319,25 +1360,34 @@ procedure _DOS_Mouse_Int; far; assembler;
     }
     pop ds
   end;
+{$endif}
 
 function Neo_Mouse_IsAvailable: boolean;
+  {$ifdef PLATFORM_DOS}
 var 
   regs: Registers;
+  {$endif}
 begin
+  {$ifdef PLATFORM_DOS}
   regs.AX := 0;
   Intr($33, regs);
-
   Neo_Mouse_IsAvailable := regs.AX <> 0;
+  {$else}
+  Neo_Mouse_IsAvailable := True;
+  {$endif}
+
 end;
 
 procedure Neo_Mouse_Init;
+  {$ifdef PLATFORM_DOS}
 var 
   regs: Registers;
+  {$endif}
 begin
   if _mouse_did_init or not Neo_Mouse_IsAvailable then Exit;
 
   _mouse_did_init := True;
-  
+  {$ifdef PLATFORM_DOS}
   asm
   MOV  AX,000CH
           MOV  CX,00011111B   { All actions. }
@@ -1345,7 +1395,7 @@ begin
           MOV  ES,DX
           MOV  DX,Offset _DOS_Mouse_Int
           INT  33H
-end;
+  end;
 
   { TOOD: Swap, using 14h}
 {  Regs.AX := $0C;
@@ -1357,32 +1407,56 @@ end;
   } 
   Regs.AX := $01;
   Intr($33, Regs);
+  {$endif}
 end;
 
+{$ifdef PLATFORM_DOS}
+procedure Neo_Mouse_GetStatus(var x, y: word; var buttons: word);
+begin
+end;
+{$else}
+procedure Neo_Mouse_GetStatus(var x, y: word; var buttons: word);
+var 
+  pos: TVector2;
+
+begin
+  pos := GetMousePosition;
+  x := round(pos.x);
+  y := round(pos.y);
+  buttons := 0;
+
+  if isMouseButtonPressed(0) then buttons := 1;
+end;
+{$endif}
+
 procedure _Mouse_Shutdown;
+{$ifdef PLATFORM_DOS}
 var 
   regs: Registers;
+{$endif}
 begin
   if _mouse_did_init then begin
     _mouse_did_init := False;
+    {$ifdef PLATFORM_DOS}
+    Regs.AX := $02;
+    Intr($33, Regs);
 
-    { Hide cursor }
-  Regs.AX := $02;
-  Intr($33, Regs);
-
-  Regs.AX := $0C;
-  Regs.CX := 0;       
-  Regs.DX := 0;
-  Regs.ES := 0;
-  
-  Intr($33, Regs);
+    Regs.AX := $0C;
+    Regs.CX := 0;       
+    Regs.DX := 0;
+    Regs.ES := 0;
+    
+    Intr($33, Regs);
+    {$endif}
   end;
 end;
+
 var
   oldKeyInt : Pointer;
   ExitSave: Pointer;
  { keyTable: array [0..127] of boolean;
 }
+{$ifdef PLATFORM_DOS}
 procedure _DOS_keyISR; interrupt;
 var
  k: scanCode;
@@ -1444,7 +1518,7 @@ begin
 memW[$40 : $1A] := memW[$40 : $1C];
   
 end;
-
+{$endif}
 
 procedure Keybrd_Init;
 var i: integer;
@@ -1453,9 +1527,10 @@ begin
   if not _keyboard_did_init then begin
     _keyboard_did_init := True;
      engine.keys := [];
-
+     {$ifdef PLATFORM_DOS}
      getIntVec(9, oldKeyInt);
      setIntVec(9, @_DOS_keyISR);
+     {$endif}
   end;
 end;
 
@@ -1463,9 +1538,29 @@ procedure _Keybrd_Shutdown;
 begin
   if _keyboard_did_init then begin
     _keyboard_did_init := False;
-    
+    {$ifdef PLATFORM_DOS}
     setIntVec(9, oldKeyInt);
+    {$endif}
   end;
+end;
+
+
+function Neo_Image_Load(filename: string): pimage_t;
+
+var
+  img: pimage_t;
+
+begin
+  Neo_Image_Load := nil;
+{$ifdef PLATFORM_DOS }
+(*
+  GetMem(img, SizeOf(image_t));
+
+  LoadBMP(filename, img^);
+  Neo_Image_Load := img;
+*)
+{  ConvertImageToModeX(img^); }
+{$endif}
 end;
 
 
@@ -1492,8 +1587,10 @@ begin
 
     { asm mov al, $3 ; mov ah, 0 ; int $10 end; }
 
+    {$ifdef PLATFORM_DOS}
     TextColor(7);
     TextBackground(0);
+    {$endif}
     
     SND_Close;
     Text.Close;
@@ -1505,6 +1602,9 @@ begin
     {$endif}
   end;
 end;
+
+
+
 
 begin
 

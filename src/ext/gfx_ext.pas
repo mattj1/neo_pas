@@ -7,12 +7,12 @@ Interface
 Uses raylib;
 Procedure InitDriver;
 
+
+
+Implementation
 Var 
   mainImage: TImage;
   mainTexture: TTexture;
-
-Implementation
-
 Uses engine;
 
 procedure FillColor(c: longint);

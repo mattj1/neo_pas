@@ -4,9 +4,7 @@ unit Sys;
 
 interface
 
-uses Event, Engine, raylib;
-
-{$I sys.inc}
+uses Engine, raylib;
 
 // procedure FillChar(var x;count : {$ifdef FILLCHAR_HAS_SIZEUINT_COUNT}SizeUInt{$else}SizeInt{$endif};value : byte );
 
@@ -154,22 +152,6 @@ end;
 procedure SYS_InitGraphicsDriver(driverType: integer);
 begin
 
-end;
-
-
-procedure Timer_Init;
-begin
-
-end;
-
-procedure Timer_Close;
-begin
-
-end;
-
-function Timer_GetTicks: longint;
-begin
-  Timer_GetTicks := round(GetTime * 1000);
 end;
 
 procedure emscripten_sleep(t: longint); external;

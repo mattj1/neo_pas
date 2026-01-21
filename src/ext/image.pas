@@ -10,10 +10,6 @@ uses
   Engine;
 
 
-
-  {$I image.inc}
-
-
 function Image_LoadFromMemory(fileType: PChar; Data: Pointer;
   dataSize: integer): pimage_t;
 

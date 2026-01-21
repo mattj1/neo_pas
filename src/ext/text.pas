@@ -2,7 +2,7 @@ unit Text;
 
 interface
 
-uses Engine, gfx, Image, gfx_ext, raylib;
+uses Engine, gfx, Image, raylib;
 
 procedure Init(Width, Height: integer);
 procedure Close;
@@ -29,7 +29,8 @@ procedure Text_Ext_LoadFontImageFromMemory(data: Pointer; length: longint);
 
 implementation
 
-uses Math, FontDataBlob;
+
+uses Math;
 
 var
   scrbuf: pointer;
@@ -37,7 +38,8 @@ var
   fontImage: pimage_t;
   text_screen_width, text_screen_height, num_chars: integer;
   isFullScreen: boolean;
-
+  mainImage: TImage;
+  mainTexture: TTexture;
 procedure HideCursor;
 begin
 
@@ -320,7 +322,7 @@ end;
 
 procedure Text_Ext_LoadFontImage(path: String);
 begin
-     fontImage := Image_Load(path);
+     fontImage := Neo_Image_Load(path);
      ImageColorReplace(PImage(fontImage^.data), BLACK, BLANK);
 end;
 
