@@ -64,6 +64,7 @@ static struct {
 #ifdef PLATFORM_DESKTOP
     Image pages[2];
     Texture mainTexture;
+    int window_width, window_height;
 #else
     u16 draw_segment;
 #endif
@@ -130,7 +131,14 @@ void EGA_Init(void) {
     }
 #else
 
+
     InitWindow(320 * 2, 200 * 2, "NEO");
+    Vector2 dpi = GetWindowScaleDPI();
+
+    ega_state.window_width = 320 * 2 * dpi.x;
+    ega_state.window_height = 200 * 2 * dpi.y;
+
+    SetWindowSize(ega_state.window_width, ega_state.window_height);
     SetTargetFPS(60);
     HideCursor();
 
@@ -564,7 +572,17 @@ void EGA_WaitVerticalRetrace(void) {
     p.x = 0;
     p.y = 0;
     UpdateTexture(ega_state.mainTexture, ega_state.pages[ega_state.visible_page].data);
-    DrawTextureEx(ega_state.mainTexture, p, 0, 2, WHITE);
+
+    Rectangle src = {
+        0, 0, 320, 200
+    };
+
+    Rectangle dest = {
+        0, 0, (float) ega_state.window_width, (float) ega_state.window_height
+    };
+
+    DrawTexturePro(ega_state.mainTexture, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
+    // DrawTextureEx(ega_state.mainTexture, p, 0, 2, WHITE);
 #endif
 }
 
