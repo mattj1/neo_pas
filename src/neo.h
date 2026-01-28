@@ -482,6 +482,7 @@ void Neo_Run(void) {
     }
 #else
     while(!neo_state.done) {
+
         Neo_ClearKeyData();
         Neo_Event_GetEvents();
         Neo_Event_ProcessEvents();
@@ -499,9 +500,9 @@ void Neo_Run(void) {
 
         EndDrawing();
 
-//        if(WindowShouldClose()) {
-//            Neo_Quit();
-//        }
+        if(WindowShouldClose()) {
+            Neo_Quit();
+        }
     }
 #endif
 }

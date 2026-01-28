@@ -54,6 +54,7 @@ extern void EGA_DrawSpriteMaskFast2(u16 src_srg, u16 src_offs, u16 src_skip,
                                     u16 num_cols, u16 num_rows);
 #else
 extern Image EGA_Raylib_GetBackBuffer(void);
+extern void EGA_Raylib_GetMouseCoords(u16 *x, u16 *y);
 #endif
 
 #ifdef EGA_IMPLEMENTATION
@@ -65,6 +66,7 @@ static struct {
     Image pages[2];
     Texture mainTexture;
     int window_width, window_height;
+    Rectangle dest_rect;
 #else
     u16 draw_segment;
 #endif
@@ -130,13 +132,13 @@ void EGA_Init(void) {
       out dx, ax
     }
 #else
-
-
     InitWindow(320 * 2, 200 * 2, "NEO");
     Vector2 dpi = GetWindowScaleDPI();
 
     ega_state.window_width = 320 * 2 * dpi.x;
     ega_state.window_height = 200 * 2 * dpi.y;
+
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetWindowSize(ega_state.window_width, ega_state.window_height);
     SetTargetFPS(60);
@@ -364,16 +366,17 @@ void EGA_DrawSpriteFast(int x, int y, ega_sprite_t *sprite) {
     }
 
     // Hack
-    unsigned char redMask = 0;
-    unsigned char greenMask = 0;
-    unsigned char blueMask = 0;
+    unsigned char plane_or[4] = {0,0,0,0};
 
-    if(sprite->planes_or == 0x0f) {
-        redMask = 255;
+    if (sprite->planes_and & 0x07 && sprite->planes_or == 8) {
+        // mouse highlight
+        plane_or[0] = 64;
+        plane_or[1] = 64;
+        plane_or[2] = 64;
+    }
 
-//        redMask = 127;
-//        greenMask = 127;
-//        blueMask = 127;
+    if (sprite->planes_and == 0 && sprite->planes_or == 12) {
+        plane_or[0] = 127;
     }
 
     Image *img = &ega_state.pages[ega_state.draw_page];
@@ -393,14 +396,16 @@ void EGA_DrawSpriteFast(int x, int y, ega_sprite_t *sprite) {
             int dy = dst_y0 + y;
             Color s = src[sy * sprite->data.width + sx];
             if(s.a == 255) {
+                Color t = {
+                    s.r | plane_or[0],
+                    s.g | plane_or[1],
+                    s.b | plane_or[2],
+                    255
+                };
 //                if(sprite->planes_or == 0x0f) {
 //                    s = RED;
 //                }
-                s.r |= redMask;
-                s.g |= greenMask;
-                s.b |= blueMask;
-
-                dst[dy * 320 + dx] = s;
+                dst[dy * 320 + dx] = t;
             }
         }
     }
@@ -531,7 +536,7 @@ void EGA_DrawSpriteSlow(int x, int y, ega_sprite_t *sprite) {
     EGA_SetRotate(2, shift_amount);
 
    for(plane = 0; plane < 4; plane++) {
-       EGA_SetPlanes(1 << plane);
+       EGA_SetPlanes(((1 << plane) & sprite->planes_and) | sprite->planes_or);
 
        if(num_cols >= 0) {
            EGA_SetMask(0xff >> shift_amount);
@@ -562,12 +567,24 @@ void EGA_DrawSpriteSlow(int x, int y, ega_sprite_t *sprite) {
 #endif
 }
 
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+
 void EGA_WaitVerticalRetrace(void) {
 #ifdef PLATFORM_DOS
     while ((inportb(0x3da) & 0x08) != 0);
     while ((inportb(0x3da) & 0x08) == 0);
 
 #else
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+    int scaleX = (int) floorf((float) GetScreenWidth() / 320.0f);
+    int scaleY = (int) floorf((float) GetScreenHeight() / 200.0f);
+    int scale = MIN(scaleX, scaleY);
+
+    int w = 320 * scale;
+    int h = 200 * scale;
+
+
     Vector2 p;
     p.x = 0;
     p.y = 0;
@@ -577,14 +594,56 @@ void EGA_WaitVerticalRetrace(void) {
         0, 0, 320, 200
     };
 
-    Rectangle dest = {
-        0, 0, (float) ega_state.window_width, (float) ega_state.window_height
+    ega_state.dest_rect = (Rectangle) {
+        screenWidth / 2 - w / 2,
+        screenHeight / 2 - h / 2,
+        w, h
     };
-
-    DrawTexturePro(ega_state.mainTexture, src, dest, (Vector2){0, 0}, 0.0f, WHITE);
-    // DrawTextureEx(ega_state.mainTexture, p, 0, 2, WHITE);
+    DrawTexturePro(ega_state.mainTexture, src, ega_state.dest_rect, (Vector2){0, 0}, 0.0f, WHITE);
 #endif
 }
+
+#ifdef PLATFORM_DESKTOP
+void EGA_Raylib_GetMouseCoords(u16 *x, u16 *y) {
+    Vector2 mousePos = GetMousePosition();
+    mousePos.x = (mousePos.x - ega_state.dest_rect.x) / (ega_state.dest_rect.width / 320);
+    mousePos.y = (mousePos.y - ega_state.dest_rect.y) / (ega_state.dest_rect.height / 200);
+
+    bool shouldHide = true;
+
+    if (mousePos.x < 0) {
+        mousePos.x = 0;
+        shouldHide = false;
+    }
+
+    if (mousePos.x > 319) {
+        mousePos.x = 319;
+        shouldHide = false;
+    }
+
+    if (mousePos.y < 0) {
+        mousePos.y = 0;
+        shouldHide = false;
+    }
+
+    if (mousePos.y > 199) {
+        mousePos.y = 199;
+        shouldHide = false;
+    }
+
+    if (shouldHide) {
+        HideCursor();
+    } else {
+        if (IsCursorHidden()) {
+            ShowCursor();
+        }
+    }
+
+    *x = (int) mousePos.x;
+    *y = (int) mousePos.y;
+}
+
+#endif
 
 void EGA_ClearScreen(void) {
 #ifdef PLATFORM_DOS
