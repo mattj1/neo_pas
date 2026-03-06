@@ -141,7 +141,7 @@ void EGA_Init(void) {
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetWindowSize(ega_state.window_width, ega_state.window_height);
-    SetTargetFPS(60);
+    SetTargetFPS(30);
     HideCursor();
 
     for(int i = 0; i < 2; i++) {
