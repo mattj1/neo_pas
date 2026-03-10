@@ -1,6 +1,7 @@
 #ifndef NEO_H
 #define NEO_H
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -22,7 +23,12 @@ typedef unsigned char bool;
 #endif
 
 #ifdef PLATFORM_DOS
+typedef unsigned char uint8_t;
+typedef char int8_t;
+typedef int int16_t;
+typedef unsigned int uint16_t;
 typedef unsigned long uint32_t;
+
 #endif
 
 typedef enum {
@@ -98,6 +104,7 @@ extern void Neo_Run(void);
 extern void Neo_Shutdown(void);
 bool Neo_ShouldQuit(void);
 void Neo_Quit(void);
+void LogInfo(const char *format, ...);
 
 #ifdef NEO_IMPLEMENTATION
 
@@ -567,5 +574,24 @@ void Neo_Shutdown(void) {
          */
     }
 }
+
+void LogInfo(const char *format, ...) {
+#ifdef PLATFORM_DOS
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    putchar('\n');
+    va_end(args);
+
+#else
+    char buffer[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+    TraceLog(LOG_INFO, "%s", buffer);
+#endif
+}
+
 #endif  // NEO_IMPLEMENTATION
 #endif  // NEO_H
