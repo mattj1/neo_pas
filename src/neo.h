@@ -57,15 +57,17 @@ enum {
 
 #define MAX_EVENTS 64
 
-typedef struct neo_buffer_reader_s neo_buffer_reader_t;
+// typedef struct neo_buffer_reader_s neo_buffer_reader_t;
+struct neo_buffer_reader_s;
 
-typedef void (*BufferReadDataProc)(neo_buffer_reader_t *reader, void *data, int length);
+typedef void (*BufferReadDataProc)(struct neo_buffer_reader_s *reader, void *data, int length);
 
 typedef void (*NeoUpdateProc)(void);
 typedef void (*NeoDrawProc)(void);
 
 typedef struct neo_config_s {
     const char *app_name;
+    const char *logFilePath;
     NeoUpdateProc updateFunc;
     NeoDrawProc drawFunc;
 } neo_config_t;
@@ -177,6 +179,11 @@ static struct {
     struct {
         unsigned short ticks;
     } sound;
+
+    struct
+    {
+        FILE *logFile;
+    } log;
 
 #ifdef PLATFORM_DOS
     void interrupt far (*timer_old_int)();
@@ -531,6 +538,11 @@ void Neo_Init(neo_config_t config) {
 //    printf("Size of int: %d, short: %d\n", sizeof(int), sizeof(unsigned short));
     memset(&neo_state, 0, sizeof(neo_state));
     neo_state.config = config;
+
+    if (config.logFilePath)
+    {
+        neo_state.log.logFile = fopen(config.logFilePath, "wb");
+    }
 }
 
 void Neo_Quit(void) {
@@ -579,10 +591,14 @@ void LogInfo(const char *format, ...) {
 #ifdef PLATFORM_DOS
     va_list args;
     va_start(args, format);
-    vprintf(format, args);
+    // vprintf(format, args);
+    if (neo_state.log.logFile != NULL)
+    {
+        vfprintf(neo_state.log.logFile, format, args);
+        fputs("\r\n", neo_state.log.logFile);
+    }
     putchar('\n');
     va_end(args);
-
 #else
     char buffer[1024];
     va_list args;

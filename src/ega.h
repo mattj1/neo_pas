@@ -21,10 +21,9 @@ typedef struct ega_sprite_s {
     u16 num_color_channels;
     u16 planes_and;
     u16 planes_or;
-#ifdef PLATFORM_DOS
     void *data;
-#else
-    Image data;
+#ifndef PLATFORM_DOS
+    Image raylib_image;
 #endif
 } ega_sprite_t;
 
@@ -195,16 +194,35 @@ void EGA_DrawTileFast(u16 x, u16 y, u16 vmem_offs) {
 #ifdef PLATFORM_DESKTOP
 #endif
 
+typedef struct {
+    unsigned char r, g, b;
+} RGB;
+
+static const RGB EGA_PALETTE[16] = {
+    {0x00, 0x00, 0x00},  /* 0:  Black         */
+    {0x00, 0x00, 0xAA},  /* 1:  Blue          */
+    {0x00, 0xAA, 0x00},  /* 2:  Green         */
+    {0x00, 0xAA, 0xAA},  /* 3:  Cyan          */
+    {0xAA, 0x00, 0x00},  /* 4:  Red           */
+    {0xAA, 0x00, 0xAA},  /* 5:  Magenta       */
+    {0xAA, 0x55, 0x00},  /* 6:  Brown         */
+    {0xAA, 0xAA, 0xAA},  /* 7:  Light Gray    */
+    {0x55, 0x55, 0x55},  /* 8:  Dark Gray     */
+    {0x55, 0x55, 0xFF},  /* 9:  Light Blue    */
+    {0x55, 0xFF, 0x55},  /* 10: Light Green   */
+    {0x55, 0xFF, 0xFF},  /* 11: Light Cyan    */
+    {0xFF, 0x55, 0x55},  /* 12: Light Red     */
+    {0xFF, 0x55, 0xFF},  /* 13: Light Magenta */
+    {0xFF, 0xFF, 0x55},  /* 14: Yellow        */
+    {0xFF, 0xFF, 0xFF},  /* 15: White         */
+};
 ega_sprite_t EGA_LoadSprite(const char *path) {
     char final_path[256];
     ega_sprite_t out;
-#ifdef PLATFORM_DOS
-    FILE *f;
-#endif
 
+    FILE *f;
     out.width = out.height = 0;
 
-#ifdef PLATFORM_DOS
     sprintf(final_path, "data/%s.ega", path);
     f = fopen(final_path, "rb");
 
@@ -224,14 +242,54 @@ ega_sprite_t EGA_LoadSprite(const char *path) {
     if(out.data == NULL) {
         printf("didn't allocate!\n");
     }
-    fread(out.data, out.column_count * out.height * 5, 1, f);
+    // fread(out.data, out.column_count * out.height * out.column_count, 1, f);
+    fread(out.data, out.column_count * out.height * out.num_channels, 1, f);
 //    printf("Loaded %s, %d x %d, num columns: %d", final_path, out.width, out.height, out.column_count);
 
-#else
-    sprintf(final_path, "dev/%s.png", path);
-    out.data = LoadImage(final_path);
-    out.width = out.data.width;
-    out.height = out.data.height;
+#ifndef PLATFORM_DOS
+    // sprintf(final_path, "dev/%s.png", path);
+    // out.data = LoadImage(final_path);
+    // Create raylib image and convert EGA data
+
+    out.raylib_image = GenImageColor(out.width, out.height, BLANK);
+
+    Color *data = out.raylib_image.data;
+    int column_size = 5 * out.height;
+
+    for (int y = 0; y < out.height; y++)
+    {
+        for (int x = 0; x < out.width; x++)
+        {
+            int col_no = (x >> 3);
+            int shift = 7 - (x & 7);
+
+            // byte offset into each plane
+            int offs = col_no * out.height + y;
+
+            unsigned char b = (((unsigned char *)out.data)[col_no * column_size + 0 * out.height + y] >> shift) & 1;
+            unsigned char g = (((unsigned char *)out.data)[col_no * column_size + 1 * out.height + y] >> shift) & 1;
+            unsigned char r = (((unsigned char *)out.data)[col_no * column_size + 2 * out.height + y] >> shift) & 1;
+            unsigned char i = (((unsigned char *)out.data)[col_no * column_size + 3 * out.height + y] >> shift) & 1;
+            unsigned char mask = (((unsigned char *)out.data)[col_no * column_size + 4 * out.height + y] >> shift) & 1;
+
+            unsigned char col = (b | (g << 1) | (r << 2) | (i << 3));
+
+            // 0 is blue
+            // 1 is green
+            // 2 is red
+            // 3 is I
+            // 4 is mask
+            if (!mask)
+            {
+                RGB c = EGA_PALETTE[col];
+                data[x + y * out.width] = (Color) {
+                    c.r, c.g, c.b, 255
+                };
+            }
+        }
+    }
+    out.width = out.raylib_image.width;
+    out.height = out.raylib_image.height;
 #endif
     return out;
 }
@@ -381,7 +439,7 @@ void EGA_DrawSpriteFast(int x, int y, ega_sprite_t *sprite) {
 
     Image *img = &ega_state.pages[ega_state.draw_page];
 
-    Color *src = (Color *) sprite->data.data;
+    Color *src = (Color *) sprite->raylib_image.data;
     Color *dst = (Color *) img->data;
 
     int numCols = src_x1 - src_x0 + 1;
@@ -394,7 +452,7 @@ void EGA_DrawSpriteFast(int x, int y, ega_sprite_t *sprite) {
             int sy = src_y0 + y;
             int dx = dst_x0 + x;
             int dy = dst_y0 + y;
-            Color s = src[sy * sprite->data.width + sx];
+            Color s = src[sy * sprite->raylib_image.width + sx];
             if(s.a == 255) {
                 Color t = {
                     s.r | plane_or[0],
