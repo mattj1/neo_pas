@@ -240,15 +240,13 @@ ega_sprite_t EGA_LoadSprite(const char *path) {
     out.planes_or = 0;
     out.data = (void *) malloc(out.column_count * out.height * 5);
     if(out.data == NULL) {
-        printf("didn't allocate!\n");
+        LogInfo("didn't allocate!\n");
     }
     // fread(out.data, out.column_count * out.height * out.column_count, 1, f);
     fread(out.data, out.column_count * out.height * out.num_channels, 1, f);
-//    printf("Loaded %s, %d x %d, num columns: %d", final_path, out.width, out.height, out.column_count);
+    LogInfo("Loaded %s, %d x %d, num columns: %d", final_path, out.width, out.height, out.column_count);
 
 #ifndef PLATFORM_DOS
-    // sprintf(final_path, "dev/%s.png", path);
-    // out.data = LoadImage(final_path);
     // Create raylib image and convert EGA data
 
     out.raylib_image = GenImageColor(out.width, out.height, BLANK);
@@ -262,9 +260,6 @@ ega_sprite_t EGA_LoadSprite(const char *path) {
         {
             int col_no = (x >> 3);
             int shift = 7 - (x & 7);
-
-            // byte offset into each plane
-            int offs = col_no * out.height + y;
 
             unsigned char b = (((unsigned char *)out.data)[col_no * column_size + 0 * out.height + y] >> shift) & 1;
             unsigned char g = (((unsigned char *)out.data)[col_no * column_size + 1 * out.height + y] >> shift) & 1;
@@ -642,10 +637,6 @@ void EGA_WaitVerticalRetrace(void) {
     int w = 320 * scale;
     int h = 200 * scale;
 
-
-    Vector2 p;
-    p.x = 0;
-    p.y = 0;
     UpdateTexture(ega_state.mainTexture, ega_state.pages[ega_state.visible_page].data);
 
     Rectangle src = {
