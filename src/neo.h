@@ -545,7 +545,7 @@ void Neo_Init(neo_config_t config) {
     }
 }
 
-void Neo_Quit(void) {
+extern void Neo_Quit(void) {
     neo_state.done = true;
 }
 
