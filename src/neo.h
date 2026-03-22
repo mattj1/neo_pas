@@ -31,6 +31,8 @@ typedef unsigned long uint32_t;
 
 #endif
 
+#define MAX_EVENTS 64
+
 typedef enum {
     kNone = 0x00,    kEsc = 0x01,    k1 = 0x02,    k2 = 0x03,    k3 = 0x04,    k4 = 0x05,
     k5 = 0x06,    k6 = 0x07,    k7 = 0x08,    k8 = 0x09,    k9 = 0x0A,    k0 = 0x0B,
@@ -55,12 +57,30 @@ enum {
     SE_KEYCHAR
 };
 
-#define MAX_EVENTS 64
+typedef struct neo_buffer_reader_s neo_buffer_reader_t;
 
-// typedef struct neo_buffer_reader_s neo_buffer_reader_t;
-struct neo_buffer_reader_s;
+typedef void (*neo_buffer_close_proc)(struct neo_buffer_reader_s *reader);
+typedef long (*neo_buffer_get_pos_proc)(struct neo_buffer_reader_s *reader);
+typedef void (*neo_buffer_seek_proc)(struct neo_buffer_reader_s *reader, long pos);
+typedef bool (*neo_buffer_read_data_proc)(struct neo_buffer_reader_s *reader, void *data, int length);
 
-typedef void (*BufferReadDataProc)(struct neo_buffer_reader_s *reader, void *data, int length);
+typedef struct neo_buffer_reader_s {
+    FILE *file;
+    void *data;
+    void *userdata;
+    long pos;
+
+    neo_buffer_read_data_proc readData;
+    neo_buffer_get_pos_proc getPos;
+    neo_buffer_close_proc close;
+    neo_buffer_seek_proc seek;
+} neo_buffer_reader_t;
+
+typedef struct neo_event_s {
+    int eventType;
+    int param;
+    int param2;
+} neo_event_t;
 
 typedef void (*NeoUpdateProc)(void);
 typedef void (*NeoDrawProc)(void);
@@ -72,19 +92,14 @@ typedef struct neo_config_s {
     NeoDrawProc drawFunc;
 } neo_config_t;
 
-typedef struct neo_buffer_reader_s {
-    FILE *file;
-    void *data;
-    void *userdata;
+extern bool Neo_Buf_ReadData(neo_buffer_reader_t *reader, void *dst, int length);
+extern bool Neo_Buf_ReadShort(neo_buffer_reader_t *reader, short *out);
 
-    BufferReadDataProc readData;
-} neo_buffer_reader_t;
-
-typedef struct neo_event_s {
-    int eventType;
-    int param;
-    int param2;
-} neo_event_t;
+extern long Neo_Buf_GetReadPos(neo_buffer_reader_t *reader);
+extern void Neo_Buf_Seek(neo_buffer_reader_t *reader, long pos);
+extern void Neo_Buf_CreateReaderForMemory(neo_buffer_reader_t *reader, void *data);
+extern void Neo_Buf_CreateReaderForFile(neo_buffer_reader_t *reader, FILE *file);
+extern void Neo_Buf_CloseReader(neo_buffer_reader_t *reader);
 
 extern void Neo_Event_GetEvents(void);
 extern void Neo_Event_ProcessEvents(void);
@@ -108,10 +123,12 @@ bool Neo_ShouldQuit(void);
 void Neo_Quit(void);
 void LogInfo(const char *format, ...);
 
+bool Neo_IsEGAAvailable(void);
+bool Neo_IsVGAAvailable(void);
+
 #ifdef NEO_IMPLEMENTATION
 
 #ifdef PLATFORM_DESKTOP
-
 static KeyboardKey neo_scanCodeToRaylibKey[kMAX] = {
         0,
         KEY_ESCAPE,
@@ -151,11 +168,11 @@ static struct {
     bool did_shutdown;
     bool keyboard_did_init;
     bool mouse_did_init;
-
-    int event_head;
-    int event_tail;
-
     bool done;
+
+    int16_t event_head;
+    int16_t event_tail;
+
 
     struct {
         bool did_init;
@@ -185,11 +202,117 @@ static struct {
         FILE *logFile;
     } log;
 
+    struct
+    {
+        char msg[32][100];
+    } console;
+
 #ifdef PLATFORM_DOS
     void interrupt far (*timer_old_int)();
     void interrupt far (*keyboard_old_int)();
 #endif
 } neo_state;
+
+#pragma region Buffer
+#pragma mark - Buffer
+
+static bool _FileReadData(neo_buffer_reader_t *reader, void *data, int length)
+{
+    int numRead = fread(data, 1, length, reader->file);
+    return numRead == length;
+}
+
+static long _FileGetPos(neo_buffer_reader_t *reader)
+{
+    return ftell(reader->file);
+}
+
+static void _FileSeek(neo_buffer_reader_t *reader, long pos)
+{
+    fseek(reader->file, pos, SEEK_SET);
+}
+
+static void _FileClose(neo_buffer_reader_t *reader)
+{
+    if (reader->file) {
+        fclose(reader->file);
+        reader->file = NULL;
+    }
+}
+
+static bool _MemoryReadData(neo_buffer_reader_t *reader, void *data, int length)
+{
+    // TODO: Check buffer size...
+    uint8_t *src = (uint8_t *)reader->data + reader->pos;
+    memcpy(data, src, length);
+    reader->pos += length;
+    return true;
+}
+
+static long _MemoryGetPos(neo_buffer_reader_t *reader)
+{
+    return reader->pos;
+}
+
+static void _MemorySeek(neo_buffer_reader_t *reader, long pos)
+{
+    reader->pos = pos;
+}
+
+bool Neo_Buf_ReadData(neo_buffer_reader_t *reader, void *dst, int length)
+{
+    return reader->readData(reader, dst, length);
+}
+
+bool Neo_Buf_ReadByte(neo_buffer_reader_t *reader, unsigned char *out)
+{
+    return Neo_Buf_ReadData(reader, out, 1);
+}
+
+bool Neo_Buf_ReadShort(neo_buffer_reader_t *reader, short *out)
+{
+    return Neo_Buf_ReadData(reader, out, 2);
+}
+
+long Neo_Buf_GetReadPos(neo_buffer_reader_t *reader)
+{
+    return reader->getPos(reader);
+}
+
+void Neo_Buf_Seek(neo_buffer_reader_t *reader, long pos)
+{
+    reader->seek(reader, pos);
+}
+
+void Neo_Buf_CreateReaderForMemory(neo_buffer_reader_t *reader, void *data)
+{
+    memset(reader, 0, sizeof(neo_buffer_reader_t));
+    reader->data = data;
+    reader->readData  = _MemoryReadData;
+    reader->getPos    = _MemoryGetPos;
+    reader->seek = _MemorySeek;
+}
+
+void Neo_Buf_CreateReaderForFile(neo_buffer_reader_t *reader, FILE *file)
+{
+    memset(reader, 0, sizeof(neo_buffer_reader_t));
+    reader->file      = file;
+    reader->readData  = _FileReadData;
+    reader->getPos    = _FileGetPos;
+    reader->close = _FileClose;
+    reader->seek = _FileSeek;
+}
+
+void Neo_Buf_CloseReader(neo_buffer_reader_t *reader)
+{
+    if (reader->close)
+    {
+        reader->close(reader);
+    }
+}
+
+#pragma endregion
+
 
 #pragma region Event
 #pragma mark - Event
@@ -524,6 +647,7 @@ void Neo_Run(void) {
 
 void Neo_Init(neo_config_t config) {
 #ifdef PLATFORM_DOS
+    textmode(C80);
     clrscr();
     textattr(7);
     textbackground(4);
@@ -535,7 +659,8 @@ void Neo_Init(neo_config_t config) {
     textbackground(0);
 #endif
 
-//    printf("Size of int: %d, short: %d\n", sizeof(int), sizeof(unsigned short));
+    // int a = sizeof(neo_state);
+    // printf("Size of int: %d, short: %d, state: %ld\n", sizeof(int), sizeof(unsigned short), sizeof(neo_state));
     memset(&neo_state, 0, sizeof(neo_state));
     neo_state.config = config;
 
@@ -556,6 +681,54 @@ bool Neo_ShouldQuit(void) {
 void Neo_ClearKeyData(void) {
     memset(&neo_state.keyboard.pressed_keys, 0, sizeof(neo_state.keyboard.pressed_keys));
     memset(&neo_state.keyboard.released_keys, 0, sizeof(neo_state.keyboard.released_keys));
+}
+
+bool Neo_IsEGAAvailable(void)
+{
+#ifdef PLATFORM_DOS
+    unsigned char result;
+    asm {
+        mov ax, 1200h
+        mov bl, 10h
+        mov cx, 0xFFFF
+        int 10h
+        inc cx
+        mov al, cl
+        or al, ch
+        mov result, al
+    }
+    return result;
+#else
+    return true;
+#endif
+}
+
+bool Neo_IsVGAAvailable(void)
+{
+#ifdef PLATFORM_DOS
+    unsigned char result;
+    asm {
+        mov ax, 0x1a00
+        int 10h
+
+        // Check for VGA BIOS
+        cmp al, 0x1a
+        jne err
+
+        // Check for VGA
+        cmp bl, 8 // or 7?
+        jb err
+
+        // Check for unknown
+        cmp bl, 0xff
+        jz err
+    }
+    return true;
+err:
+    return false;
+#else
+    return true;
+#endif
 }
 
 void Neo_Shutdown(void) {
@@ -591,7 +764,7 @@ void LogInfo(const char *format, ...) {
 #ifdef PLATFORM_DOS
     va_list args;
     va_start(args, format);
-    // vprintf(format, args);
+    vprintf(format, args);
     if (neo_state.log.logFile != NULL)
     {
         vfprintf(neo_state.log.logFile, format, args);

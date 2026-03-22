@@ -271,7 +271,7 @@ void Neo_Text_SwapBuffers(void) {
 
 void Neo_Text_Init(neo_text_init_params_t params)
 {
-    unsigned short mode = 3;
+    unsigned short mode = 3, b;
     unsigned short param = 0;
 
     // if (state._did_init == 0x11E0)
@@ -343,6 +343,18 @@ void Neo_Text_Init(neo_text_init_params_t params)
         mov ax, mode
         mov bx, param
         int 10h
+    }
+
+    if (Neo_IsVGAAvailable())
+    {
+        outportb(0x3c4, 1);
+        b = inportb(0x3c5);
+        b = (b & 0xfe) | 1;
+        outportb(0x3c5, b);
+
+        b = inportb(0x3cc);
+        b = b & 0xf3;
+        outportb(0x3c2, b);
     }
 
     state.page = 1;
