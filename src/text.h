@@ -31,6 +31,7 @@ extern void Neo_Text_DrawColorStringEx(int x, int y, const char *string, unsigne
 
 extern void Neo_Text_Init(neo_text_init_params_t params);
 extern void Neo_Text_Close(void);
+extern void Neo_Text_LoadFont(void *data);
 
 extern void Neo_Text_SwapBuffers(void);
 
@@ -291,7 +292,7 @@ void Neo_Text_Init(neo_text_init_params_t params)
 
 
     InitWindow(state.width * 8, state.height * 16, "NEO");
-
+    SetWindowPosition(20, 20);
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetTargetFPS(60);
@@ -375,6 +376,22 @@ void Neo_Text_Init(neo_text_init_params_t params)
     Neo_Text_DrawColorStringEx(73, 4, "Color ^2string", 7, 0xff);
     Neo_Text_TextBox(10, 10, 5, 5);
     Neo_Text_DrawString(11, 12, "123");
+}
+
+void Neo_Text_LoadFont(void *data)
+{
+#ifdef PLATFORM_DOS
+    struct REGPACK reg;
+
+    reg.r_ax = (0x11 << 8) | 0;
+    reg.r_bx = (16 << 8) | 0;     // Bytes per char, 0
+    reg.r_cx = 0xff; // Number of characters
+    reg.r_dx = 0;    // Start at char code
+    reg.r_es = FP_SEG(data);
+    reg.r_bp = FP_OFF(data);
+
+    intr(0x10, &reg);
+#endif
 }
 
 void Neo_Text_Close(void)

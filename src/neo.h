@@ -66,7 +66,7 @@ typedef long (*neo_buffer_get_pos_proc)(struct neo_buffer_reader_s* reader);
 typedef void (*neo_buffer_seek_proc)(struct neo_buffer_reader_s* reader, long pos);
 typedef bool (*neo_buffer_read_data_proc)(struct neo_buffer_reader_s* reader, void* data, size_t length);
 
-typedef struct neo_buffer_reader_s
+struct neo_buffer_reader_s
 {
     FILE* file;
     void* data;
@@ -77,7 +77,7 @@ typedef struct neo_buffer_reader_s
     neo_buffer_get_pos_proc getPos;
     neo_buffer_close_proc close;
     neo_buffer_seek_proc seek;
-} neo_buffer_reader_t;
+};
 
 typedef struct neo_event_s
 {
@@ -106,7 +106,7 @@ typedef struct neo_config_s
 extern bool Neo_Buf_ReadData(neo_buffer_reader_t* reader, void* dst, size_t length);
 extern bool Neo_Buf_ReadUShort(neo_buffer_reader_t* reader, unsigned short* out);
 extern bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out);
-
+extern bool Neo_Buf_IsReaderValid(neo_buffer_reader_t reader);
 
 extern long Neo_Buf_GetReadPos(neo_buffer_reader_t* reader);
 extern void Neo_Buf_Seek(neo_buffer_reader_t* reader, long pos);
@@ -312,6 +312,11 @@ bool Neo_Buf_ReadUShort(neo_buffer_reader_t* reader, unsigned short* out)
 bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out)
 {
     return Neo_Buf_ReadData(reader, out, 2);
+}
+
+extern bool Neo_Buf_IsReaderValid(neo_buffer_reader_t reader)
+{
+    return reader.data != NULL || reader.file != NULL;
 }
 
 long Neo_Buf_GetReadPos(neo_buffer_reader_t* reader)
