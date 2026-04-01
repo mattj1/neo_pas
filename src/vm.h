@@ -7,7 +7,7 @@
 
 typedef struct vm_state_s vm_state_t;
 typedef neo_buffer_reader_t (*vm_script_load_func)(const char *name);
-typedef void (*vm_trap_func)(vm_state_t *state, uint8_t trapNo);
+typedef bool (*vm_trap_func)(vm_state_t *state, uint8_t trapNo);
 typedef void *(*vm_mem_func)(vm_state_t *state, uint16_t addr);
 
 typedef struct
@@ -111,9 +111,10 @@ static void State_Init(int16_t state_id)
 
 static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
 {
-    vm_script_t script;
+    vm_script_t script, *newScript;
     uint16_t sz;
     bool done = false;
+    uint8_t code;
     int current_export = 0;
 
     memset(&script, 0, sizeof(script));
@@ -132,7 +133,6 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
     printf("ROM size: %d\n", sz);
     Neo_Buf_ReadData(reader, script.rom, sz);
 
-    uint8_t code;
     while (!done)
     {
         Neo_Buf_ReadByte(reader, &code);
@@ -152,7 +152,7 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
         }
     }
 
-    vm_script_t *newScript = malloc(sizeof(vm_script_t));
+    newScript = malloc(sizeof(vm_script_t));
     memcpy(newScript, &script, sizeof(vm_script_t));
 
     Neo_Buf_CloseReader(reader);
@@ -303,13 +303,14 @@ bool VM_AttachState(int16_t state_id, vm_script_t *script)
 bool VM_GetExport(vm_state_t *state, const char *name, uint16_t *out_addr)
 {
     vm_export_t *e;
+    int i;
 
     if (!STATE_VALID(state) || state->script == NULL)
     {
         return false;
     }
 
-    for (int i = 0; i < VM_MAX_SCRIPT_EXPORTS; i++)
+    for (i = 0; i < VM_MAX_SCRIPT_EXPORTS; i++)
     {
         e = &state->script->exports[i];
 
@@ -360,12 +361,14 @@ void *VM_Ptr(vm_state_t *state, uint16_t addr)
 
 void VM_WriteShort(vm_state_t *state, uint16_t addr, uint16_t val)
 {
+    uint16_t *p;
+
     if (!STATE_VALID(state) || addr < 0xc000)
     {
         return;
     }
 
-    uint16_t *p = VM_Ptr(state, addr);
+    p = VM_Ptr(state, addr);
 
     if (p == NULL)
     {
@@ -489,7 +492,7 @@ uint16_t VM_NextMemOperand(vm_state_t *state)
         return VM_ReadReg(state, reg) + offset;
 
     default:
-       // printf("Unsupported memory operand\n");
+        printf("Unsupported memory operand\n");
 
     }
 }
@@ -572,11 +575,13 @@ void LoadInstructionArgs(vm_state_t *state, vm_instruction_t *i, const char *arg
 {
     int p = 0;
     char a;
+    vm_instruction_arg_t *arg;
+
     while (args[p] != 0)
     {
         a = (char) args[p];
 
-        vm_instruction_arg_t *arg = &i->args[p];
+        arg = &i->args[p];
 
         if (a == 'r')
         {
@@ -602,6 +607,7 @@ bool VM_Run(vm_state_t *state)
     int numExecuted = 0;
     uint16_t param, param2;
     vm_instruction_t i;
+    unsigned short *ptr;
 
     if (!STATE_VALID(state))
     {
@@ -764,7 +770,7 @@ bool VM_Run(vm_state_t *state)
                 // if (i.cond_run)
                 // {
 
-                unsigned short *ptr = VM_Ptr(state, i.args[0].uintVal);
+                ptr = VM_Ptr(state, i.args[0].uintVal);
                 *ptr = VM_PopInt(state);
                 // }
                 break;
@@ -815,7 +821,9 @@ bool VM_Run(vm_state_t *state)
             printf("trap %d\n", i.args[0].intVal);
             if (i.cond_run)
             {
-                G.config.trap_func(state, i.args[0].intVal);
+                if(!G.config.trap_func(state, i.args[0].intVal)) {
+                    printf("Unhandled trap: %d\n", i.args[0].intVal);
+                }
             }
             break;
         default:
