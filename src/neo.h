@@ -23,10 +23,18 @@ typedef unsigned char bool;
 #endif
 
 #ifdef PLATFORM_DOS
-typedef unsigned char uint8_t;
-typedef char int8_t;
-typedef int int16_t;
-typedef unsigned int uint16_t;
+#ifndef uint8_t
+#define uint8_t unsigned char
+#endif
+#ifndef int8_t
+#define int8_t char
+#endif
+#ifndef int16_t
+#define int16_t short
+#endif
+#ifndef uint16_t
+#define uint16_t unsigned short
+#endif
 typedef unsigned long uint32_t;
 
 #endif
@@ -103,9 +111,11 @@ typedef struct neo_config_s
     NeoDrawProc drawFunc;
 } neo_config_t;
 
+extern bool Neo_Buf_ReadByte(neo_buffer_reader_t* reader, unsigned char* out);
 extern bool Neo_Buf_ReadData(neo_buffer_reader_t* reader, void* dst, size_t length);
 extern bool Neo_Buf_ReadUShort(neo_buffer_reader_t* reader, unsigned short* out);
 extern bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out);
+extern bool Neo_Buf_ReadString(neo_buffer_reader_t *reader, char *out, size_t bufLen);
 extern bool Neo_Buf_IsReaderValid(neo_buffer_reader_t reader);
 
 extern long Neo_Buf_GetReadPos(neo_buffer_reader_t* reader);
@@ -312,6 +322,24 @@ bool Neo_Buf_ReadUShort(neo_buffer_reader_t* reader, unsigned short* out)
 bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out)
 {
     return Neo_Buf_ReadData(reader, out, 2);
+}
+
+bool Neo_Buf_ReadString(neo_buffer_reader_t *reader, char *out, size_t bufLen)
+{
+    uint8_t len;
+    if (!Neo_Buf_ReadByte(reader, &len))
+    {
+        return false;
+    }
+
+    if (len >= bufLen)
+    {
+        return false;
+    }
+
+    memset(out, 0, bufLen);
+
+    return Neo_Buf_ReadData(reader, out, len);
 }
 
 extern bool Neo_Buf_IsReaderValid(neo_buffer_reader_t reader)
