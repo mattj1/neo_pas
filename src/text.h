@@ -23,6 +23,12 @@ struct neo_text_init_params_t
 #endif
 };
 
+typedef struct
+{
+    unsigned char ch;
+    unsigned char attr;
+} textattr_t;
+
 extern void Neo_Text_WriteCharEx(int x, int y, unsigned char ch, unsigned char color, unsigned char mask);
 extern void Neo_Text_TextBox(int x, int y, int w, int h);
 extern void Neo_Text_DrawStringEx(int x, int y, const char *str, unsigned char color, unsigned char mask);
@@ -35,14 +41,8 @@ extern void Neo_Text_LoadFont(void *data);
 
 extern void Neo_Text_SwapBuffers(void);
 
+extern textattr_t *Neo_Text_Ptr(int x, int y);
 #ifdef NEO_TEXT_IMPLEMENTATION
-typedef struct textattr_t textattr_t;
-
-struct textattr_t
-{
-    unsigned char ch;
-    unsigned char attr;
-};
 
 static struct
 {
@@ -95,6 +95,11 @@ void Neo_Text_WriteCharEx(int x, int y, unsigned char ch, unsigned char color, u
     textattr_t *a = &state.buf[y * state.width + x];
     a->ch = ch;
     a->attr = (a->attr & ~mask) | (color & mask);
+}
+
+textattr_t *Neo_Text_Ptr(int x, int y)
+{
+    return &state.buf[y * state.width + x];
 }
 
 void Neo_Text_TextBox(int x, int y, int w, int h)
@@ -296,7 +301,8 @@ void Neo_Text_Init(neo_text_init_params_t params)
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetTargetFPS(60);
-    state.fontImage = LoadImage("dev/Px437_IBM_VGA8x16.png");
+    // state.fontImage = LoadImage("dev/Px437_IBM_VGA8x16.png");
+    state.fontImage = LoadImage("dev/test.png");
     ImageColorReplace(&state.fontImage, BLACK, BLANK);
     // HideCursor();
 

@@ -102,13 +102,14 @@ typedef struct
 
 typedef void (*NeoUpdateProc)(void);
 typedef void (*NeoDrawProc)(void);
-
+typedef void (*NeoEventProc)(neo_event_t *event);
 typedef struct neo_config_s
 {
     const char* app_name;
     const char* logFilePath;
     NeoUpdateProc updateFunc;
     NeoDrawProc drawFunc;
+    NeoEventProc eventFunc;
 } neo_config_t;
 
 extern bool Neo_Buf_ReadByte(neo_buffer_reader_t* reader, unsigned char* out);
@@ -173,9 +174,10 @@ static KeyboardKey neo_scanCodeToRaylibKey[kMAX] = {
     KEY_ZERO,
     KEY_MINUS,
     KEY_EQUAL,
-
     KEY_BACKSPACE,
     KEY_TAB,
+
+    // 0x10...
     KEY_Q,
     KEY_W,
     KEY_E,
@@ -187,6 +189,76 @@ static KeyboardKey neo_scanCodeToRaylibKey[kMAX] = {
     KEY_O,
     KEY_P,
     KEY_LEFT_BRACKET,
+    KEY_RIGHT_BRACKET,
+    KEY_ENTER,
+    KEY_LEFT_CONTROL,
+    KEY_A,
+    KEY_S,
+
+    // 0x20...
+    KEY_D,
+    KEY_F,
+    KEY_G,
+    KEY_H,
+    KEY_J,
+    KEY_K,
+    KEY_L,
+    KEY_SEMICOLON,
+    KEY_APOSTROPHE,
+    KEY_GRAVE,
+    KEY_LEFT_SHIFT,
+    KEY_BACKSLASH,
+    KEY_Z,
+    KEY_X,
+    KEY_C,
+    KEY_V,
+
+    // 0x30...
+    KEY_B,
+    KEY_N,
+    KEY_M,
+    KEY_COMMA,
+    KEY_PERIOD,
+    KEY_SLASH,
+    KEY_RIGHT_SHIFT,
+    KEY_KP_MULTIPLY,
+    KEY_LEFT_ALT,
+    KEY_SPACE,
+    KEY_CAPS_LOCK,
+    KEY_F1,
+    KEY_F2,
+    KEY_F3,
+    KEY_F4,
+    KEY_F5,
+
+    // 0x40...
+    KEY_F6,
+    KEY_F7,
+    KEY_F8,
+    KEY_F9,
+    KEY_F10,
+    KEY_NUM_LOCK,
+    KEY_SCROLL_LOCK,
+    KEY_KP_7,
+    KEY_KP_8,
+    KEY_KP_9,
+    KEY_KP_SUBTRACT,
+    KEY_KP_4,
+    KEY_KP_5,
+    KEY_KP_6,
+    KEY_KP_ADD,
+    KEY_KP_1,
+
+    // 0x50...
+    KEY_KP_2,
+    KEY_KP_3,
+    KEY_KP_0,
+    KEY_KP_DECIMAL,
+    0,           // 0x54 sc_alt_printScreen - no direct raylib equivalent
+    0,           // 0x55 unused
+    0,           // 0x56 sc_bracketAngle - no standard raylib equivalent
+    KEY_F11,
+    KEY_F12,
 };
 #endif
 
@@ -237,6 +309,7 @@ static struct
 
         // Keys that were released this frame
         unsigned char released_keys[256];
+
     } keyboard;
 
     neo_sound_state_t sound;
@@ -410,12 +483,12 @@ void Neo_Event_GetEvents(void)
         if (IsKeyPressed(neo_scanCodeToRaylibKey[i]))
         {
             Neo_Event_Add(SE_KEYDOWN, i, 0);
-            //            printf("Key down (raylib): %d\n", i);
+            // LogInfo("Key down (raylib): %d", i);
         }
         if (IsKeyReleased(neo_scanCodeToRaylibKey[i]))
         {
             Neo_Event_Add(SE_KEYUP, i, 0);
-            //            printf("Key up (raylib): %d\n", i);
+            // LogInfo("Key up (raylib): %d", i);
         }
     }
 
@@ -437,6 +510,7 @@ void Neo_Event_ProcessEvents(void)
             //                printf("SE_KEYDOWN: %d\n", event->param);
             neo_state.keyboard.current_keys[event->param] = 1;
             neo_state.keyboard.pressed_keys[event->param] = 1;
+
             break;
         case SE_KEYUP:
             //                printf("SE_KEYUP: %d\n", event->param);
@@ -449,6 +523,11 @@ void Neo_Event_ProcessEvents(void)
         default:
             //                printf("Didn't process event %d\n", event->eventType);
             break;
+        }
+
+        if (neo_state.config.eventFunc)
+        {
+            neo_state.config.eventFunc(event);
         }
     }
 }
@@ -678,7 +757,9 @@ bool Neo_Sound_Init(void)
 {
 #ifdef PLATFORM_DESKTOP
     InitAudioDevice();
-    SetAudioStreamBufferSizeDefault(4096);
+    //SetAudioStreamBufferSizeDefault(4096);
+    // SetAudioStreamBufferSizeDefault(2048);
+    SetAudioStreamBufferSizeDefault(512);
     if (IsAudioDeviceReady())
     {
         neo_state.sound.stream = LoadAudioStream(22050, 16, 1);

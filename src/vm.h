@@ -642,7 +642,7 @@ bool VM_Run(vm_state_t *state)
             {
                 if (state->sp == 0xc100)
                 {
-                    printf("done?");
+                    // printf("done?");
                     state->isRunning = false;
                     break;
                 }
@@ -650,7 +650,7 @@ bool VM_Run(vm_state_t *state)
                 state->pc = VM_PopInt(state);
                 if (state->pc == 0xffff)
                 {
-                    printf("done?");
+                    // printf("done?");
                     state->isRunning = false;
                     break;
                 }
