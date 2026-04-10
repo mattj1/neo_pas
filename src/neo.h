@@ -39,6 +39,9 @@ typedef unsigned long uint32_t;
 
 #endif
 
+typedef int16_t i16;
+typedef uint16_t u16;
+
 #define MAX_EVENTS 64
 
 typedef enum
@@ -151,6 +154,11 @@ extern void Neo_Run(void);
 extern void Neo_Shutdown(void);
 bool Neo_ShouldQuit(void);
 void Neo_Quit(void);
+#ifdef PLATFORM_DOS
+void Neo_Panic(const char *format, ...);
+#else
+void Neo_Panic(const char *format, ...) __attribute__ ((__noreturn__));
+#endif
 void LogInfo(const char* format, ...);
 
 bool Neo_IsEGAAvailable(void);
@@ -159,6 +167,24 @@ bool Neo_IsVGAAvailable(void);
 #ifdef NEO_IMPLEMENTATION
 
 #ifdef PLATFORM_DESKTOP
+
+static ScanCode _raylibKeyToScancode[400] = {
+    [65] = kA,
+    [68] = kD,
+    [69] = kE,
+    [73] = kI,
+    [79] = kO,
+    [80] = kP,
+    [81] = kQ,
+    [83] = kS,
+    [87] = kW,
+    [96] = kTilde,
+    [265] = kUp,
+    [264] = kDn,
+    [263] = kLf,
+    [262] = kRt,
+};
+
 static KeyboardKey neo_scanCodeToRaylibKey[kMAX] = {
     0,
     KEY_ESCAPE,
@@ -478,16 +504,25 @@ void Neo_Event_GetEvents(void)
         Neo_Event_Add(SE_KEYCHAR, charPressed, 0);
     }
 
-    for (int i = 0; i < kMAX; i++)
+    // while (true)
+    // {
+    //     int key = GetKeyPressed();
+    //     if (key == 0)
+    //         break;
+    //     Neo_Event_Add(SE_KEYDOWN, _raylibKeyToScancode[key], 0);
+    //     LogInfo("Key pressed: %d ---", key);
+    // }
+
+    for (int i = 0; i < 400; i++)
     {
-        if (IsKeyPressed(neo_scanCodeToRaylibKey[i]))
+        if (IsKeyPressed(i))
         {
-            Neo_Event_Add(SE_KEYDOWN, i, 0);
+            Neo_Event_Add(SE_KEYDOWN, _raylibKeyToScancode[i], 0);
             // LogInfo("Key down (raylib): %d", i);
         }
-        if (IsKeyReleased(neo_scanCodeToRaylibKey[i]))
+        if (IsKeyReleased(i))
         {
-            Neo_Event_Add(SE_KEYUP, i, 0);
+            Neo_Event_Add(SE_KEYUP, _raylibKeyToScancode[i], 0);
             // LogInfo("Key up (raylib): %d", i);
         }
     }
@@ -757,7 +792,7 @@ bool Neo_Sound_Init(void)
 {
 #ifdef PLATFORM_DESKTOP
     InitAudioDevice();
-    //SetAudioStreamBufferSizeDefault(4096);
+    // SetAudioStreamBufferSizeDefault(4096);
     // SetAudioStreamBufferSizeDefault(2048);
     SetAudioStreamBufferSizeDefault(512);
     if (IsAudioDeviceReady())
@@ -1124,11 +1159,9 @@ void Neo_Shutdown(void)
     }
 }
 
-void LogInfo(const char* format, ...)
+void LogInfoV(const char *format, va_list args)
 {
 #ifdef PLATFORM_DOS
-    va_list args;
-    va_start(args, format);
     vprintf(format, args);
     if (neo_state.log.logFile != NULL)
     {
@@ -1136,15 +1169,29 @@ void LogInfo(const char* format, ...)
         fputs("\r\n", neo_state.log.logFile);
     }
     putchar('\n');
-    va_end(args);
 #else
     char buffer[1024];
-    va_list args;
-    va_start(args, format);
     vsnprintf(buffer, sizeof(buffer), format, args);
-    va_end(args);
     TraceLog(LOG_INFO, "%s", buffer);
 #endif
+}
+
+void Neo_Panic(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    LogInfoV(format, args);
+    va_end(args);
+
+    exit(1);
+}
+
+void LogInfo(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    LogInfoV(format, args);
+    va_end(args);
 }
 
 #endif  // NEO_IMPLEMENTATION

@@ -9,12 +9,26 @@ typedef struct vm_state_s vm_state_t;
 typedef neo_buffer_reader_t (*vm_script_load_func)(const char *name);
 typedef bool (*vm_trap_func)(vm_state_t *state, uint8_t trapNo);
 typedef void *(*vm_mem_func)(vm_state_t *state, uint16_t addr);
+typedef uint16_t (*vm_get_entity_u16_func)(vm_state_t *state, uint16_t id);
+typedef void (*vm_set_entity_u16_func)(vm_state_t *state, uint16_t id, uint16_t val);
 
 typedef struct
 {
     vm_script_load_func script_load_func;
     vm_trap_func trap_func;
     vm_mem_func mem_func;
+
+    vm_get_entity_u16_func get_entity_x_func;
+    vm_get_entity_u16_func get_entity_y_func;
+
+    vm_get_entity_u16_func get_item_type_func;
+    vm_get_entity_u16_func get_item_quantity_func;
+
+    vm_set_entity_u16_func set_entity_x_func;
+    vm_set_entity_u16_func set_entity_y_func;
+
+    vm_set_entity_u16_func set_item_type_func;
+    vm_set_entity_u16_func set_item_quantity_func;
 } vm_config_t;
 
 typedef struct
@@ -53,8 +67,8 @@ typedef struct vm_state_s
 extern void VM_Init(vm_config_t config);
 extern vm_script_t *VM_GetScript(const char *name);
 extern vm_state_t *VM_StateForID(int16_t state_id);
-extern bool VM_CreateState(int16_t *out_state_id);
-extern bool VM_AttachState(int16_t state_id, vm_script_t *script);
+extern bool VM_CreateState(u16 *out_state_id);
+extern bool VM_AttachState(u16 state_id, vm_script_t *script);
 extern void VM_ReleaseState(vm_state_t *state);
 extern bool VM_GetExport(vm_state_t *state, const char *name, uint16_t *out_addr);
 extern bool VM_SetPC(vm_state_t *state, uint16_t addr);
@@ -241,7 +255,7 @@ vm_script_t *VM_GetScript(const char *name)
     return script;
 }
 
-bool VM_CreateState(int16_t *out_state_id)
+bool VM_CreateState(u16 *out_state_id)
 {
     int16_t i;
 
@@ -282,7 +296,7 @@ vm_state_t *VM_StateForID(int16_t state_id)
     return state;
 }
 
-bool VM_AttachState(int16_t state_id, vm_script_t *script)
+bool VM_AttachState(u16 state_id, vm_script_t *script)
 {
     vm_state_t *state = VM_StateForID(state_id);
 
@@ -492,40 +506,58 @@ uint16_t VM_NextMemOperand(vm_state_t *state)
         return VM_ReadReg(state, reg) + offset;
 
     default:
-        printf("Unsupported memory operand\n");
-
-    }
-}
-
-uint16_t *VM_Reg(vm_state_t *state, uint8_t reg)
-{
-    switch (reg)
-    {
-    case 0x00: return &state->r0;
-    case 0x01: return &state->r1;
-    case 0x0e: return &state->bp;
-    case 0x0f: return &state->sp;
-    case 0x10: return &state->e0;
-    case 0x20: return &state->e1;
-    case 0x40: return &state->i0;
-    case 0x80: return &state->i1;
-    default:
-        printf("unsupported register %d\n", reg);
-        return NULL;
+        Neo_Panic("Unsupported memory operand\n");
+        return 0;
     }
 }
 
 uint16_t VM_ReadReg(vm_state_t *state, uint8_t reg)
 {
-    return *VM_Reg(state, reg);
+    switch (reg) {
+    case 0x00: return state->r0;
+    case 0x01: return state->r1;
+    case 0x0e: return state->bp;
+    case 0x0f: return state->sp;
+    case 0x10: return state->e0;
+    case 0x11:
+        return G.config.get_entity_x_func(state, state->e0);
+    case 0x12:
+        return G.config.get_entity_y_func(state, state->e0);
+    case 0x20: return state->e1;
+    case 0x40: return state->i0;
+    case 0x41:
+        return G.config.get_item_type_func(state, state->i0);
+    case 0x42:
+        return G.config.get_item_quantity_func(state, state->i0);
+    case 0x80: return state->i1;
+    default:
+        Neo_Panic("VM_ReadReg: Unsupported register: %d", reg);
+        return 0;
+    }
 }
 
 void VM_WriteReg(vm_state_t *state, uint8_t reg, uint16_t val)
 {
-    uint16_t *r = VM_Reg(state, reg);
-    if (r != NULL)
-    {
-        *r = val;
+    switch (reg) {
+    case 0x00: state->r0 = val; break;
+    case 0x01: state->r1 = val; break;
+    case 0x0e: state->bp = val; break;
+    case 0x0f: state->sp = val; break;
+    case 0x10:
+        state->e0 = val; break;
+    case 0x11:
+        G.config.set_entity_x_func(state, state->e0, val); break;
+    case 0x12:
+        G.config.set_entity_y_func(state, state->e0, val); break;
+    case 0x20: state->e1 = val; break;
+    case 0x40: state->i0 = val; break;
+    case 0x41:
+        G.config.set_item_type_func(state, state->i0, val); break;
+    case 0x42:
+        G.config.set_item_quantity_func(state, state->i0, val); break;
+    case 0x80: state->i1 = val; break;
+    default:
+        Neo_Panic("VM_WriteReg: Unsupported register: %d", reg);
     }
 }
 
@@ -605,7 +637,7 @@ void LoadInstructionArgs(vm_state_t *state, vm_instruction_t *i, const char *arg
 bool VM_Run(vm_state_t *state)
 {
     int numExecuted = 0;
-    uint16_t param, param2;
+    uint16_t param, param2, val;
     vm_instruction_t i;
     unsigned short *ptr;
 
@@ -698,7 +730,7 @@ bool VM_Run(vm_state_t *state)
         case 65:
             // mov reg, imm
             LoadInstructionArgs(state, &i, "ri");
-            printf("mov r%d, %d\n", i.args[0].regVal, i.args[1].uintVal);
+            LogInfo("mov r%d, %d\n", i.args[0].regVal, i.args[1].uintVal);
             if (i.cond_run)
             {
                 VM_WriteReg(state, i.args[0].regVal, i.args[1].uintVal);
@@ -708,23 +740,24 @@ bool VM_Run(vm_state_t *state)
             // mov reg, mem
             i.args[0].regVal = VM_NextByte(state);
             i.args[1].uintVal = VM_NextMemOperand(state);
-            printf("mov reg %d, [%d]\n", i.args[0].regVal, i.args[1].uintVal);
+            LogInfo("mov reg %d, [%d]", i.args[0].regVal, i.args[1].uintVal);
             if (i.cond_run)
             {
-                VM_WriteReg(state, i.args[0].regVal, i.args[1].uintVal);
+                val = *(uint16_t *)VM_Ptr(state, i.args[1].uintVal);
+                VM_WriteReg(state, i.args[0].regVal, val);
             }
             break;
         case 68:
             // mov reg, reg
             i.args[0].intVal = VM_NextByte(state);
             i.args[1].intVal = VM_NextByte(state);
-            printf("mov reg, reg: %d %d\n", i.args[0].intVal, i.args[1].intVal);
+            LogInfo("mov reg, reg: %d %d", i.args[0].intVal, i.args[1].intVal);
             VM_WriteReg(state, i.args[0].regVal, VM_ReadReg(state, i.args[1].intVal));
             break;
         case 80:
             // push imm
             i.args[0].intVal = VM_NextShort(state);
-            printf("push imm: %d\n", i.args[0].intVal);
+            LogInfo("push imm: %d", i.args[0].intVal);
             if (i.cond_run)
             {
                 VM_PushInt(state, i.args[0].intVal);
@@ -733,7 +766,7 @@ bool VM_Run(vm_state_t *state)
         case 81:
             // Push reg
             i.args[0].intVal = VM_NextByte(state);
-            printf("push reg: %d\n", i.args[0].intVal);
+            LogInfo("push reg: %d", i.args[0].intVal);
             if (i.cond_run)
             {
                 param = VM_ReadReg(state, i.args[0].intVal);
@@ -758,20 +791,21 @@ bool VM_Run(vm_state_t *state)
             LoadInstructionArgs(state, &i, "r");
             if (i.cond_run)
             {
-                unsigned short val = VM_PopInt(state);
-                printf("pop r%d  got: (%d)\n", i.args[0].regVal, val);
+                uint16_t val = VM_PopInt(state);
+                LogInfo("pop r%d  got: (%d)\n", i.args[0].regVal, val);
                 VM_WriteReg(state, i.args[0].regVal, val);
             }
             break;
         case 84:
             {
                 i.args[0].uintVal = VM_NextMemOperand(state);
-                printf("pop mem [%x]\n", i.args[0].uintVal);
+                ptr = VM_Ptr(state, i.args[0].uintVal);
+                val = VM_PopInt(state);
+                *ptr = val;
+                LogInfo("pop mem [%x] <- %d", i.args[0].uintVal, val);
                 // if (i.cond_run)
                 // {
 
-                ptr = VM_Ptr(state, i.args[0].uintVal);
-                *ptr = VM_PopInt(state);
                 // }
                 break;
             }
