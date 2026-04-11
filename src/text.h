@@ -34,6 +34,7 @@ extern void Neo_Text_TextBox(int x, int y, int w, int h);
 extern void Neo_Text_DrawStringEx(int x, int y, const char *str, unsigned char color, unsigned char mask);
 extern void Neo_Text_DrawString(int x, int y, const char *str);
 extern void Neo_Text_DrawColorStringEx(int x, int y, const char *string, unsigned char color, unsigned char mask);
+extern void Neo_Text_FillRectEx(int x, int y, int w, int h, u8 ch, u8 color, u8 mask);
 
 extern void Neo_Text_Init(neo_text_init_params_t params);
 extern void Neo_Text_Close(void);
@@ -192,6 +193,16 @@ void Neo_Text_DrawColorStringEx(int x, int y, const char *str, unsigned char col
         x ++;
         i ++;
         dst ++;
+    }
+}
+
+void Neo_Text_FillRectEx(int x, int y, int w, int h, u8 ch, u8 color, u8 mask)
+{
+    int i, j;
+    for (j = y; j < y + h; j++) {
+        for (i = x; i < x + w; i++) {
+            Neo_Text_WriteCharEx(i, j, ch, color, mask);
+        }
     }
 }
 

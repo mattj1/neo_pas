@@ -39,6 +39,7 @@ typedef unsigned long uint32_t;
 
 #endif
 
+typedef uint8_t u8;
 typedef int16_t i16;
 typedef uint16_t u16;
 
