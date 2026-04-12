@@ -68,8 +68,8 @@ struct vm_state_t
 extern void VM_Init(vm_config_t config);
 extern vm_script_t *VM_GetScript(const char *name);
 extern vm_state_t *VM_StateForID(i16 state_id);
-extern bool VM_CreateState(u16 *out_state_id);
-extern bool VM_AttachState(u16 state_id, vm_script_t *script);
+extern bool VM_CreateState(i16 *out_state_id);
+extern bool VM_AttachState(i16 state_id, vm_script_t *script);
 extern void VM_ReleaseState(vm_state_t *state);
 extern bool VM_GetExport(vm_state_t *state, const char *name, uint16_t *out_addr);
 extern bool VM_SetPC(vm_state_t *state, uint16_t addr);
@@ -257,7 +257,7 @@ vm_script_t *VM_GetScript(const char *name)
     return script;
 }
 
-bool VM_CreateState(u16 *out_state_id)
+bool VM_CreateState(i16 *out_state_id)
 {
     int16_t i;
 
@@ -279,7 +279,7 @@ bool VM_CreateState(u16 *out_state_id)
     return false;
 }
 
-vm_state_t *VM_StateForID(int16_t state_id)
+vm_state_t *VM_StateForID(i16 state_id)
 {
     vm_state_t *state;
 
@@ -298,7 +298,7 @@ vm_state_t *VM_StateForID(int16_t state_id)
     return state;
 }
 
-bool VM_AttachState(u16 state_id, vm_script_t *script)
+bool VM_AttachState(i16 state_id, vm_script_t *script)
 {
     vm_state_t *state = VM_StateForID(state_id);
 
@@ -419,7 +419,7 @@ uint16_t VM_ReadShort(vm_state_t *state, uint16_t addr)
 
 uint16_t VM_PopShort(vm_state_t *state)
 {
-    // printf("VM_PopShort at sp=%d\n", state->sp);
+    // LogInfo("VM_PopShort at sp=%x", state->sp);
     uint16_t val = VM_ReadShort(state, state->sp);
     state->sp += 2;
     return val;
@@ -444,7 +444,7 @@ bool VM_PushInt(vm_state_t *state, uint16_t val)
         return false;
     }
 
-    // printf("VM_PushInt: %d to %d\n", val, state->sp);
+    // LogInfo("VM_PushInt: %d to %x", val, state->sp);
     if (state->sp <= 0xc002)
     {
         exit(0);
@@ -568,6 +568,7 @@ bool LoadInstruction(vm_state_t *state, vm_instruction_t *i)
     bool cond_run = true;
     uint8_t cond = 0;
     uint8_t cf = state->cf;
+    i->pc = state->pc;
     uint8_t opcode = VM_NextByte(state);
 
     if (opcode & 0x80)
@@ -576,7 +577,7 @@ bool LoadInstruction(vm_state_t *state, vm_instruction_t *i)
         switch (cond)
         {
         case 1:      // eq
-            if (cf != 1) cond_run = false;
+            if (!(cf & 1)) cond_run = false;
             break;
         case 2:      // gt
             if ((cf & 2) == 0) cond_run = false;
@@ -652,8 +653,14 @@ bool VM_Run(vm_state_t *state)
 
     state->isRunning = true;
 
-    while (state->isRunning)
+    while (true)
     {
+
+        if (!state->isRunning) {
+            VM_ReleaseState(state);
+            break;
+        }
+
         numExecuted ++;
         if (numExecuted > 128)
         {
@@ -672,11 +679,14 @@ bool VM_Run(vm_state_t *state)
         {
         case 3:
             // ret
+            LogInfo("[ %x ] ret", i.pc);
+
             if (i.cond_run)
             {
                 if (state->sp == 0xc100)
                 {
                     // printf("done?");
+                    LogInfo("ret: can't pop!");
                     state->isRunning = false;
                     break;
                 }
@@ -684,17 +694,22 @@ bool VM_Run(vm_state_t *state)
                 state->pc = VM_PopInt(state);
                 if (state->pc == 0xffff)
                 {
+                    // LogInfo("ret: popped pc=0xffff");
                     // printf("done?");
                     state->isRunning = false;
                     break;
                 }
+
+                // LogInfo("After ret: PC: %x  SP: %x\n", state->pc, state->sp);
+            } else {
+                LogInfo("cond_run: won't return!");
             }
             break;
         case 4:
             // add reg, imm
             i.args[0].regVal = VM_NextByte(state);
             i.args[1].intVal = VM_NextShort(state);
-            printf("add r%d, %d\n", i.args[0].regVal, i.args[1].intVal);
+            LogInfo("[ %x ] add r%d, %d", i.pc, i.args[0].regVal, i.args[1].intVal);
 
             param = VM_ReadReg(state, i.args[0].intVal);
             if (i.cond_run)
@@ -716,7 +731,7 @@ bool VM_Run(vm_state_t *state)
             i.args[0].uintVal = VM_NextShort(state);
             if (i.cond_run)
             {
-                printf("b %d (%d)\n", i.args->uintVal, i.args->uintVal);
+                LogInfo("[ %x ] b %x (%d)\n", i.pc, i.args->uintVal, i.args->uintVal);
                 VM_PushInt(state, state->pc);
                 VM_SetPC(state, i.args[0].uintVal);
             }
@@ -759,7 +774,7 @@ bool VM_Run(vm_state_t *state)
         case 80:
             // push imm
             i.args[0].intVal = VM_NextShort(state);
-            LogInfo("push imm: %d", i.args[0].intVal);
+            LogInfo("[ %x ] push imm: %d", i.pc, i.args[0].intVal);
             if (i.cond_run)
             {
                 VM_PushInt(state, i.args[0].intVal);
@@ -780,10 +795,10 @@ bool VM_Run(vm_state_t *state)
             // Push mem
             {
                 LoadInstructionArgs(state, &i, "m");
-                printf("push mem [%x]\n", i.args[0].uintVal);
                 if (i.cond_run)
                 {
                     unsigned short *ptr = VM_Ptr(state, i.args[0].uintVal);
+                    LogInfo("push mem [%x/%d] val: %d", i.args[0].uintVal, i.args[0].uintVal, *ptr);
                     VM_PushInt(state, *ptr);
                 }
             }
@@ -794,7 +809,7 @@ bool VM_Run(vm_state_t *state)
             if (i.cond_run)
             {
                 uint16_t val = VM_PopInt(state);
-                LogInfo("pop r%d  got: (%d)\n", i.args[0].regVal, val);
+                LogInfo("[ %x ] pop r%d  got: (%d)", i.pc, i.args[0].regVal, val);
                 VM_WriteReg(state, i.args[0].regVal, val);
             }
             break;
@@ -804,7 +819,7 @@ bool VM_Run(vm_state_t *state)
                 ptr = VM_Ptr(state, i.args[0].uintVal);
                 val = VM_PopInt(state);
                 *ptr = val;
-                LogInfo("pop mem [%x] <- %d", i.args[0].uintVal, val);
+                LogInfo("pop mem [%x/%d] <- %d", i.args[0].uintVal, i.args[0].uintVal, val);
                 // if (i.cond_run)
                 // {
 
@@ -815,6 +830,8 @@ bool VM_Run(vm_state_t *state)
             // s_cmp
             param2 = VM_PopInt(state);
             param = VM_PopInt(state);
+
+            LogInfo("s_cmp: %d, %d", param, param2);
 
             state->cf &= 0xf0;
 
@@ -845,6 +862,7 @@ bool VM_Run(vm_state_t *state)
                 VM_PushInt(state, param > param2);
                 break;
             case 98:
+                LogInfo("s_eq: %d == %d", param, param2);
                 VM_PushInt(state, param == param2);
                 break;
             default:
@@ -854,7 +872,7 @@ bool VM_Run(vm_state_t *state)
            break;
         case 127:
             i.args[0].intVal = VM_NextShort(state);
-            printf("trap %d\n", i.args[0].intVal);
+            LogInfo("[ %x ] trap %d", i.pc, i.args[0].intVal);
             if (i.cond_run)
             {
                 if(!G.config.trap_func(state, i.args[0].intVal)) {
@@ -867,9 +885,9 @@ bool VM_Run(vm_state_t *state)
             state->isRunning = false;
             break;
         }
-
     }
 
+    // LogInfo("script finished running");
     return true;
 }
 
@@ -878,6 +896,10 @@ bool VM_Call(vm_state_t* state, uint16_t addr)
     if (!state)
     {
         return false;
+    }
+
+    if (state->isRunning) {
+        exit(0);
     }
 
     VM_PushInt(state, state->pc);

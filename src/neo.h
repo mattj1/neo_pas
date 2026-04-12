@@ -132,6 +132,8 @@ extern void Neo_Buf_CloseReader(neo_buffer_reader_t* reader);
 extern void Neo_Event_GetEvents(void);
 extern void Neo_Event_ProcessEvents(void);
 extern void Neo_Event_Add(int eventType, int param, int param2);
+extern void Neo_Event_ClearKeyCharQueue(void);
+extern bool Neo_Event_GetKeyChar(uint8_t *ch);
 
 extern bool Neo_Sound_Init(void);
 extern neo_sfx_t Neo_Sound_LoadEffect(neo_buffer_reader_t *reader);
@@ -170,6 +172,7 @@ bool Neo_IsVGAAvailable(void);
 #ifdef PLATFORM_DESKTOP
 
 static ScanCode _raylibKeyToScancode[400] = {
+    [32] = kSpace,
     [65] = kA,
     [68] = kD,
     [69] = kE,
@@ -180,6 +183,7 @@ static ScanCode _raylibKeyToScancode[400] = {
     [83] = kS,
     [87] = kW,
     [96] = kTilde,
+    [257] = kEnter,
     [265] = kUp,
     [264] = kDn,
     [263] = kLf,
@@ -303,6 +307,21 @@ typedef struct
 #endif
 } neo_sound_state_t;
 
+typedef struct
+{
+    // Current state of keys
+    unsigned char current_keys[256];
+
+    // Keys that were pressed down this frame
+    unsigned char pressed_keys[256];
+
+    // Keys that were released this frame
+    unsigned char released_keys[256];
+
+    unsigned char keyCharQueue[16];
+    int keyCharHead, keyCharTail;
+} neo_keyboard_state_t;
+
 static struct
 {
     neo_config_t config;
@@ -326,18 +345,7 @@ static struct
         unsigned short old_timer_tick_count;
     } timer;
 
-    struct
-    {
-        // Current state of keys
-        unsigned char current_keys[256];
-
-        // Keys that were pressed down this frame
-        unsigned char pressed_keys[256];
-
-        // Keys that were released this frame
-        unsigned char released_keys[256];
-
-    } keyboard;
+    neo_keyboard_state_t keyboard;
 
     neo_sound_state_t sound;
 
@@ -518,8 +526,12 @@ void Neo_Event_GetEvents(void)
     {
         if (IsKeyPressed(i))
         {
-            Neo_Event_Add(SE_KEYDOWN, _raylibKeyToScancode[i], 0);
-            // LogInfo("Key down (raylib): %d", i);
+            if (_raylibKeyToScancode[i] == 0) {
+                LogInfo("Didn't handle raylib key down: %d", i);
+            } else {
+                // LogInfo("Key down (raylib): %d", i);
+                Neo_Event_Add(SE_KEYDOWN, _raylibKeyToScancode[i], 0);
+            }
         }
         if (IsKeyReleased(i))
         {
@@ -554,6 +566,11 @@ void Neo_Event_ProcessEvents(void)
             neo_state.keyboard.released_keys[event->param] = 1;
             break;
         case SE_KEYCHAR:
+            // if keycharfunc...
+            // lastkeychar =
+
+            neo_state.keyboard.keyCharQueue[neo_state.keyboard.keyCharHead] = event->param;
+            neo_state.keyboard.keyCharHead = (neo_state.keyboard.keyCharHead + 1) & 15;
             //                printf("SE_KEYCHAR: %c (%d)\n", event->param, event->param);
             break;
         default:
@@ -566,6 +583,30 @@ void Neo_Event_ProcessEvents(void)
             neo_state.config.eventFunc(event);
         }
     }
+}
+
+void Neo_Event_ClearKeyCharQueue(void)
+{
+    neo_state.keyboard.keyCharHead = 0;
+    neo_state.keyboard.keyCharTail = 0;
+    neo_state.keyboard.keyCharQueue[0] = 0;
+}
+
+bool Neo_Event_GetKeyChar(uint8_t *ch)
+{
+    neo_keyboard_state_t *k = &neo_state.keyboard;
+
+    if (k->keyCharHead == k->keyCharTail) {
+        return false;
+    }
+
+    *ch = k->keyCharQueue[k->keyCharTail];
+
+    //k->keyCharQueue[k->keyCharTail] = 0;
+
+    k->keyCharTail = (k->keyCharTail + 1) & 15;
+
+    return true;
 }
 
 void Neo_Event_Add(int eventType, int param, int param2)
