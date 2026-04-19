@@ -568,8 +568,8 @@ bool LoadInstruction(vm_state_t *state, vm_instruction_t *i)
     bool cond_run = true;
     uint8_t cond = 0;
     uint8_t cf = state->cf;
-    i->pc = state->pc;
     uint8_t opcode = VM_NextByte(state);
+    i->pc = state->pc;
 
     if (opcode & 0x80)
     {
