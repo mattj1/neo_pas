@@ -18,9 +18,12 @@ typedef struct neo_text_init_params_t neo_text_init_params_t;
 struct neo_text_init_params_t
 {
     int width, height;
-#ifdef PLATFORM_DESKTOP
     float maxScale;
-#endif
+    /**
+     * 0 = Write directly to offscreen VRAM page and swap
+     * 1 = Write to RAM buffer, which is then copied to an offscreen VRAM page and swapped
+     */
+    bool dosSwapMode;
 };
 
 typedef struct
@@ -66,6 +69,11 @@ static struct
 #else
     // Current offscreen page
     int page;
+
+    bool swapMode;
+
+    // Backbuffer for swap mode 1 - this memory is allocated on init
+    textattr_t *backBuffer;
 #endif
 
 } state;
@@ -93,14 +101,22 @@ static const Color EGA_PALETTE[16] = {
 
 void Neo_Text_WriteCharEx(int x, int y, unsigned char ch, unsigned char color, unsigned char mask)
 {
-    textattr_t *a = &state.buf[y * state.width + x];
+    textattr_t *a = Neo_Text_Ptr(x, y);
     a->ch = ch;
     a->attr = (a->attr & ~mask) | (color & mask);
 }
 
 textattr_t *Neo_Text_Ptr(int x, int y)
 {
+#ifdef PLATFORM_DOS
+    if (state.swapMode) {
+        return &state.backBuffer[y * state.width + x];
+    } else {
+        return &state.buf[y * state.width + x];
+    }
+#else
     return &state.buf[y * state.width + x];
+#endif
 }
 
 void Neo_Text_TextBox(int x, int y, int w, int h)
@@ -208,8 +224,18 @@ void Neo_Text_FillRectEx(int x, int y, int w, int h, u8 ch, u8 color, u8 mask)
 
 void Neo_Text_SwapBuffers(void) {
 #ifdef PLATFORM_DOS
+    void *src, *dst;
     unsigned char page = state.page;
 
+    if (state.swapMode) {
+        // Copy backbuffer to target
+        src = state.backBuffer;
+        dst = state.buf;
+        // memcpy(dst, src, state.width * state.height * 2);
+        memcpy(dst, src, state.width * state.height / 2);
+    }
+
+    // Flip page
     asm {
         mov ah, 05h
         mov al, page
@@ -299,6 +325,7 @@ void Neo_Text_Init(neo_text_init_params_t params)
     // state._did_init = 0x11E0;
     state.width = params.width;
     state.height = params.height;
+
 #ifdef PLATFORM_DESKTOP
 
     state.maxScale = params.maxScale;
@@ -379,20 +406,13 @@ void Neo_Text_Init(neo_text_init_params_t params)
     // state.buf = MK_FP(0xB800, (state.width * state.height * 2) * state.page);
     state.buf = MK_FP(0xB800, 0x1000 * state.page);
 
+    state.swapMode = params.dosSwapMode;
+
+    if (state.swapMode) {
+        state.backBuffer = malloc(params.width * params.height * sizeof(textattr_t));
+    }
+
 #endif
-    // Neo_Text_WriteCharEx(0, 0, 'A', 2 | (1 << 4), 0xff);
-    // Neo_Text_WriteCharEx(1, 1, 'B', 15 | (2 << 4), 0xff);
-    // Neo_Text_WriteCharEx(79, 1, 'C', 15 | (2 << 4), 0xff);
-
-    Neo_Text_DrawString(3, 9, "-------------------");
-    Neo_Text_DrawString(3, 9, "Hello world");
-    Neo_Text_DrawString(70, 2, "Hello world");
-    Neo_Text_DrawStringEx(69, 3, "Hello world", 31, 0xff);
-
-    Neo_Text_DrawColorStringEx(3, 3, "Hello ^11 ^22 ^EE", 7, 0xff);
-    Neo_Text_DrawColorStringEx(73, 4, "Color ^2string", 7, 0xff);
-    Neo_Text_TextBox(10, 10, 5, 5);
-    Neo_Text_DrawString(11, 12, "123");
 }
 
 void Neo_Text_LoadFont(void *data)

@@ -183,6 +183,7 @@ static ScanCode _raylibKeyToScancode[400] = {
     [83] = kS,
     [87] = kW,
     [96] = kTilde,
+    [KEY_ESCAPE] = kEsc,
     [257] = kEnter,
     [265] = kUp,
     [264] = kDn,
