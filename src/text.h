@@ -24,6 +24,7 @@ struct neo_text_init_params_t
      * 1 = Write to RAM buffer, which is then copied to an offscreen VRAM page and swapped
      */
     bool dosSwapMode;
+    const char *raylibFontPath;
 };
 
 typedef struct
@@ -340,7 +341,7 @@ void Neo_Text_Init(neo_text_init_params_t params)
 
     SetTargetFPS(60);
     // state.fontImage = LoadImage("dev/Px437_IBM_VGA8x16.png");
-    state.fontImage = LoadImage("dev/test.png");
+    state.fontImage = LoadImage(params.raylibFontPath);
     ImageColorReplace(&state.fontImage, BLACK, BLANK);
     // HideCursor();
 
