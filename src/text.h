@@ -62,7 +62,8 @@ static struct
 #ifdef PLATFORM_DESKTOP
     Image mainImage;
     Image fontImage;
-    Texture mainTexture;
+    Texture fontTexture;
+    RenderTexture2D target;
     Rectangle dest_rect;
     int window_width, window_height;
     Vector2 dpi;
@@ -284,6 +285,8 @@ void Neo_Text_SwapBuffers(void) {
     int w = bbWidth * scale;
     int h = bbHeight * scale;
 
+    BeginTextureMode(state.target);
+
     for (int y = 0; y < state.height; y++)
     {
         for (int x = 0; x < state.width; x++)
@@ -296,16 +299,23 @@ void Neo_Text_SwapBuffers(void) {
             Rectangle srcRect = {col * 8, row * 16, 8, 16};
             Rectangle dstRect = {x * 8, y * 16, 8, 16};
 
-            ImageDrawRectangleRec(&state.mainImage, dstRect, EGA_PALETTE[a.attr >> 4]);
-            ImageDraw(&state.mainImage, state.fontImage, srcRect, dstRect, EGA_PALETTE[a.attr & 0xf]);
+            DrawRectangleRec(dstRect, EGA_PALETTE[a.attr >> 4]);
+            DrawTexturePro(state.fontTexture, srcRect, dstRect, (Vector2){0, 0}, 0.0f, EGA_PALETTE[a.attr & 0xf]);
+
+            // ImageDrawRectangleRec(&state.mainImage, dstRect, EGA_PALETTE[a.attr >> 4]);
+            // ImageDraw(&state.mainImage, state.fontImage, srcRect, dstRect, EGA_PALETTE[a.attr & 0xf]);
         }
     }
 
+    EndTextureMode();
     // ImageDraw(&state.mainImage, state.fontImage, (Rectangle){0, 0, 64, 64}, (Rectangle){0,0,64,64}, WHITE);
-    UpdateTexture(state.mainTexture, state.mainImage.data);
+    // UpdateTexture(state.mainTexture, state.mainImage.data);
 
+    // Rectangle src = {
+        // 0, 0, 80 * 8, 25 * 16
+    // };
     Rectangle src = {
-        0, 0, 80 * 8, 25 * 16
+        0, 0, 80 * 8, -25 * 16
     };
 
     state.dest_rect = (Rectangle) {
@@ -314,8 +324,15 @@ void Neo_Text_SwapBuffers(void) {
         w, h
     };
 
+    // state.dest_rect = (Rectangle) {
+        // screenWidth / 2 - w / 2,
+        // screenHeight / 2 - h / 2,
+        0,
+        // w,
+        // -h
+    // };
 
-    DrawTexturePro(state.mainTexture, src, state.dest_rect, (Vector2){0, 0}, 0.0f, WHITE);
+    DrawTexturePro(state.target.texture, src, state.dest_rect, (Vector2){0, 0}, 0.0f, WHITE);
 #endif
 }
 
@@ -348,13 +365,15 @@ void Neo_Text_Init(neo_text_init_params_t params)
     SetTargetFPS(60);
     // state.fontImage = LoadImage("dev/Px437_IBM_VGA8x16.png");
     state.fontImage = LoadImage(params.raylibFontPath);
+    state.fontTexture = LoadTextureFromImage(state.fontImage);
+
     ImageColorReplace(&state.fontImage, BLACK, BLANK);
     // HideCursor();
 
     state.mainImage = GenImageColor(state.width * 8, state.height * 16, BLANK);
 
-    state.mainTexture = LoadTextureFromImage(state.mainImage);
-    SetTextureFilter(state.mainTexture, TEXTURE_FILTER_POINT);
+    state.target = LoadRenderTexture(state.width * 8, state.height * 16);
+    SetTextureFilter(state.target.texture, TEXTURE_FILTER_POINT);
 #else
 
     if (params.width == 80)
