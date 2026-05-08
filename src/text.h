@@ -249,7 +249,13 @@ void Neo_Text_SwapBuffers(void) {
     while ((inportb(0x3da) & 0x08) == 0);
 
 #else
-    Vector2 dpi = GetWindowScaleDPI();
+
+    Vector2 dpi;
+#ifdef NEO_WEB
+    dpi = (Vector2) {1.0f, 1.0f};
+#else
+    dpi = GetWindowScaleDPI();
+#endif
 
     if (dpi.x != state.dpi.x || dpi.y != state.dpi.y)
     {

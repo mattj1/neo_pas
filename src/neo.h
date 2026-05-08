@@ -5,6 +5,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef NEO_WEB
+#include <emscripten.h>
+#endif
+
 #ifdef PLATFORM_DOS
 #include <conio.h>
 #include <dos.h>
@@ -1028,6 +1032,34 @@ void Neo_Timer_Shutdown(void)
 
 #pragma region Loop
 #pragma mark - Loop
+
+static void _UpdateDrawFrame()
+{
+    Neo_ClearKeyData();
+    Neo_Event_GetEvents();
+    Neo_Event_ProcessEvents();
+
+    if (neo_state.config.updateFunc)
+    {
+        neo_state.config.updateFunc();
+    }
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    if (neo_state.config.drawFunc)
+    {
+        neo_state.config.drawFunc();
+    }
+
+    EndDrawing();
+
+    if (WindowShouldClose())
+    {
+        Neo_Quit();
+    }
+}
+
 void Neo_Run(void)
 {
 #ifdef PLATFORM_DOS
@@ -1053,32 +1085,14 @@ void Neo_Run(void)
         }
     }
 #else
+#ifdef NEO_WEB
+    emscripten_set_main_loop(_UpdateDrawFrame, 0, 1);
+#else
     while (!neo_state.done)
     {
-        Neo_ClearKeyData();
-        Neo_Event_GetEvents();
-        Neo_Event_ProcessEvents();
-
-        if (neo_state.config.updateFunc)
-        {
-            neo_state.config.updateFunc();
-        }
-
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        if (neo_state.config.drawFunc)
-        {
-            neo_state.config.drawFunc();
-        }
-
-        EndDrawing();
-
-        if (WindowShouldClose())
-        {
-            Neo_Quit();
-        }
+        _UpdateDrawFrame();
     }
+#endif
 #endif
 }
 #pragma endregion
