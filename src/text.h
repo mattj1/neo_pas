@@ -68,6 +68,8 @@ static struct
     int window_width, window_height;
     Vector2 dpi;
     float maxScale;
+    int frameCount;
+    double fpsTime;
 #else
     // Current offscreen page
     int page;
@@ -251,6 +253,13 @@ void Neo_Text_SwapBuffers(void) {
 
 #else
 
+    state.frameCount ++;
+    if (GetTime() - state.fpsTime >= 1.0)
+    {
+        state.fpsTime = GetTime();
+        LogInfo("FPS: %d", state.frameCount);
+        state.frameCount = 0;
+    }
     Vector2 dpi;
 #ifdef NEO_WEB
     dpi = (Vector2) {1.0f, 1.0f};

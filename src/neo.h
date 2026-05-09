@@ -1053,11 +1053,12 @@ static void _UpdateDrawFrame()
     }
 
     EndDrawing();
-
+#ifndef NEO_WEB
     if (WindowShouldClose())
     {
         Neo_Quit();
     }
+#endif
 }
 
 void Neo_Run(void)
