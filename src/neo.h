@@ -848,11 +848,11 @@ bool Neo_Sound_Init(void)
     {
         neo_state.sound.stream = LoadAudioStream(22050, 16, 1);
         SetAudioStreamVolume(neo_state.sound.stream, 1.0);
-        if (!IsAudioStreamValid(neo_state.sound.stream))
-        {
-            LogInfo("Audio stream not ready");
-            return false;
-        }
+        // if (!IsAudioStreamValid(neo_state.sound.stream))
+        // {
+            // LogInfo("Audio stream not ready");
+            // return false;
+        // }
 
         neo_state.sound.curFreq = 0;
         SetAudioStreamCallback(neo_state.sound.stream, _AudioInputCallback);

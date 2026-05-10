@@ -4,7 +4,6 @@
 *.TPP
 *.o
 backup
-lib
 link*.res
 .idea
 *.ppu
