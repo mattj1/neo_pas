@@ -226,6 +226,18 @@ void Neo_Text_FillRectEx(int x, int y, int w, int h, u8 ch, u8 color, u8 mask)
     }
 }
 
+#ifdef NEO_WEB
+void OnCanvasResize(int width, int height, float devicePixelRatio) {
+    printf("OnCanvasResize %d %d\n", width, height);
+    // printf(" --- %d %d\n", Engine::GetScreenWidth(), Engine::GetScreenHeight());
+    //    if(!IsWindowFullscreen()) {
+    SetWindowSize(width, height);
+    // Engine::canvasWidth = width;
+    // Engine::canvasHeight = height;
+    //    }
+}
+
+#endif
 void Neo_Text_SwapBuffers(void) {
 #ifdef PLATFORM_DOS
     void *src, *dst;
@@ -269,15 +281,30 @@ void Neo_Text_SwapBuffers(void) {
 
     if (dpi.x != state.dpi.x || dpi.y != state.dpi.y)
     {
+#ifdef _WIN32
+        // Hack for windows
         state.window_width = state.width * 8 * 2 * dpi.x;
         state.window_height = state.height * 16 * 2 * dpi.y;
+#else
+        // Logical size
+        state.window_width = state.width * 8 * 2;
+        state.window_height = state.height * 16 * 2;
+#endif
+#ifndef NEO_WEB
         SetWindowSize(state.window_width, state.window_height);
+#endif
     }
 
     state.dpi = dpi;
 
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
+
+
+#ifdef NEO_WEB
+// LogInfo("%d %d, %d %d", screenWidth, screenHeight, GetRenderWidth(), GetRenderHeight());
+// SetWindowSize(GetScreenWidth(), GetScreenHeight());
+    #endif
 
     float bbWidth = state.width * 8;
     float bbHeight = state.height * 16;
@@ -365,7 +392,6 @@ void Neo_Text_Init(neo_text_init_params_t params)
 
     state.buf = (textattr_t *) malloc(sizeof(textattr_t) * params.width * params.height);
     memset(state.buf, 0, sizeof(textattr_t) * params.width * params.height);
-
 
     InitWindow(state.width * 8, state.height * 16, "NEO");
     SetWindowPosition(20, 20);
