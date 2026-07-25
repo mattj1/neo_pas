@@ -269,7 +269,7 @@ void Neo_Text_SwapBuffers(void) {
     if (GetTime() - state.fpsTime >= 1.0)
     {
         state.fpsTime = GetTime();
-        LogInfo("FPS: %d", state.frameCount);
+        // LogInfo("FPS: %d", state.frameCount);
         state.frameCount = 0;
     }
     Vector2 dpi;

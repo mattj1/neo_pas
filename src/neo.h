@@ -77,24 +77,46 @@ enum
     SE_KEYCHAR
 };
 
-typedef struct neo_buffer_reader_s neo_buffer_reader_t;
+typedef struct neo_buffer_reader_t neo_buffer_reader_t;
+typedef struct neo_buffer_writer_t neo_buffer_writer_t;
 
-typedef void (*neo_buffer_close_proc)(struct neo_buffer_reader_s* reader);
-typedef long (*neo_buffer_get_pos_proc)(struct neo_buffer_reader_s* reader);
-typedef void (*neo_buffer_seek_proc)(struct neo_buffer_reader_s* reader, long pos);
-typedef bool (*neo_buffer_read_data_proc)(struct neo_buffer_reader_s* reader, void* data, size_t length);
+typedef void (*neo_buffer_close_proc)(neo_buffer_reader_t* reader);
+typedef long (*neo_buffer_get_pos_proc)(neo_buffer_reader_t* reader);
+typedef void (*neo_buffer_seek_proc)(neo_buffer_reader_t* reader, long pos);
+typedef bool (*neo_buffer_read_data_proc)(neo_buffer_reader_t* reader, void* data, size_t length);
 
-struct neo_buffer_reader_s
+typedef void (*neo_buffer_write_data_proc)(neo_buffer_writer_t* writer, void* data, size_t length);
+
+struct neo_buffer_reader_t
 {
     FILE* file;
     void* data;
     void* userdata;
     long pos;
 
+    // Set to true if an error occurred. Future reads will be ignored.
+    bool isError;
+
     neo_buffer_read_data_proc readData;
     neo_buffer_get_pos_proc getPos;
     neo_buffer_close_proc close;
     neo_buffer_seek_proc seek;
+};
+
+struct neo_buffer_writer_t
+{
+    FILE *file;
+
+    // Writing to memory
+    void *data;
+    // Size of memory buffer
+    size_t bufLen;
+
+    void *userdata;
+
+
+    neo_buffer_write_data_proc writeData;
+    neo_buffer_close_proc close;
 };
 
 typedef struct neo_event_s
@@ -129,11 +151,16 @@ extern bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out);
 extern bool Neo_Buf_ReadString(neo_buffer_reader_t *reader, char *out, size_t bufLen);
 extern bool Neo_Buf_IsReaderValid(neo_buffer_reader_t reader);
 
+extern void Neo_Buf_WriteShort(neo_buffer_writer_t* writer, short val);
+
 extern long Neo_Buf_GetReadPos(neo_buffer_reader_t* reader);
 extern void Neo_Buf_Seek(neo_buffer_reader_t* reader, long pos);
 extern void Neo_Buf_CreateReaderForMemory(neo_buffer_reader_t* reader, void* data);
 extern void Neo_Buf_CreateReaderForFile(neo_buffer_reader_t* reader, FILE* file);
 extern void Neo_Buf_CloseReader(neo_buffer_reader_t* reader);
+
+extern void Neo_Buf_CreateWriterForMemory(neo_buffer_writer_t* writer, void* data, size_t bufLen);
+extern void Neo_Buf_CreateWriterForFile(neo_buffer_writer_t* writer, FILE* file);
 
 extern void Neo_Event_GetEvents(void);
 extern void Neo_Event_ProcessEvents(void);
@@ -400,6 +427,11 @@ static void _FileClose(neo_buffer_reader_t* reader)
     }
 }
 
+static void _FileWriteData(neo_buffer_writer_t *writer, void *data, size_t length)
+{
+    fwrite(data, 1, length, writer->file);
+}
+
 static bool _MemoryReadData(neo_buffer_reader_t* reader, void* data, size_t length)
 {
     // TODO: Check buffer size...
@@ -421,7 +453,9 @@ static void _MemorySeek(neo_buffer_reader_t* reader, long pos)
 
 bool Neo_Buf_ReadData(neo_buffer_reader_t* reader, void* dst, size_t length)
 {
-    return reader->readData(reader, dst, length);
+    bool result = reader->readData(reader, dst, length);
+    // On error, set isError to true.
+    return result;
 }
 
 bool Neo_Buf_ReadByte(neo_buffer_reader_t* reader, unsigned char* out)
@@ -437,6 +471,16 @@ bool Neo_Buf_ReadUShort(neo_buffer_reader_t* reader, unsigned short* out)
 bool Neo_Buf_ReadShort(neo_buffer_reader_t* reader, short* out)
 {
     return Neo_Buf_ReadData(reader, out, 2);
+}
+
+void Neo_Buf_WriteData(neo_buffer_writer_t *writer, void *data, size_t length)
+{
+    writer->writeData(writer, data, length);
+}
+
+void Neo_Buf_WriteShort(neo_buffer_writer_t* writer, short val)
+{
+    Neo_Buf_WriteData(writer, &val, sizeof(short));
 }
 
 bool Neo_Buf_ReadString(neo_buffer_reader_t *reader, char *out, size_t bufLen)
@@ -497,6 +541,20 @@ void Neo_Buf_CloseReader(neo_buffer_reader_t* reader)
     {
         reader->close(reader);
     }
+}
+
+void Neo_Buf_CreateWriterForMemory(neo_buffer_writer_t* writer, void* data, size_t bufLen)
+{
+    memset(writer, 0, sizeof(neo_buffer_writer_t));
+    writer->data = data;
+    writer->bufLen = bufLen;
+}
+
+void Neo_Buf_CreateWriterForFile(neo_buffer_writer_t* writer, FILE* file)
+{
+    memset(writer, 0, sizeof(neo_buffer_writer_t));
+    writer->file = file;
+    writer->writeData = _FileWriteData;
 }
 
 #pragma endregion
