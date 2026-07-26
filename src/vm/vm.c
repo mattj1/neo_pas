@@ -1,86 +1,5 @@
-#ifndef VM_H
-#define VM_H
+#include "vm.h"
 
-#include "neo.h"
-
-#define VM_MAX_SCRIPT_EXPORTS 8
-
-// typedef struct vm_state_s vm_state_t;
-typedef struct vm_state_t vm_state_t;
-typedef neo_buffer_reader_t (*vm_script_load_func)(const char *name);
-typedef bool (*vm_trap_func)(vm_state_t *state, uint8_t trapNo);
-typedef void *(*vm_mem_func)(vm_state_t *state, uint16_t addr);
-typedef uint16_t (*vm_get_entity_u16_func)(vm_state_t *state, uint16_t id);
-typedef void (*vm_set_entity_u16_func)(vm_state_t *state, uint16_t id, uint16_t val);
-
-typedef struct
-{
-    vm_script_load_func script_load_func;
-    vm_trap_func trap_func;
-    vm_mem_func mem_func;
-
-    vm_get_entity_u16_func get_entity_x_func;
-    vm_get_entity_u16_func get_entity_y_func;
-
-    vm_get_entity_u16_func get_item_type_func;
-    vm_get_entity_u16_func get_item_quantity_func;
-
-    vm_set_entity_u16_func set_entity_x_func;
-    vm_set_entity_u16_func set_entity_y_func;
-
-    vm_set_entity_u16_func set_item_type_func;
-    vm_set_entity_u16_func set_item_quantity_func;
-} vm_config_t;
-
-typedef struct
-{
-    char name[20];
-    uint16_t addr;
-} vm_export_t;
-
-typedef struct vm_script_t
-{
-    uint8_t *rom;
-    uint8_t ram[256];
-    vm_export_t exports[VM_MAX_SCRIPT_EXPORTS];
-    int refCount;
-    char name[20];
-    uint16_t romSize;
-} vm_script_t;
-
-struct vm_state_t
-{
-    int16_t id;             // -1 = unused
-    int16_t refCount;
-    uint8_t ram[256];
-    vm_script_t *script;
-
-    uint16_t pc, sp, bp;
-    uint8_t cf;
-
-    uint16_t r0, r1;
-    uint16_t e0, e1;
-    uint16_t i0, i1;
-
-    bool isRunning;
-}; // vm_state_t;
-
-extern void VM_Init(vm_config_t config);
-extern vm_script_t *VM_GetScript(const char *name);
-extern vm_state_t *VM_StateForID(i16 state_id);
-extern bool VM_CreateState(i16 *out_state_id);
-extern bool VM_AttachState(i16 state_id, vm_script_t *script);
-extern void VM_ReleaseState(vm_state_t *state);
-extern bool VM_GetExport(vm_state_t *state, const char *name, uint16_t *out_addr);
-extern bool VM_SetPC(vm_state_t *state, uint16_t addr);
-extern bool VM_Call(vm_state_t* state, uint16_t addr);
-extern bool VM_Run(vm_state_t *state);
-
-uint16_t VM_ReadReg(vm_state_t *state, uint8_t reg);
-uint16_t VM_PopInt(vm_state_t *state);
-const char *VM_PopAddrToString(vm_state_t *state);
-
-#ifdef NEO_VM_IMPLEMENTATION
 #define MAX_SCRIPTS 32
 #define MAX_STATES 68
 
@@ -125,7 +44,7 @@ static void State_Init(int16_t state_id)
     state->pc = 0xffff;
 }
 
-static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
+static vm_script_t *LoadScript(neo_buf_reader_t *reader, const char *name)
 {
     vm_script_t script, *newScript;
     uint16_t sz;
@@ -137,13 +56,13 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
 
     strcpy(&script.name[0], name);
 
-    Neo_Buf_ReadUShort(reader, &sz);
+    sz = Neo_Buf_ReadUInt16(reader);
     if (sz > 0)
     {
         Neo_Buf_ReadData(reader, script.ram, sz);
     }
 
-    Neo_Buf_ReadUShort(reader, &sz);
+    sz = Neo_Buf_ReadUInt16(reader);
     script.romSize = sz;
     script.rom = malloc(sz);
     printf("ROM size: %d\n", sz);
@@ -151,7 +70,7 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
 
     while (!done)
     {
-        Neo_Buf_ReadByte(reader, &code);
+        code = Neo_Buf_ReadUInt8(reader);
         if (code == 0)
         {
             done = true;
@@ -162,7 +81,7 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
         {
             vm_export_t *export = &script.exports[current_export];
             Neo_Buf_ReadString(reader, export->name, 20);
-            Neo_Buf_ReadUShort(reader, &export->addr);
+            export->addr = Neo_Buf_ReadUInt16(reader);
 
             current_export ++;
         }
@@ -171,7 +90,7 @@ static vm_script_t *LoadScript(neo_buffer_reader_t *reader, const char *name)
     newScript = malloc(sizeof(vm_script_t));
     memcpy(newScript, &script, sizeof(vm_script_t));
 
-    Neo_Buf_CloseReader(reader);
+    Neo_Buf_ReaderClose(reader);
     return newScript;
 }
 
@@ -225,7 +144,7 @@ static vm_script_t *GetLoadedScriptForName(const char *name)
 
 vm_script_t *VM_GetScript(const char *name)
 {
-    neo_buffer_reader_t reader;
+    neo_buf_reader_t reader;
 
     vm_script_t *script = NULL;
     script = GetLoadedScriptForName(name);
@@ -247,7 +166,7 @@ vm_script_t *VM_GetScript(const char *name)
 
     reader = G.config.script_load_func(name);
 
-    if (!Neo_Buf_IsReaderValid(reader))
+    if (!Neo_Buf_ReaderIsValid(&reader))
     {
         return NULL;
     }
@@ -922,7 +841,4 @@ void VM_Init(vm_config_t config)
         G.states[i].id = -1;
     }
 }
-
-#endif
-#endif
 
