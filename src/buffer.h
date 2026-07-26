@@ -1,8 +1,8 @@
 #ifndef NEO_BUF_H
 #define NEO_BUF_H
-
-#include <stdint.h>
-#include <stdio.h>
+#include "neo.h"
+// #include <stdint.h>
+// #include <stdio.h>
 
 /* ---------------------------------------------------------------------------
  * Reader
@@ -32,7 +32,7 @@ int32_t Neo_Buf_ReadInt32(neo_buf_reader_t* reader);
 
 /* Generic data and length-prefixed string (max 255 bytes + null) */
 int16_t Neo_Buf_ReadData(neo_buf_reader_t* reader, void* dest, uint16_t size);
-void Neo_Buf_ReadString(neo_buf_reader_t* reader, char* dest, uint8_t size);
+void Neo_Buf_ReadString(neo_buf_reader_t* reader, char* dest, size_t size);
 
 /* ---------------------------------------------------------------------------
  * Writer

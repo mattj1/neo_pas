@@ -2,12 +2,6 @@
 
 #ifdef PLATFORM_DESKTOP
 #include <raylib.h>
-// #include <math.h>
-// #include <stdint.h>
-#endif
-
-#ifdef PLATFORM_DESKTOP
-
 static ScanCode _raylibKeyToScancode[400] = {
     [32] = kSpace,
     [65] = kA,
@@ -732,6 +726,7 @@ void Neo_Timer_Shutdown(void)
 #pragma region Loop
 #pragma mark - Loop
 
+#ifndef PLATFORM_DOS
 static void _UpdateDrawFrame()
 {
     Neo_ClearKeyData();
@@ -759,6 +754,7 @@ static void _UpdateDrawFrame()
     }
 #endif
 }
+#endif
 
 void Neo_Run(void)
 {

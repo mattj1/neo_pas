@@ -1,7 +1,7 @@
 #ifndef VM_H
 #define VM_H
 
-#include "../neo.h"
+#include <neo.h>
 
 #define VM_MAX_SCRIPT_EXPORTS 8
 

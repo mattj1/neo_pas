@@ -43,8 +43,10 @@ typedef unsigned char bool;
 #ifndef uint16_t
 #define uint16_t unsigned short
 #endif
+typedef long int32_t;
 typedef unsigned long uint32_t;
-
+#define true 1
+#define false 0
 #endif
 
 typedef uint8_t u8;

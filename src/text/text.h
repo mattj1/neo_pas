@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "../neo.h"
+#include <neo.h>
 
 #ifdef PLATFORM_DOS
 #include <dos.h>

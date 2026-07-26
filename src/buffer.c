@@ -178,7 +178,7 @@ int16_t Neo_Buf_ReadData(neo_buf_reader_t *reader, void *dest, uint16_t size)
     return 1;
 }
 
-void Neo_Buf_ReadString(neo_buf_reader_t *reader, char *dest, uint8_t size)
+void Neo_Buf_ReadString(neo_buf_reader_t *reader, char *dest, size_t size)
 {
     uint8_t len = Neo_Buf_ReadUInt8(reader);
 
@@ -192,11 +192,7 @@ void Neo_Buf_ReadString(neo_buf_reader_t *reader, char *dest, uint8_t size)
         dest[0] = '\0';
         return;
     }
-    if (len > 255) { /* defensive, though uint8_t cannot exceed */
-        reader_fail(reader, "Neo_Buf: string length > 255");
-        dest[0] = '\0';
-        return;
-    }
+
     Neo_Buf_ReadData(reader, dest, len);
     dest[len] = '\0';
 }
