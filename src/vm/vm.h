@@ -65,6 +65,10 @@ struct vm_state_t
     bool isRunning;
 }; // vm_state_t;
 
+
+void VM_LoadState(i16 stateID, neo_buf_reader_t *reader);
+void VM_SaveState(i16 stateID, neo_buf_writer_t *writer);
+
 extern void VM_Init(vm_config_t config);
 extern vm_script_t *VM_GetScript(const char *name);
 extern vm_state_t *VM_StateForID(i16 state_id);

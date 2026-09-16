@@ -122,7 +122,7 @@ void VM_ReleaseState(vm_state_t *state)
         if (state->refCount <= 0)
         {
             ReleaseScript(state->script);
-            free(state->ram);
+            // free(state->ram);
             state->id = -1;
         }
     }
@@ -658,6 +658,7 @@ bool VM_Run(vm_state_t *state)
         case 64:
             // move mem, imm
             LoadInstructionArgs(state, &i, "mi");
+                LogInfo("mov mem, imm, %x <- %d", i.args[0].uintVal, i.args[1].uintVal);
             if (i.cond_run)
             {
                 VM_WriteShort(state, i.args[0].uintVal, i.args[1].uintVal);
@@ -826,6 +827,45 @@ bool VM_Call(vm_state_t* state, uint16_t addr)
     return VM_Run(state);
 }
 
+void VM_LoadState(i16 stateID, neo_buf_reader_t *reader) {
+    char scriptName[20];
+    vm_state_t *state = VM_StateForID(stateID);
+
+    if (state == NULL) {
+        Neo_Panic("VM_LoadState: VM_StateForID returned NULL");
+    }
+
+    Neo_Buf_ReadString(reader, scriptName, 20);
+
+    if (!VM_AttachState(stateID, VM_GetScript(scriptName))) {
+        Neo_Panic("VM_LoadState: Couldn't attach state");
+    }
+
+    state->pc = Neo_Buf_ReadUInt16(reader);
+    state->sp = Neo_Buf_ReadUInt16(reader);
+    state->bp = Neo_Buf_ReadUInt16(reader);
+    state->cf = Neo_Buf_ReadUInt16(reader);
+    state->e0 = Neo_Buf_ReadUInt16(reader);
+    state->e1 = Neo_Buf_ReadUInt16(reader);
+    Neo_Buf_ReadData(reader, state->ram, 256);
+}
+
+void VM_SaveState(i16 stateID, neo_buf_writer_t *writer) {
+    vm_state_t *state = VM_StateForID(stateID);
+
+    if (state == NULL) {
+        Neo_Panic("VM_SaveState: Couldn't attach state");
+    }
+
+    Neo_Buf_WriteString(writer, state->script->name);
+    Neo_Buf_WriteUInt16(writer, state->pc);
+    Neo_Buf_WriteUInt16(writer, state->sp);
+    Neo_Buf_WriteUInt16(writer, state->bp);
+    Neo_Buf_WriteUInt16(writer, state->cf);
+    Neo_Buf_WriteUInt16(writer, state->e0);
+    Neo_Buf_WriteUInt16(writer, state->e1);
+    Neo_Buf_WriteData(writer, state->ram, 256);
+}
 
 void VM_Init(vm_config_t config)
 {

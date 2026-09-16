@@ -4,6 +4,7 @@
 #include <raylib.h>
 static ScanCode _raylibKeyToScancode[400] = {
     [32] = kSpace,
+    [57] = k9,
     [65] = kA,
     [68] = kD,
     [69] = kE,
@@ -933,6 +934,10 @@ void LogInfoV(const char *format, va_list args)
 
 void Neo_Panic(const char *format, ...)
 {
+#ifdef PLATFORM_DOS
+#else
+    TraceLog(LOG_ERROR, "--- Neo_Panic ---");
+#endif
     va_list args;
     va_start(args, format);
     LogInfoV(format, args);
