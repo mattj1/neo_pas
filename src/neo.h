@@ -22,7 +22,7 @@
 
 #ifndef bool
 #ifndef __APPLE__
-typedef unsigned char bool;
+typedef int bool;
 #else
 // typedef unsigned char bool;
 #endif
@@ -83,6 +83,16 @@ enum
 
 #include "buffer.h"
 
+typedef struct neo_log_dest_s neo_log_dest_t;
+
+typedef void (*NeoLogDestProc)(void *userData, const char *str);
+
+typedef struct neo_log_dest_s {
+    NeoLogDestProc proc;
+    void *userData;
+    neo_log_dest_t *next;
+} neo_log_dest_t;
+
 typedef struct neo_event_s
 {
     int eventType;
@@ -106,6 +116,8 @@ typedef struct neo_config_s
     NeoUpdateProc updateFunc;
     NeoDrawProc drawFunc;
     NeoEventProc eventFunc;
+
+    neo_log_dest_t *logDest;
 } neo_config_t;
 
 extern void Neo_Event_GetEvents(void);

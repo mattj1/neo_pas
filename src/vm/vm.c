@@ -34,6 +34,13 @@ static struct
     vm_config_t config;
 } G;
 
+
+#ifdef PLATFORM_DESKTOP
+#define logi LogInfo
+#else
+#define logi  1 ? (void)0 : (void)
+#endif
+
 static void State_Init(int16_t state_id)
 {
     vm_state_t *state = &G.states[state_id];
@@ -65,7 +72,7 @@ static vm_script_t *LoadScript(neo_buf_reader_t *reader, const char *name)
     sz = Neo_Buf_ReadUInt16(reader);
     script.romSize = sz;
     script.rom = malloc(sz);
-    printf("ROM size: %d\n", sz);
+    logi("ROM size: %d\n", sz);
     Neo_Buf_ReadData(reader, script.rom, sz);
 
     while (!done)
@@ -307,7 +314,7 @@ void VM_WriteShort(vm_state_t *state, uint16_t addr, uint16_t val)
 
     if (p == NULL)
     {
-        printf("Error: Can't write to %x\n", addr);
+        logi("Error: Can't write to %x\n", addr);
         return;
     }
 
@@ -378,7 +385,8 @@ bool VM_PushInt(vm_state_t *state, uint16_t val)
 
 bool VM_SetPC(vm_state_t *state, uint16_t addr)
 {
-    if (state == NULL || state->id == -1 || addr > 1024 * 48)
+    if (state == NULL || state->id == -1
+        || addr > 1024 * 48)
     {
         return false;
     }
@@ -598,14 +606,14 @@ bool VM_Run(vm_state_t *state)
         {
         case 3:
             // ret
-            LogInfo("[ %x ] ret", i.pc);
+            logi("[ %x ] ret", i.pc);
 
             if (i.cond_run)
             {
                 if (state->sp == 0xc100)
                 {
                     // printf("done?");
-                    LogInfo("ret: can't pop!");
+                    logi("ret: can't pop!");
                     state->isRunning = false;
                     break;
                 }
@@ -628,7 +636,7 @@ bool VM_Run(vm_state_t *state)
             // add reg, imm
             i.args[0].regVal = VM_NextByte(state);
             i.args[1].intVal = VM_NextShort(state);
-            LogInfo("[ %x ] add r%d, %d", i.pc, i.args[0].regVal, i.args[1].intVal);
+            logi("[ %x ] add r%d, %d", i.pc, i.args[0].regVal, i.args[1].intVal);
 
             param = VM_ReadReg(state, i.args[0].intVal);
             if (i.cond_run)
@@ -650,7 +658,7 @@ bool VM_Run(vm_state_t *state)
             i.args[0].uintVal = VM_NextShort(state);
             if (i.cond_run)
             {
-                LogInfo("[ %x ] b %x (%d)\n", i.pc, i.args->uintVal, i.args->uintVal);
+                logi("[ %x ] b %x (%d)\n", i.pc, i.args->uintVal, i.args->uintVal);
                 VM_PushInt(state, state->pc);
                 VM_SetPC(state, i.args[0].uintVal);
             }
@@ -667,7 +675,7 @@ bool VM_Run(vm_state_t *state)
         case 65:
             // mov reg, imm
             LoadInstructionArgs(state, &i, "ri");
-            LogInfo("mov r%d, %d\n", i.args[0].regVal, i.args[1].uintVal);
+            logi("mov r%d, %d\n", i.args[0].regVal, i.args[1].uintVal);
             if (i.cond_run)
             {
                 VM_WriteReg(state, i.args[0].regVal, i.args[1].uintVal);
@@ -677,7 +685,7 @@ bool VM_Run(vm_state_t *state)
             // mov reg, mem
             i.args[0].regVal = VM_NextByte(state);
             i.args[1].uintVal = VM_NextMemOperand(state);
-            LogInfo("mov reg %d, [%d]", i.args[0].regVal, i.args[1].uintVal);
+            logi("mov reg %d, [%d]", i.args[0].regVal, i.args[1].uintVal);
             if (i.cond_run)
             {
                 val = *(uint16_t *)VM_Ptr(state, i.args[1].uintVal);
@@ -688,13 +696,13 @@ bool VM_Run(vm_state_t *state)
             // mov reg, reg
             i.args[0].intVal = VM_NextByte(state);
             i.args[1].intVal = VM_NextByte(state);
-            LogInfo("mov reg, reg: %d %d", i.args[0].intVal, i.args[1].intVal);
+            logi("mov reg, reg: %d %d", i.args[0].intVal, i.args[1].intVal);
             VM_WriteReg(state, i.args[0].regVal, VM_ReadReg(state, i.args[1].intVal));
             break;
         case 80:
             // push imm
             i.args[0].intVal = VM_NextShort(state);
-            LogInfo("[ %x ] push imm: %d", i.pc, i.args[0].intVal);
+            logi("[ %x ] push imm: %d", i.pc, i.args[0].intVal);
             if (i.cond_run)
             {
                 VM_PushInt(state, i.args[0].intVal);
@@ -703,7 +711,7 @@ bool VM_Run(vm_state_t *state)
         case 81:
             // Push reg
             i.args[0].intVal = VM_NextByte(state);
-            LogInfo("push reg: %d", i.args[0].intVal);
+            logi("push reg: %d", i.args[0].intVal);
             if (i.cond_run)
             {
                 param = VM_ReadReg(state, i.args[0].intVal);
@@ -718,7 +726,7 @@ bool VM_Run(vm_state_t *state)
                 if (i.cond_run)
                 {
                     unsigned short *ptr = VM_Ptr(state, i.args[0].uintVal);
-                    LogInfo("push mem [%x/%d] val: %d", i.args[0].uintVal, i.args[0].uintVal, *ptr);
+                    logi("push mem [%x/%d] val: %d", i.args[0].uintVal, i.args[0].uintVal, *ptr);
                     VM_PushInt(state, *ptr);
                 }
             }
@@ -729,7 +737,7 @@ bool VM_Run(vm_state_t *state)
             if (i.cond_run)
             {
                 uint16_t val = VM_PopInt(state);
-                LogInfo("[ %x ] pop r%d  got: (%d)", i.pc, i.args[0].regVal, val);
+                logi("[ %x ] pop r%d  got: (%d)", i.pc, i.args[0].regVal, val);
                 VM_WriteReg(state, i.args[0].regVal, val);
             }
             break;
@@ -739,7 +747,7 @@ bool VM_Run(vm_state_t *state)
                 ptr = VM_Ptr(state, i.args[0].uintVal);
                 val = VM_PopInt(state);
                 *ptr = val;
-                LogInfo("pop mem [%x/%d] <- %d", i.args[0].uintVal, i.args[0].uintVal, val);
+                logi("pop mem [%x/%d] <- %d", i.args[0].uintVal, i.args[0].uintVal, val);
                 // if (i.cond_run)
                 // {
 
@@ -751,7 +759,7 @@ bool VM_Run(vm_state_t *state)
             param2 = VM_PopInt(state);
             param = VM_PopInt(state);
 
-            LogInfo("s_cmp: %d, %d", param, param2);
+            logi("s_cmp: %d, %d", param, param2);
 
             state->cf &= 0xf0;
 
@@ -782,26 +790,26 @@ bool VM_Run(vm_state_t *state)
                 VM_PushInt(state, param > param2);
                 break;
             case 98:
-                LogInfo("s_eq: %d == %d", param, param2);
+                logi("s_eq: %d == %d", param, param2);
                 VM_PushInt(state, param == param2);
                 break;
             default:
-                printf("Unhandled stack op: %d\n", i.opcode);
+                logi("Unhandled stack op: %d\n", i.opcode);
             }
 
            break;
         case 127:
             i.args[0].intVal = VM_NextShort(state);
-            LogInfo("[ %x ] trap %d", i.pc, i.args[0].intVal);
+            logi("[ %x ] trap %d", i.pc, i.args[0].intVal);
             if (i.cond_run)
             {
                 if(!G.config.trap_func(state, i.args[0].intVal)) {
-                    printf("Unhandled trap: %d\n", i.args[0].intVal);
+                    logi("Unhandled trap: %d\n", i.args[0].intVal);
                 }
             }
             break;
         default:
-            printf("Unhandled opcode: %d\n", i.opcode);
+            logi("Unhandled opcode: %d\n", i.opcode);
             state->isRunning = false;
             break;
         }
@@ -871,7 +879,7 @@ void VM_Init(vm_config_t config)
 {
     int i;
 
-    LogInfo("VM_Init: State size: %d", sizeof(G));
+    logi("VM_Init: State size: %d", sizeof(G));
     memset(&G, 0, sizeof(G));
     G.scripts = calloc(MAX_SCRIPTS, sizeof(vm_script_t));
     G.config = config;

@@ -197,8 +197,7 @@ void Neo_Text_SwapBuffers(void) {
         // Copy backbuffer to target
         src = state.backBuffer;
         dst = state.buf;
-        // memcpy(dst, src, state.width * state.height * 2);
-        memcpy(dst, src, state.width * state.height / 2);
+        memcpy(dst, src, state.width * state.height * 2);
     }
 
     // Flip page

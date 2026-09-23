@@ -184,7 +184,10 @@ static struct
 
     struct
     {
+        neo_log_dest_t defaultLogDest;
+        neo_log_dest_t *logDest;
         FILE* logFile;
+        char last[128];
     } log;
 
     struct
@@ -794,6 +797,8 @@ void Neo_Run(void)
 }
 #pragma endregion
 
+void _LogDestStdout(void *userData, const char *str);
+
 void Neo_Init(neo_config_t config)
 {
 #ifdef PLATFORM_DOS
@@ -813,6 +818,13 @@ void Neo_Init(neo_config_t config)
     // printf("Size of int: %d, short: %d, state: %ld\n", sizeof(int), sizeof(unsigned short), sizeof(neo_state));
     memset(&neo_state, 0, sizeof(neo_state));
     neo_state.config = config;
+    neo_state.log.defaultLogDest.proc = _LogDestStdout;
+
+    neo_state.log.logDest = config.logDest;
+
+    if (neo_state.log.logDest == NULL) {
+        neo_state.log.logDest = &neo_state.log.defaultLogDest;
+    }
 
     if (config.logFilePath)
     {
@@ -891,6 +903,7 @@ void Neo_Shutdown(void)
         neo_state.did_shutdown = true;
 
         printf("Neo_Shutdown\n");
+        printf("%s", neo_state.log.last);
         Neo_Keyboard_Shutdown();
         Neo_Timer_Shutdown();
         /*
@@ -915,20 +928,41 @@ void Neo_Shutdown(void)
     }
 }
 
+void _LogDestStdout(void *userData, const char *str) {
+    (void) userData;
+#ifdef PLATFORM_DOS
+    puts(str);
+#else
+    TraceLog(LOG_INFO, "%s", str);
+#endif
+}
+
 void LogInfoV(const char *format, va_list args)
 {
+    neo_log_dest_t *i = neo_state.log.logDest;
 #ifdef PLATFORM_DOS
-    vprintf(format, args);
-    if (neo_state.log.logFile != NULL)
-    {
-        vfprintf(neo_state.log.logFile, format, args);
-        fputs("\r\n", neo_state.log.logFile);
-    }
-    putchar('\n');
+    char buffer[128];
+    vsprintf(buffer, format, args);
 #else
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
-    TraceLog(LOG_INFO, "%s", buffer);
+#endif
+
+    strcpy(neo_state.log.last, buffer);
+    for (;i != NULL; i = i->next) {
+        i->proc(i->userData, buffer);
+    }
+
+#ifdef PLATFORM_DOS
+    // vprintf(format, args);
+    // if (neo_state.log.logFile != NULL)
+    // {
+        // vfprintf(neo_state.log.logFile, format, args);
+        // fputs("\r\n", neo_state.log.logFile);
+    // }
+    // putchar('\n');
+#else
+    // vsnprintf(buffer, sizeof(buffer), format, args);
 #endif
 }
 
