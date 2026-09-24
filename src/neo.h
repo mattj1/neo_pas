@@ -158,4 +158,5 @@ void LogInfo(const char* format, ...);
 bool Neo_IsEGAAvailable(void);
 bool Neo_IsVGAAvailable(void);
 
+int Neo_FS_CopyFile(const char *srcPath, const char *dstPath);
 #endif  // NEO_H

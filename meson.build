@@ -9,7 +9,8 @@ libneo = static_library(
     'neo',
     sources: [
         'src/buffer.c',
-        'src/neo.c'
+        'src/neo.c',
+        'src/fs.c'
         ],
     include_directories: inc,
     c_args: ['-DPLATFORM_DESKTOP'],
