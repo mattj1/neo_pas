@@ -1,5 +1,9 @@
 #include "neo.h"
 
+#define MAX_EVENTS 64
+#define NEO_CONSOLE_LOG_COUNT 16
+#define NEO_CONSOLE_LOG_LEN 80
+
 #ifdef PLATFORM_DESKTOP
 #include <raylib.h>
 static ScanCode _raylibKeyToScancode[400] = {
@@ -9,6 +13,8 @@ static ScanCode _raylibKeyToScancode[400] = {
     [68] = kD,
     [69] = kE,
     [73] = kI,
+    [KEY_L] = kL,
+    [KEY_M] = kM,
     [79] = kO,
     [80] = kP,
     [81] = kQ,
@@ -17,6 +23,7 @@ static ScanCode _raylibKeyToScancode[400] = {
     [96] = kTilde,
     [KEY_ESCAPE] = kEsc,
     [257] = kEnter,
+    [259] = kBack,
     [265] = kUp,
     [264] = kDn,
     [263] = kLf,
@@ -161,6 +168,7 @@ static struct
     neo_event_t events[MAX_EVENTS];
 
     bool did_shutdown;
+    bool did_panic;
     bool keyboard_did_init;
     bool mouse_did_init;
     bool done;
@@ -187,12 +195,13 @@ static struct
         neo_log_dest_t defaultLogDest;
         neo_log_dest_t *logDest;
         FILE* logFile;
-        char last[128];
     } log;
 
     struct
     {
-        char msg[32][100];
+        char msg[NEO_CONSOLE_LOG_COUNT][NEO_CONSOLE_LOG_LEN + 1];
+        int head;
+        int count;
     } console;
 
 #ifdef PLATFORM_DOS
@@ -902,8 +911,18 @@ void Neo_Shutdown(void)
     {
         neo_state.did_shutdown = true;
 
-        printf("Neo_Shutdown\n");
-        printf("%s", neo_state.log.last);
+        {
+            int i;
+            int start = neo_state.console.head - neo_state.console.count;
+
+            _LogDestStdout(NULL, "Neo_Shutdown\n");
+
+            for (i = 0; i < neo_state.console.count; i++)
+            {
+                int index = (start + i) & (NEO_CONSOLE_LOG_COUNT - 1);
+                _LogDestStdout(NULL, neo_state.console.msg[index]);
+            }
+        }
         Neo_Keyboard_Shutdown();
         Neo_Timer_Shutdown();
         /*
@@ -948,7 +967,19 @@ void LogInfoV(const char *format, va_list args)
     vsnprintf(buffer, sizeof(buffer), format, args);
 #endif
 
-    strcpy(neo_state.log.last, buffer);
+    strncpy(
+        neo_state.console.msg[neo_state.console.head],
+        buffer,
+        NEO_CONSOLE_LOG_LEN
+    );
+
+    neo_state.console.msg[neo_state.console.head][NEO_CONSOLE_LOG_LEN] = 0;
+    neo_state.console.head = (neo_state.console.head + 1) & (NEO_CONSOLE_LOG_COUNT - 1);
+    if (neo_state.console.count < NEO_CONSOLE_LOG_COUNT)
+    {
+        neo_state.console.count++;
+    }
+
     for (;i != NULL; i = i->next) {
         i->proc(i->userData, buffer);
     }
@@ -968,11 +999,13 @@ void LogInfoV(const char *format, va_list args)
 
 void Neo_Panic(const char *format, ...)
 {
+    va_list args;
+    neo_state.did_panic = true;
+
 #ifdef PLATFORM_DOS
 #else
     TraceLog(LOG_ERROR, "--- Neo_Panic ---");
 #endif
-    va_list args;
     va_start(args, format);
     LogInfoV(format, args);
     va_end(args);

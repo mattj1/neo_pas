@@ -53,8 +53,6 @@ typedef uint8_t u8;
 typedef int16_t i16;
 typedef uint16_t u16;
 
-#define MAX_EVENTS 64
-
 typedef enum
 {
     kNone = 0x00, kEsc = 0x01, k1 = 0x02, k2 = 0x03, k3 = 0x04, k4 = 0x05,
