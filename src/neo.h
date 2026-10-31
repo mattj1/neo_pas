@@ -152,7 +152,7 @@ void Neo_Panic(const char *format, ...);
 void Neo_Panic(const char *format, ...) __attribute__ ((__noreturn__));
 #endif
 void LogInfo(const char* format, ...);
-
+void Neo_AddStdoutLogDest(void);
 bool Neo_IsEGAAvailable(void);
 bool Neo_IsVGAAvailable(void);
 

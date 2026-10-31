@@ -956,6 +956,15 @@ void _LogDestStdout(void *userData, const char *str) {
 #endif
 }
 
+void Neo_AddStdoutLogDest()
+{
+    neo_log_dest_t *dest = (neo_log_dest_t *) malloc(sizeof(neo_log_dest_t));
+    dest->proc = _LogDestStdout;
+    dest->userData = NULL;
+    dest->next = neo_state.log.logDest;
+    neo_state.log.logDest = dest;
+}
+
 void LogInfoV(const char *format, va_list args)
 {
     neo_log_dest_t *i = neo_state.log.logDest;
