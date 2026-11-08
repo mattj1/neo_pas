@@ -89,7 +89,7 @@ typedef struct neo_log_dest_s {
     NeoLogDestProc proc;
     void *userData;
     neo_log_dest_t *next;
-} neo_log_dest_t;
+};
 
 typedef struct neo_event_s
 {

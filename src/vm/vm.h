@@ -8,28 +8,14 @@
 // typedef struct vm_state_s vm_state_t;
 typedef struct vm_state_t vm_state_t;
 typedef neo_buf_reader_t (*vm_script_load_func)(const char *name);
-typedef bool (*vm_trap_func)(vm_state_t *state, uint8_t trapNo);
+typedef bool (*vm_trap_func)(vm_state_t *state, uint8_t trapNo, bool isInvoke, uint16_t self);
 typedef void *(*vm_mem_func)(vm_state_t *state, uint16_t addr);
-typedef uint16_t (*vm_get_entity_u16_func)(vm_state_t *state, uint16_t id);
-typedef void (*vm_set_entity_u16_func)(vm_state_t *state, uint16_t id, uint16_t val);
 
 typedef struct
 {
     vm_script_load_func script_load_func;
     vm_trap_func trap_func;
     vm_mem_func mem_func;
-
-    vm_get_entity_u16_func get_entity_x_func;
-    vm_get_entity_u16_func get_entity_y_func;
-
-    vm_get_entity_u16_func get_item_type_func;
-    vm_get_entity_u16_func get_item_quantity_func;
-
-    vm_set_entity_u16_func set_entity_x_func;
-    vm_set_entity_u16_func set_entity_y_func;
-
-    vm_set_entity_u16_func set_item_type_func;
-    vm_set_entity_u16_func set_item_quantity_func;
 } vm_config_t;
 
 typedef struct
@@ -55,12 +41,11 @@ struct vm_state_t
     uint8_t ram[256];
     vm_script_t *script;
 
-    uint16_t pc, sp, bp;
-    uint8_t cf;
+    // Registers
+    uint16_t r0, r1, sp, bp;
 
-    uint16_t r0, r1;
-    uint16_t e0, e1;
-    uint16_t i0, i1;
+    uint16_t pc, self;
+    uint8_t cf;
 
     bool isRunning;
 }; // vm_state_t;
@@ -78,9 +63,12 @@ extern void VM_ReleaseState(vm_state_t *state);
 extern bool VM_GetExport(vm_state_t *state, const char *name, uint16_t *out_addr);
 extern bool VM_SetPC(vm_state_t *state, uint16_t addr);
 extern bool VM_Call(vm_state_t* state, uint16_t addr);
+bool VM_CallExport(vm_state_t *state, const char *name);
 extern bool VM_Run(vm_state_t *state);
 
 uint16_t VM_ReadReg(vm_state_t *state, uint8_t reg);
+uint16_t VM_ReadShort(vm_state_t *state, uint16_t addr);
+const char *VM_ReadAddrToString(vm_state_t *state, uint16_t addr);
 uint16_t VM_PopInt(vm_state_t *state);
 const char *VM_PopAddrToString(vm_state_t *state);
 

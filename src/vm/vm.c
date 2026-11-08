@@ -309,6 +309,11 @@ uint16_t VM_ReadShort(vm_state_t *state, uint16_t addr) {
     return *p;
 }
 
+const char *VM_ReadAddrToString(vm_state_t *state, uint16_t addr) {
+    const uint16_t addr2 = VM_ReadShort(state, addr);
+    return VM_Ptr(state, addr2);
+}
+
 uint16_t VM_PopShort(vm_state_t *state) {
     // LogInfo("VM_PopShort at sp=%x", state->sp);
     uint16_t val = VM_ReadShort(state, state->sp);
@@ -321,12 +326,12 @@ uint16_t VM_PopInt(vm_state_t *state) {
 }
 
 const char *VM_PopAddrToString(vm_state_t *state) {
-    uint16_t addr = VM_PopShort(state);
+    const uint16_t addr = VM_PopShort(state);
     // printf("addr popped: %d\n", addr);
     return VM_Ptr(state, addr);
 }
 
-bool VM_PushInt(vm_state_t *state, uint16_t val) {
+static bool VM_PushInt(vm_state_t *state, uint16_t val) {
     if (!STATE_VALID(state)) {
         return false;
     }
@@ -399,18 +404,6 @@ uint16_t VM_ReadReg(vm_state_t *state, uint8_t reg) {
         case 0x01: return state->r1;
         case 0x0e: return state->bp;
         case 0x0f: return state->sp;
-        case 0x10: return state->e0;
-        case 0x11:
-            return G.config.get_entity_x_func(state, state->e0);
-        case 0x12:
-            return G.config.get_entity_y_func(state, state->e0);
-        case 0x20: return state->e1;
-        case 0x40: return state->i0;
-        case 0x41:
-            return G.config.get_item_type_func(state, state->i0);
-        case 0x42:
-            return G.config.get_item_quantity_func(state, state->i0);
-        case 0x80: return state->i1;
         default:
             Neo_Panic("VM_ReadReg: Unsupported register: %d", reg);
             return 0;
@@ -426,27 +419,6 @@ void VM_WriteReg(vm_state_t *state, uint8_t reg, uint16_t val) {
         case 0x0e: state->bp = val;
             break;
         case 0x0f: state->sp = val;
-            break;
-        case 0x10:
-            state->e0 = val;
-            break;
-        case 0x11:
-            G.config.set_entity_x_func(state, state->e0, val);
-            break;
-        case 0x12:
-            G.config.set_entity_y_func(state, state->e0, val);
-            break;
-        case 0x20: state->e1 = val;
-            break;
-        case 0x40: state->i0 = val;
-            break;
-        case 0x41:
-            G.config.set_item_type_func(state, state->i0, val);
-            break;
-        case 0x42:
-            G.config.set_item_quantity_func(state, state->i0, val);
-            break;
-        case 0x80: state->i1 = val;
             break;
         default:
             Neo_Panic("VM_WriteReg: Unsupported register: %d", reg);
@@ -477,7 +449,7 @@ static const char *paramList[] = {
     IMM, "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "",
     // 8 / 64 - 71 - push
-    IMM, "", REG, "", PTR_BP_OFFS, "", "", "",
+    IMM, ADDR, REG, "", PTR_BP_OFFS, "", "", "",
 
     // 9 / pop / 72 - 79
     "", "", REG, "", "", "", "", "",
@@ -511,7 +483,7 @@ static const char *paramList[] = {
     "", "", "", "", "", "", "", "",
 
     // 31 / 248 - 255
-    "i", "", "", "", "", "", "", "",
+    IMM, IMM, "", "", "", "", "", "",
 };
 
 static void LoadInstructionArgs(vm_state_t *state, vm_instruction_t *i) {
@@ -650,6 +622,9 @@ bool VM_Run(vm_state_t *state) {
 
                 break;
             case 65:
+                logi("[ %04x ] push mem: [%d]", i.pc, i.args[0].uintVal);
+
+                VM_PushInt(state, *i.args[0].ptr.intPtrVal);
                 break;
             case 66:
                 // Push reg
@@ -709,7 +684,7 @@ bool VM_Run(vm_state_t *state) {
             case 101:
             case 102:
             case 103:
-                logi("[ %04x ] mov (%d)", i.pc, i.opcode);
+                logi("[ %04x sp: %04x ] mov (%d)", i.pc, i.sp, i.opcode);
                 *i.args[0].ptr.intPtrVal = *i.args[1].ptr.intPtrVal;
                 break;
             case 104: {
@@ -792,8 +767,15 @@ bool VM_Run(vm_state_t *state) {
             case 248:
                 // i.args[0].intVal = VM_NextShort(state);
                 logi("[ %04x ] trap %d", i.pc, i.args[0].intVal);
-                if (!G.config.trap_func(state, i.args[0].intVal)) {
+                if (!G.config.trap_func(state, i.args[0].intVal, false, state->self)) {
                     logi("Unhandled trap: %d\n", i.args[0].intVal);
+                }
+                break;
+            case 249:
+                param = VM_PopInt(state);
+                logi("[ %04x ] trap_invoke %d, self = %d", i.pc, i.args[0].intVal, param);
+                if (!G.config.trap_func(state, i.args[0].intVal, true, param)) {
+                    logi("Unhandled trap_invoke: %d\n", i.args[0].intVal);
                 }
                 break;
             default:
@@ -821,6 +803,15 @@ bool VM_Call(vm_state_t *state, uint16_t addr) {
     return VM_Run(state);
 }
 
+bool VM_CallExport(vm_state_t *state, const char *name) {
+    uint16_t addr;
+    if (!VM_GetExport(state, name, &addr)) {
+        return false;
+    }
+
+    return VM_Call(state, addr);
+}
+
 void VM_LoadState(i16 stateID, neo_buf_reader_t *reader) {
     char scriptName[20];
     vm_state_t *state = VM_StateForID(stateID);
@@ -839,8 +830,6 @@ void VM_LoadState(i16 stateID, neo_buf_reader_t *reader) {
     state->sp = Neo_Buf_ReadUInt16(reader);
     state->bp = Neo_Buf_ReadUInt16(reader);
     state->cf = Neo_Buf_ReadUInt16(reader);
-    state->e0 = Neo_Buf_ReadUInt16(reader);
-    state->e1 = Neo_Buf_ReadUInt16(reader);
     Neo_Buf_ReadData(reader, state->ram, 256);
 }
 
@@ -856,8 +845,6 @@ void VM_SaveState(i16 stateID, neo_buf_writer_t *writer) {
     Neo_Buf_WriteUInt16(writer, state->sp);
     Neo_Buf_WriteUInt16(writer, state->bp);
     Neo_Buf_WriteUInt16(writer, state->cf);
-    Neo_Buf_WriteUInt16(writer, state->e0);
-    Neo_Buf_WriteUInt16(writer, state->e1);
     Neo_Buf_WriteData(writer, state->ram, 256);
 }
 
