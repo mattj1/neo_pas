@@ -304,8 +304,13 @@ uint8_t VM_ReadByte(vm_state_t *state, uint16_t addr) {
     return *p;
 }
 
-uint16_t VM_ReadShort(vm_state_t *state, uint16_t addr) {
-    uint16_t *p = VM_Ptr(state, addr);
+int16_t VM_ReadShort(vm_state_t *state, uint16_t addr) {
+    const int16_t *p = VM_Ptr(state, addr);
+    return *p;
+}
+
+uint16_t VM_ReadUShort(vm_state_t *state, uint16_t addr) {
+    const uint16_t *p = VM_Ptr(state, addr);
     return *p;
 }
 
@@ -722,8 +727,6 @@ bool VM_Run(vm_state_t *state) {
             //             VM_PushInt(state, param > param2);
             //             break;
             //         case 98:
-            //             logi("s_eq: %d == %d", param, param2);
-            //             VM_PushInt(state, param == param2);
             //             break;
             //         default:
             //
@@ -731,6 +734,7 @@ bool VM_Run(vm_state_t *state) {
             //
             //     break;
             case 192:
+            case 198:
             case 200:
             case 201:
             case 202: {
@@ -746,6 +750,10 @@ bool VM_Run(vm_state_t *state) {
                         if (param == param2) state->cf |= 0x01;
                         if (param > param2) state->cf |= 0x02;
                         if (param < param2) state->cf |= 0x04;
+                        break;
+                    case 198:
+                        logi("s_eq: %d == %d", param, param2);
+                        VM_PushInt(state, param == param2);
                         break;
                     case 200:
                         logi("[ %04x sp: %04x ] s_add (%d + %d)", i.pc, i.sp, param, param2);

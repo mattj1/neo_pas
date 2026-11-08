@@ -67,7 +67,8 @@ bool VM_CallExport(vm_state_t *state, const char *name);
 extern bool VM_Run(vm_state_t *state);
 
 uint16_t VM_ReadReg(vm_state_t *state, uint8_t reg);
-uint16_t VM_ReadShort(vm_state_t *state, uint16_t addr);
+int16_t VM_ReadShort(vm_state_t *state, uint16_t addr);
+uint16_t VM_ReadUShort(vm_state_t *state, uint16_t addr);
 const char *VM_ReadAddrToString(vm_state_t *state, uint16_t addr);
 uint16_t VM_PopInt(vm_state_t *state);
 const char *VM_PopAddrToString(vm_state_t *state);
