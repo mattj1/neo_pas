@@ -44,7 +44,11 @@ struct vm_state_t
     // Registers
     uint16_t r0, r1, sp, bp;
 
-    uint16_t pc, self;
+    uint16_t pc;
+
+    // This is the game-specific handle that the state is connected to. 0 = none.
+    uint16_t self;
+
     uint8_t cf;
 
     bool isRunning;
@@ -57,6 +61,7 @@ void VM_SaveState(i16 stateID, neo_buf_writer_t *writer);
 extern void VM_Init(vm_config_t config);
 extern vm_script_t *VM_GetScript(const char *name);
 extern vm_state_t *VM_StateForID(i16 state_id);
+extern vm_state_t *VM_StateForHandle(const uint16_t handle);
 extern bool VM_CreateState(i16 *out_state_id);
 extern bool VM_AttachState(i16 state_id, vm_script_t *script);
 extern void VM_ReleaseState(vm_state_t *state);

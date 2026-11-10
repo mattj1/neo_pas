@@ -197,6 +197,17 @@ vm_state_t *VM_StateForID(i16 state_id) {
     return state;
 }
 
+vm_state_t *VM_StateForHandle(const uint16_t handle) {
+
+    for (int i = 0; i < MAX_STATES; i++) {
+        vm_state_t *state = &G.states[i];
+        if (state->id != -1 && state->self == handle) {
+            return state;
+        }
+    }
+    return NULL;
+}
+
 bool VM_AttachState(i16 state_id, vm_script_t *script) {
     vm_state_t *state = VM_StateForID(state_id);
 
@@ -488,7 +499,7 @@ static const char *paramList[] = {
     "", "", "", "", "", "", "", "",
 
     // 31 / 248 - 255
-    IMM, IMM, "", "", "", "", "", "",
+    IMM IMM, IMM IMM, "", "", "", "", "", "",
 };
 
 static void LoadInstructionArgs(vm_state_t *state, vm_instruction_t *i) {
@@ -774,17 +785,19 @@ bool VM_Run(vm_state_t *state) {
             }
             case 248:
                 // i.args[0].intVal = VM_NextShort(state);
-                logi("[ %04x ] trap %d", i.pc, i.args[0].intVal);
+                logi("[ %04x ] trap %d, %d", i.pc, i.args[0].intVal, i.args[1].intVal);
                 if (!G.config.trap_func(state, i.args[0].intVal, false, state->self)) {
                     logi("Unhandled trap: %d\n", i.args[0].intVal);
                 }
+                state->sp += i.args[1].intVal;
                 break;
             case 249:
                 param = VM_PopInt(state);
-                logi("[ %04x ] trap_invoke %d, self = %d", i.pc, i.args[0].intVal, param);
+                logi("[ %04x ] trap_invoke %d %d, self = %d", i.pc, i.args[0].intVal, i.args[1].intVal, param);
                 if (!G.config.trap_func(state, i.args[0].intVal, true, param)) {
                     logi("Unhandled trap_invoke: %d\n", i.args[0].intVal);
                 }
+                state->sp += i.args[1].intVal;
                 break;
             default:
                 logi("[ %04x ] Unhandled opcode: %d\n", i.pc, i.opcode);
