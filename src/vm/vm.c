@@ -553,7 +553,7 @@ static void LoadInstructionArgs(vm_state_t *state, vm_instruction_t *i) {
 }
 
 static void LoadInstruction(vm_state_t *state, vm_instruction_t *i) {
-    const uint8_t pc = state->pc;
+    const uint16_t pc = state->pc;
     const uint8_t opcode = VM_NextByte(state);
 
     i->sp = state->sp;
@@ -745,6 +745,11 @@ bool VM_Run(vm_state_t *state) {
             //
             //     break;
             case 192:
+            case 193:
+            case 194:
+            case 195:
+            case 196:
+            case 197:
             case 198:
             case 200:
             case 201:
@@ -762,9 +767,13 @@ bool VM_Run(vm_state_t *state) {
                         if (param > param2) state->cf |= 0x02;
                         if (param < param2) state->cf |= 0x04;
                         break;
-                    case 198:
+                    case 197:
                         logi("s_eq: %d == %d", param, param2);
                         VM_PushInt(state, param == param2);
+                        break;
+                    case 198:
+                        logi("s_ne: %d != %d", param, param2);
+                        VM_PushInt(state, param != param2);
                         break;
                     case 200:
                         logi("[ %04x sp: %04x ] s_add (%d + %d)", i.pc, i.sp, param, param2);
