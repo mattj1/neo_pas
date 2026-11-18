@@ -859,7 +859,8 @@ void VM_LoadState(i16 stateID, neo_buf_reader_t *reader) {
     state->pc = Neo_Buf_ReadUInt16(reader);
     state->sp = Neo_Buf_ReadUInt16(reader);
     state->bp = Neo_Buf_ReadUInt16(reader);
-    state->cf = Neo_Buf_ReadUInt16(reader);
+    state->self = Neo_Buf_ReadUInt16(reader);
+    state->cf = Neo_Buf_ReadUInt8(reader);
     Neo_Buf_ReadData(reader, state->ram, 256);
 }
 
@@ -874,7 +875,8 @@ void VM_SaveState(i16 stateID, neo_buf_writer_t *writer) {
     Neo_Buf_WriteUInt16(writer, state->pc);
     Neo_Buf_WriteUInt16(writer, state->sp);
     Neo_Buf_WriteUInt16(writer, state->bp);
-    Neo_Buf_WriteUInt16(writer, state->cf);
+    Neo_Buf_WriteUInt16(writer, state->self);
+    Neo_Buf_WriteUInt8(writer, state->cf);
     Neo_Buf_WriteData(writer, state->ram, 256);
 }
 
