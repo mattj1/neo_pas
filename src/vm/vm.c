@@ -198,8 +198,8 @@ vm_state_t *VM_StateForID(i16 state_id) {
 }
 
 vm_state_t *VM_StateForHandle(const uint16_t handle) {
-
-    for (int i = 0; i < MAX_STATES; i++) {
+    int i;
+    for (i = 0; i < MAX_STATES; i++) {
         vm_state_t *state = &G.states[i];
         if (state->id != -1 && state->self == handle) {
             return state;

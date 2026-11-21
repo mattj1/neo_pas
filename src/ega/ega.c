@@ -9,6 +9,7 @@ static struct {
     Texture mainTexture;
     int window_width, window_height;
     Rectangle dest_rect;
+    u16 take_screenshot;
 #else
     u16 draw_segment;
 #endif
@@ -592,6 +593,13 @@ void EGA_WaitVerticalRetrace(void) {
         w, h
     };
     DrawTexturePro(ega_state.mainTexture, src, ega_state.dest_rect, (Vector2){0, 0}, 0.0f, WHITE);
+
+    if (ega_state.take_screenshot) {
+        ega_state.take_screenshot = false;
+        Image image = EGA_Raylib_GetBackBuffer();
+        ExportImage(image, "screenshot.png");
+        UnloadImage(image);
+    }
 #endif
 }
 
@@ -654,3 +662,8 @@ Image EGA_Raylib_GetBackBuffer(void) {
 #endif
 
 
+void EGA_Screenshot(void) {
+#ifdef PLATFORM_DESKTOP
+    ega_state.take_screenshot = true;
+#endif
+}

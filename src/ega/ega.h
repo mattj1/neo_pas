@@ -54,6 +54,7 @@ extern void EGA_DrawSpriteMaskFast2(u16 src_srg, u16 src_offs, u16 src_skip,
 #else
 extern Image EGA_Raylib_GetBackBuffer(void);
 extern void EGA_Raylib_GetMouseCoords(u16 *x, u16 *y);
+extern void EGA_Screenshot(void);
 #endif
 
 #endif
