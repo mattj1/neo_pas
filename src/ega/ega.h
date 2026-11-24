@@ -11,16 +11,14 @@
 #include <stdint.h>
 #endif
 
-typedef unsigned short u16;
-
 typedef struct ega_sprite_s {
-    u16 column_count;
-    u16 width;
-    u16 height;
-    u16 num_channels;
-    u16 num_color_channels;
-    u16 planes_and;
-    u16 planes_or;
+    uint16_t column_count;
+    uint16_t width;
+    uint16_t height;
+    uint16_t num_channels;
+    uint16_t num_color_channels;
+    uint16_t planes_and;
+    uint16_t planes_or;
     void *data;
 #ifndef PLATFORM_DOS
     Image raylib_image;
@@ -53,7 +51,7 @@ extern void EGA_DrawSpriteMaskFast2(u16 src_srg, u16 src_offs, u16 src_skip,
                                     u16 num_cols, u16 num_rows);
 #else
 extern Image EGA_Raylib_GetBackBuffer(void);
-extern void EGA_Raylib_GetMouseCoords(u16 *x, u16 *y);
+extern void EGA_Raylib_GetMouseCoords(uint16_t *x, uint16_t *y);
 extern void EGA_Screenshot(void);
 #endif
 

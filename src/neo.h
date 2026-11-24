@@ -85,7 +85,7 @@ typedef struct neo_log_dest_s neo_log_dest_t;
 
 typedef void (*NeoLogDestProc)(void *userData, const char *str);
 
-typedef struct neo_log_dest_s {
+struct neo_log_dest_s {
     NeoLogDestProc proc;
     void *userData;
     neo_log_dest_t *next;
